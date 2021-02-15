@@ -97,6 +97,9 @@ class MainWindow(Gtk.ApplicationWindow):
         set_page(self.page_left, page_index + 1)
         self.page_left_no.set_text(str(page_index + 1))
 
+        self.btn_previous_page.set_visible(self.page_index != self.PAGE_INDEX_MIN)
+        self.btn_next_page.set_visible(self.page_index != self.PAGE_INDEX_MAX)
+
     def go_previous_page(self, button: Gtk.Button) -> None:
         self.page_index = max(self.page_index - 2, self.PAGE_INDEX_MIN)
         self.view(self.page_index)
@@ -106,7 +109,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.view(self.page_index)
 
     def go_to_page(self, spin: Gtk.SpinButton) -> None:
-        self.view(int(spin.get_value()))
+        self.page_index = int(spin.get_value())
+        self.view(self.page_index)
 
     def show_about(self, button: Gtk.Button) -> None:
         About().show_all()
