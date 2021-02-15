@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Quran
+Exec=grapik-quran
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true

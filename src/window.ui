@@ -1,0 +1,667 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.38.2 -->
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <!-- interface-css-provider-path main.css -->
+  <object class="GtkAdjustment" id="adjusment_page_no">
+    <property name="lower">1</property>
+    <property name="upper">604</property>
+    <property name="value">1</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
+  <object class="GtkAboutDialog" id="dialog_about">
+    <property name="can-focus">False</property>
+    <property name="type-hint">dialog</property>
+    <property name="program-name">GRAPIK Quran</property>
+    <property name="version">0.1.0-alpha.0</property>
+    <property name="copyright">© 2021 Naufan Rusyda Faikar</property>
+    <property name="comments" translatable="yes">Access and read the Quran at any time</property>
+    <property name="website">https://github.com/naruaika/grapik-quran</property>
+    <property name="website-label" translatable="yes">Learn more about GRAPIK Quran</property>
+    <property name="authors">Naufan Rusyda Faikar</property>
+    <property name="artists">Naufan Rusyda Faikar</property>
+    <property name="logo-icon-name">application-x-executable</property>
+    <property name="license-type">gpl-3-0</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkPopoverMenu" id="popover_menu">
+    <property name="can-focus">False</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="margin-start">10</property>
+        <property name="margin-end">10</property>
+        <property name="margin-top">10</property>
+        <property name="margin-bottom">10</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkModelButton">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="text" translatable="yes">Preferences</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="receives-default">False</property>
+            <property name="text" translatable="yes">Keyboard Shortcuts</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="receives-default">False</property>
+            <property name="text" translatable="yes">Help</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="btn_about">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="receives-default">False</property>
+            <property name="text" translatable="yes">About Quran</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">5</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="text" translatable="yes">Quit</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">5</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="submenu">main</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkPopoverMenu" id="popover_nav">
+    <property name="can-focus">False</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="margin-start">10</property>
+        <property name="margin-end">10</property>
+        <property name="margin-top">10</property>
+        <property name="margin-bottom">10</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">4</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Go to page</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                  <attribute name="scale" value="0.90000000000000002"/>
+                  <attribute name="foreground" value="#808080808080"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="spin_page_no">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="text" translatable="yes">1</property>
+                <property name="caps-lock-warning">False</property>
+                <property name="progress-pulse-step">0</property>
+                <property name="placeholder-text" translatable="yes">Page Number</property>
+                <property name="input-purpose">number</property>
+                <property name="adjustment">adjusment_page_no</property>
+                <property name="climb-rate">1</property>
+                <property name="numeric">True</property>
+                <property name="update-policy">if-valid</property>
+                <property name="value">1</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+      <packing>
+        <property name="submenu">main</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
+  <template class="main_window" parent="GtkApplicationWindow">
+    <property name="can-focus">False</property>
+    <property name="resizable">False</property>
+    <property name="default-width">800</property>
+    <property name="default-height">600</property>
+    <property name="icon-name">application-x-executable</property>
+    <child>
+      <object class="GtkOverlay">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <child>
+              <object class="GtkOverlay">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-start">50</property>
+                <child>
+                  <object class="GtkImage" id="page_left">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-top">40</property>
+                    <property name="margin-bottom">40</property>
+                  </object>
+                  <packing>
+                    <property name="index">-1</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkLabel" id="page_left_no">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">center</property>
+                    <property name="valign">end</property>
+                    <property name="margin-bottom">15</property>
+                    <property name="label" translatable="yes">2</property>
+                    <property name="justify">center</property>
+                    <attributes>
+                      <attribute name="scale" value="0.90000000000000002"/>
+                      <attribute name="foreground" value="#000000000000"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="pass-through">True</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkLabel" id="page_left_verse">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="valign">start</property>
+                    <property name="margin-start">25</property>
+                    <property name="margin-top">15</property>
+                    <property name="label" translatable="yes">Surah Al-Baqarah</property>
+                    <property name="justify">center</property>
+                    <attributes>
+                      <attribute name="scale" value="0.90000000000000002"/>
+                      <attribute name="foreground" value="#000000000000"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="pass-through">True</property>
+                    <property name="index">1</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkLabel" id="page_left_juz">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="valign">start</property>
+                    <property name="margin-end">25</property>
+                    <property name="margin-top">15</property>
+                    <property name="label" translatable="yes">Juz 30</property>
+                    <property name="justify">center</property>
+                    <attributes>
+                      <attribute name="scale" value="0.90000000000000002"/>
+                      <attribute name="foreground" value="#000000000000"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="pass-through">True</property>
+                    <property name="index">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparator">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <style>
+                  <class name="wide"/>
+                  <class name="page-separator-left"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparator">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <style>
+                  <class name="wide"/>
+                  <class name="page-separator-right"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkOverlay">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-end">50</property>
+                <child>
+                  <object class="GtkImage" id="page_right">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-top">40</property>
+                    <property name="margin-bottom">40</property>
+                  </object>
+                  <packing>
+                    <property name="index">-1</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkLabel" id="page_right_no">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">center</property>
+                    <property name="valign">end</property>
+                    <property name="margin-bottom">15</property>
+                    <property name="label" translatable="yes">1</property>
+                    <property name="justify">center</property>
+                    <attributes>
+                      <attribute name="scale" value="0.90000000000000002"/>
+                      <attribute name="foreground" value="#000000000000"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="pass-through">True</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkLabel" id="page_right_verse">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="valign">start</property>
+                    <property name="margin-start">25</property>
+                    <property name="margin-top">15</property>
+                    <property name="label" translatable="yes">Surah Al-Fatihah</property>
+                    <property name="justify">center</property>
+                    <attributes>
+                      <attribute name="scale" value="0.90000000000000002"/>
+                      <attribute name="foreground" value="#000000000000"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="pass-through">True</property>
+                    <property name="index">1</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkLabel" id="page_right_juz">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="valign">start</property>
+                    <property name="margin-end">25</property>
+                    <property name="margin-top">15</property>
+                    <property name="label" translatable="yes">Juz 1</property>
+                    <property name="justify">center</property>
+                    <attributes>
+                      <attribute name="scale" value="0.90000000000000002"/>
+                      <attribute name="foreground" value="#000000000000"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="pass-through">True</property>
+                    <property name="index">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="index">-1</property>
+          </packing>
+        </child>
+        <child type="overlay">
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="valign">center</property>
+            <child>
+              <object class="GtkButton" id="btn_next_page">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <signal name="clicked" handler="go_next_page" swapped="no"/>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="ypad">5</property>
+                    <property name="pixel-size">20</property>
+                    <property name="icon-name">go-previous-symbolic</property>
+                  </object>
+                </child>
+                <style>
+                  <class name="btn-overlay-left"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_previous_page">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+                <signal name="clicked" handler="go_previous_page" swapped="no"/>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="ypad">5</property>
+                    <property name="pixel-size">20</property>
+                    <property name="icon-name">go-next-symbolic</property>
+                  </object>
+                </child>
+                <style>
+                  <class name="btn-overlay-right"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="pack-type">end</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <style>
+              <class name="osd"/>
+            </style>
+          </object>
+          <packing>
+            <property name="pass-through">True</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <child type="titlebar">
+      <object class="GtkHeaderBar">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="show-close-button">True</property>
+        <child type="title">
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="spacing">10</property>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <child>
+                  <object class="GtkToggleButton">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="icon-name">user-bookmarks-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkMenuButton">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="focus-on-click">False</property>
+                    <property name="receives-default">True</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <style>
+                      <class name="btn-option"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <style>
+                  <class name="linked"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="btn_nav">
+                <property name="width-request">300</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="focus-on-click">False</property>
+                <property name="receives-default">True</property>
+                <property name="popover">popover_nav</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Al-Mu'minun (114) : 286</property>
+                    <property name="justify">center</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                    </attributes>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <child>
+                  <object class="GtkToggleButton">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="icon-name">media-playback-start-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkMenuButton">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="focus-on-click">False</property>
+                    <property name="receives-default">True</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <style>
+                      <class name="btn-option"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <style>
+                  <class name="linked"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkMenuButton" id="btn_menu">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="direction">none</property>
+            <property name="popover">popover_menu</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="btn_search">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="icon-name">edit-find-symbolic</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <style>
+      <class name="page"/>
+    </style>
+  </template>
+</interface>
