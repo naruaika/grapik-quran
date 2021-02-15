@@ -32,3 +32,11 @@ grapik_quran_sources = [
 ]
 
 install_data(grapik_quran_sources, install_dir: moduledir)
+
+grapik_quran_subsources = [
+  'widget/__init__.py',
+  'widget/dialog.py',
+  'widget/popover.py',
+]
+
+install_data(grapik_quran_subsources, install_dir: join_paths(moduledir, 'widget'))

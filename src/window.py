@@ -22,33 +22,37 @@ gi.require_version('GdkPixbuf', '2.0')
 gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gdk, GdkPixbuf, Gtk
+from .widget.dialog import About
+from .widget.popover import Navigation, Menu
 
 
-@Gtk.Template(resource_path='/org/naruaika/Quran/window.ui')
-class GrapikQuranWindow(Gtk.ApplicationWindow):
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/window.ui')
+class MainWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'main_window'
+
+    # Constants
+    PAGE_SIZE_WIDTH = 552
+    PAGE_SIZE_HEIGHT = 683
+    PAGE_INDEX_MIN = 1
+    PAGE_INDEX_MAX = 604
+
+    # Globals
+    page_index = 1
+
+    # Components
+    popover_nav = Navigation()
+    btn_nav = Gtk.Template.Child('btn_nav')
+
+    popover_menu = Menu()
+    btn_menu = Gtk.Template.Child('btn_menu')
 
     page_left = Gtk.Template.Child('page_left')
     page_right = Gtk.Template.Child('page_right')
-
     page_left_no = Gtk.Template.Child('page_left_no')
     page_right_no = Gtk.Template.Child('page_right_no')
 
     btn_next_page = Gtk.Template.Child('btn_next_page')
     btn_previous_page = Gtk.Template.Child('btn_previous_page')
-
-    spin_page_no = Gtk.Template.Child('spin_page_no')
-
-    dialog_about = Gtk.Template.Child('dialog_about')
-    btn_about = Gtk.Template.Child('btn_about')
-
-    PAGE_SIZE_WIDTH = 552
-    PAGE_SIZE_HEIGHT = 683
-
-    PAGE_INDEX_MIN = 1
-    PAGE_INDEX_MAX = 604
-
-    page_index = 1
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -60,15 +64,19 @@ class GrapikQuranWindow(Gtk.ApplicationWindow):
         # Set stylesheet
         screen = Gdk.Screen.get_default()
         provider = Gtk.CssProvider()
-        provider.load_from_resource('/org/naruaika/Quran/main.css')
+        provider.load_from_resource('/org/naruaika/Quran/res/css/main.css')
         Gtk.StyleContext.add_provider_for_screen(
             screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-        # Add handlers
+        # Add signal handlers
         self.btn_previous_page.connect('clicked', self.go_previous_page)
         self.btn_next_page.connect('clicked', self.go_next_page)
-        self.spin_page_no.connect('value-changed', self.go_to_page)
-        self.btn_about.connect('clicked', self.show_about)
+
+        self.btn_nav.set_popover(self.popover_nav)
+        self.popover_nav.spin_page_no.connect('value-changed', self.go_to_page)
+
+        self.btn_menu.set_popover(self.popover_menu)
+        self.popover_menu.btn_about.connect('clicked', self.show_about)
 
         self.view()
 
@@ -76,9 +84,10 @@ class GrapikQuranWindow(Gtk.ApplicationWindow):
         if page_index % 2 == 0:
             page_index -= 1
 
+        # Set image corresponding to the page
         def set_page(page: Gtk.Image, index: int) -> None:
             pixbuf = GdkPixbuf.Pixbuf.new_from_resource_at_scale(
-                f'/org/naruaika/Quran/pages/{index}.png',
+                f'/org/naruaika/Quran/res/pages/{index}.png',
                 self.PAGE_SIZE_WIDTH, self.PAGE_SIZE_HEIGHT, True)
             page.set_from_pixbuf(pixbuf)
 
@@ -100,4 +109,4 @@ class GrapikQuranWindow(Gtk.ApplicationWindow):
         self.view(int(spin.get_value()))
 
     def show_about(self, button: Gtk.Button) -> None:
-        self.dialog_about.show()
+        About().show_all()

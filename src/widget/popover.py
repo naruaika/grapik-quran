@@ -1,4 +1,4 @@
-# main.py
+# popover.py
 #
 # Copyright 2021 Naufan Rusyda Faikar
 #
@@ -15,28 +15,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
 import gi
 
 gi.require_version('Gtk', '3.0')
 
-from gi.repository import Gtk, Gio
-
-from .window import MainWindow
+from gi.repository import Gtk
 
 
-class Application(Gtk.Application):
-    def __init__(self) -> None:
-        super().__init__(application_id='org.naruaika.Quran',
-                         flags=Gio.ApplicationFlags.FLAGS_NONE)
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/popover/navigation.ui')
+class Navigation(Gtk.PopoverMenu):
+    __gtype_name__ = 'popover_nav'
 
-    def do_activate(self):
-        win = self.props.active_window
-        if not win:
-            win = MainWindow(application=self)
-        win.present()
+    spin_page_no = Gtk.Template.Child('spin_page_no')
 
 
-def main(version) -> int:
-    app = Application()
-    return app.run(sys.argv)
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/popover/menu.ui')
+class Menu(Gtk.PopoverMenu):
+    __gtype_name__ = 'popover_menu'
+
+    btn_preferences = Gtk.Template.Child('btn_preferences')
+    btn_shortcut = Gtk.Template.Child('btn_shortcut')
+    btn_help = Gtk.Template.Child('btn_help')
+    btn_about = Gtk.Template.Child('btn_about')
+    btn_quit = Gtk.Template.Child('btn_quit')
