@@ -31,8 +31,8 @@ class MainWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'main_window'
 
     # Constants
-    PAGE_SIZE_WIDTH = 552
-    PAGE_SIZE_HEIGHT = 683
+    PAGE_SIZE_WIDTH = 456
+    PAGE_SIZE_HEIGHT = 672
     PAGE_INDEX_MIN = 1
     PAGE_INDEX_MAX = 604
 
@@ -48,8 +48,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
     page_left = Gtk.Template.Child('page_left')
     page_right = Gtk.Template.Child('page_right')
-    page_left_no = Gtk.Template.Child('page_left_no')
-    page_right_no = Gtk.Template.Child('page_right_no')
 
     btn_next_page = Gtk.Template.Child('btn_next_page')
     btn_previous_page = Gtk.Template.Child('btn_previous_page')
@@ -92,13 +90,10 @@ class MainWindow(Gtk.ApplicationWindow):
             page.set_from_pixbuf(pixbuf)
 
         set_page(self.page_right, page_index)
-        self.page_right_no.set_text(str(page_index))
-
         set_page(self.page_left, page_index + 1)
-        self.page_left_no.set_text(str(page_index + 1))
 
-        self.btn_previous_page.set_visible(self.page_index != self.PAGE_INDEX_MIN)
-        self.btn_next_page.set_visible(self.page_index != self.PAGE_INDEX_MAX)
+        self.btn_previous_page.set_visible(page_index != self.PAGE_INDEX_MIN)
+        self.btn_next_page.set_visible(page_index != self.PAGE_INDEX_MAX - 1)
 
         # Update current page info
         self.popover_nav.spin_page_no.set_value(self.page_index)
