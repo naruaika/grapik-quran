@@ -22,6 +22,8 @@ gi.require_version('GdkPixbuf', '2.0')
 gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gdk, GdkPixbuf, Gtk
+
+from .process import Process
 from .widget.dialog import About
 from .widget.popover import Navigation, Menu
 
@@ -30,21 +32,36 @@ from .widget.popover import Navigation, Menu
 class MainWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'main_window'
 
-    # Constants
     PAGE_SIZE_WIDTH = 456
     PAGE_SIZE_HEIGHT = 672
-    PAGE_INDEX_MIN = 1
-    PAGE_INDEX_MAX = 604
 
-    # Globals
-    page_index = 1
+    PAGE_NO_MIN = 1
+    PAGE_NO_MAX = 604
+    page_no: int = 1
 
-    # Components
+    SURA_NO_MIN = 1
+    SURA_NO_MAX = 30
+    sura_no: int = 1
+
+    AYAH_NO_MIN = 1
+    AYAH_NO_MAX = None
+    ayah_no: int = 1
+
+    JUZ_NO_MIN = 1
+    JUZ_NO_MAX = 30
+    juz_no: int = 1
+
+    HIZB_NO_MIN = 1
+    HIZB_NO_MAX = 7
+    hizb_no: int = 1
+
+    process = Process()
+
     popover_nav = Navigation()
-    btn_nav = Gtk.Template.Child('btn_nav')
+    btn_open_nav = Gtk.Template.Child('btn_open_nav')
 
     popover_menu = Menu()
-    btn_menu = Gtk.Template.Child('btn_menu')
+    btn_open_menu = Gtk.Template.Child('btn_open_menu')
 
     page_left = Gtk.Template.Child('page_left')
     page_right = Gtk.Template.Child('page_right')
@@ -70,17 +87,17 @@ class MainWindow(Gtk.ApplicationWindow):
         self.btn_previous_page.connect('clicked', self.go_previous_page)
         self.btn_next_page.connect('clicked', self.go_next_page)
 
-        self.btn_nav.set_popover(self.popover_nav)
+        self.btn_open_nav.set_popover(self.popover_nav)
         self.popover_nav.spin_page_no.connect('value-changed', self.go_to_page)
 
-        self.btn_menu.set_popover(self.popover_menu)
+        self.btn_open_menu.set_popover(self.popover_menu)
         self.popover_menu.btn_about.connect('clicked', self.show_about)
 
         self.view()
 
-    def view(self, page_index: int = 1) -> None:
-        if page_index % 2 == 0:
-            page_index -= 1
+    def view(self, page_no: int = 1) -> None:
+        if page_no % 2 == 0:
+            page_no -= 1
 
         # Set image corresponding to the page
         def set_page(page: Gtk.Image, index: int) -> None:
@@ -89,26 +106,26 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.PAGE_SIZE_WIDTH, self.PAGE_SIZE_HEIGHT, True)
             page.set_from_pixbuf(pixbuf)
 
-        set_page(self.page_right, page_index)
-        set_page(self.page_left, page_index + 1)
+        set_page(self.page_right, page_no)
+        set_page(self.page_left, page_no + 1)
 
-        self.btn_previous_page.set_visible(page_index != self.PAGE_INDEX_MIN)
-        self.btn_next_page.set_visible(page_index != self.PAGE_INDEX_MAX - 1)
+        self.btn_previous_page.set_visible(page_no != self.PAGE_NO_MIN)
+        self.btn_next_page.set_visible(page_no != self.PAGE_NO_MAX - 1)
 
         # Update current page info
-        self.popover_nav.spin_page_no.set_value(self.page_index)
+        self.popover_nav.spin_page_no.set_value(self.page_no)
 
     def go_previous_page(self, button: Gtk.Button) -> None:
-        self.page_index = max(self.page_index - 2, self.PAGE_INDEX_MIN)
-        self.view(self.page_index)
+        self.page_no = max(self.page_no - 2, self.PAGE_NO_MIN)
+        self.view(self.page_no)
 
     def go_next_page(self, button: Gtk.Button) -> None:
-        self.page_index = min(self.page_index + 2, self.PAGE_INDEX_MAX)
-        self.view(self.page_index)
+        self.page_no = min(self.page_no + 2, self.PAGE_NO_MAX)
+        self.view(self.page_no)
 
     def go_to_page(self, spin: Gtk.SpinButton) -> None:
-        self.page_index = int(spin.get_value())
-        self.view(self.page_index)
+        self.page_no = int(spin.get_value())
+        self.view(self.page_no)
 
     def show_about(self, button: Gtk.Button) -> None:
         About().show_all()

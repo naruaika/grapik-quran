@@ -1,4 +1,4 @@
-# main.py
+# process.py
 #
 # Copyright 2021 Naufan Rusyda Faikar
 #
@@ -15,29 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
+import xml.etree.ElementTree as etree
 import gi
 
-gi.require_version('Gtk', '3.0')
 gi.require_version('Gio', '2.0')
 
-from gi.repository import Gtk, Gio
+from gi.repository import Gio
 
-from .window import MainWindow
+class Process:
 
+    # Databases
+    db_map = etree.fromstring(Gio.resources_lookup_data(
+        '/org/naruaika/Quran/res/db/map.xml', 0).get_data())
 
-class Application(Gtk.Application):
     def __init__(self) -> None:
-        super().__init__(application_id='org.naruaika.Quran',
-                         flags=Gio.ApplicationFlags.FLAGS_NONE)
-
-    def do_activate(self):
-        win = self.props.active_window
-        if not win:
-            win = MainWindow(application=self)
-        win.present()
-
-
-def main(version) -> int:
-    app = Application()
-    return app.run(sys.argv)
+        pass
