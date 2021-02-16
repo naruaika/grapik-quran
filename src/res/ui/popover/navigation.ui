@@ -6,7 +6,7 @@
     <property name="lower">1</property>
     <property name="upper">604</property>
     <property name="value">1</property>
-    <property name="step-increment">1</property>
+    <property name="step-increment">2</property>
     <property name="page-increment">10</property>
   </object>
   <template class="popover_nav" parent="GtkPopoverMenu">

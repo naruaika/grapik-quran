@@ -100,6 +100,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.btn_previous_page.set_visible(self.page_index != self.PAGE_INDEX_MIN)
         self.btn_next_page.set_visible(self.page_index != self.PAGE_INDEX_MAX)
 
+        # Update current page info
+        self.popover_nav.spin_page_no.set_value(self.page_index)
+
     def go_previous_page(self, button: Gtk.Button) -> None:
         self.page_index = max(self.page_index - 2, self.PAGE_INDEX_MIN)
         self.view(self.page_index)
