@@ -26,11 +26,23 @@ from gi.repository import Gtk
 class Navigation(Gtk.PopoverMenu):
     __gtype_name__ = 'popover_nav'
 
+    # TODO: select all text on focus
     spin_page_no = Gtk.Template.Child('spin_page_no')
+    spin_aya_no = Gtk.Template.Child('spin_aya_no')
+    spin_juz_no = Gtk.Template.Child('spin_juz_no')
+    spin_hizb_no = Gtk.Template.Child('spin_hizb_no')
+
+    # FIXME: list items is too long
+    combo_sura_name = Gtk.Template.Child('combo_sura_name')
+    entry_sura_name = Gtk.Template.Child('entry_sura_name')
+
+    # TODO: connect completion to entry
+    complete_sura_name = Gtk.Template.Child('complete_sura_name')
+    adjust_aya_no = Gtk.Template.Child('adjust_aya_no')
 
 
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/popover/menu.ui')
-class Menu(Gtk.PopoverMenu):
+class Help(Gtk.PopoverMenu):
     __gtype_name__ = 'popover_menu'
 
     btn_preferences = Gtk.Template.Child('btn_preferences')

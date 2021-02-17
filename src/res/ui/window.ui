@@ -111,7 +111,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_previous_page">
+              <object class="GtkButton" id="btn_back_page">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
@@ -219,7 +219,7 @@
                 <property name="focus-on-click">False</property>
                 <property name="receives-default">True</property>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="win_title">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes">Al-Mu'minun (114) : 286</property>

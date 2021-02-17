@@ -29,7 +29,7 @@ grapik_quran_sources = [
   '__init__.py',
   'main.py',
   'window.py',
-  'process.py',
+  'model.py',
 ]
 
 install_data(grapik_quran_sources, install_dir: moduledir)

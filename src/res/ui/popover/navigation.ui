@@ -2,35 +2,35 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkAdjustment" id="adjusment_page_no">
-    <property name="lower">1</property>
-    <property name="upper">604</property>
-    <property name="value">1</property>
-    <property name="step-increment">2</property>
-    <property name="page-increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment_ayah_no">
+  <object class="GtkAdjustment" id="adjust_aya_no">
     <property name="lower">1</property>
     <property name="upper">286</property>
     <property name="value">1</property>
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment_hizb_no">
-    <property name="lower">1</property>
-    <property name="upper">7</property>
-    <property name="value">1</property>
+  <object class="GtkAdjustment" id="adjust_hizb_no">
+    <property name="upper">59</property>
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment_juz_no">
+  <object class="GtkAdjustment" id="adjust_juz_no">
     <property name="lower">1</property>
     <property name="upper">30</property>
     <property name="value">1</property>
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
-  <object class="GtkEntryCompletion" id="completion_sura_name"/>
+  <object class="GtkAdjustment" id="adjust_page_no">
+    <property name="lower">1</property>
+    <property name="upper">604</property>
+    <property name="value">1</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
+  <object class="GtkEntryCompletion" id="complete_sura_name">
+    <property name="inline-completion">True</property>
+  </object>
   <template class="popover_nav" parent="GtkPopoverMenu">
     <property name="can-focus">False</property>
     <child>
@@ -41,9 +41,10 @@
         <property name="margin-end">20</property>
         <property name="margin-top">15</property>
         <property name="margin-bottom">15</property>
-        <property name="spacing">8</property>
+        <property name="spacing">20</property>
+        <property name="homogeneous">True</property>
         <child>
-          <!-- n-columns=1 n-rows=3 -->
+          <!-- n-columns=1 n-rows=6 -->
           <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
@@ -69,12 +70,11 @@
               <object class="GtkSpinButton" id="spin_page_no">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="text" translatable="yes">1</property>
                 <property name="caps-lock-warning">False</property>
                 <property name="progress-pulse-step">0</property>
-                <property name="placeholder-text" translatable="yes">Page Number</property>
+                <property name="placeholder-text" translatable="yes">Type page number...</property>
                 <property name="input-purpose">number</property>
-                <property name="adjustment">adjusment_page_no</property>
+                <property name="adjustment">adjust_page_no</property>
                 <property name="climb-rate">1</property>
                 <property name="numeric">True</property>
                 <property name="update-policy">if-valid</property>
@@ -90,51 +90,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="valign">start</property>
-                <property name="label" translatable="yes">Type a page number between 1 and 604 to navigate to.</property>
-                <property name="wrap">True</property>
-                <property name="max-width-chars">15</property>
-                <attributes>
-                  <attribute name="scale" value="0.80000000000000004"/>
-                  <attribute name="foreground" value="#808080808080"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">2</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSeparator">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <!-- n-columns=1 n-rows=5 -->
-          <object class="GtkGrid">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="row-spacing">8</property>
-            <property name="column-spacing">8</property>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="label" translatable="yes">Surah Name</property>
+                <property name="label" translatable="yes">Sura Name</property>
                 <property name="justify">right</property>
                 <attributes>
                   <attribute name="weight" value="bold"/>
@@ -143,7 +99,7 @@
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">0</property>
+                <property name="top-attach">2</property>
               </packing>
             </child>
             <child>
@@ -151,12 +107,10 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="valign">start</property>
-                <property name="label" translatable="yes">Type a ayah number between 1 and 286 to navigate to.</property>
-                <property name="wrap">True</property>
-                <property name="max-width-chars">15</property>
+                <property name="label" translatable="yes">Aya No.</property>
+                <property name="justify">right</property>
                 <attributes>
-                  <attribute name="scale" value="0.80000000000000004"/>
+                  <attribute name="weight" value="bold"/>
                   <attribute name="foreground" value="#808080808080"/>
                 </attributes>
               </object>
@@ -166,15 +120,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="spin_ayah_no">
+              <object class="GtkSpinButton" id="spin_aya_no">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="text" translatable="yes">1</property>
                 <property name="caps-lock-warning">False</property>
                 <property name="progress-pulse-step">0</property>
-                <property name="placeholder-text" translatable="yes">Page Number</property>
+                <property name="placeholder-text" translatable="yes">Type aya number...</property>
                 <property name="input-purpose">number</property>
-                <property name="adjustment">adjustment_ayah_no</property>
+                <property name="adjustment">adjust_aya_no</property>
                 <property name="climb-rate">1</property>
                 <property name="numeric">True</property>
                 <property name="update-policy">if-valid</property>
@@ -182,65 +135,34 @@
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">3</property>
+                <property name="top-attach">5</property>
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="label" translatable="yes">Ayah No.</property>
-                <property name="justify">right</property>
-                <attributes>
-                  <attribute name="weight" value="bold"/>
-                  <attribute name="foreground" value="#808080808080"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkComboBoxText">
+              <object class="GtkComboBoxText" id="combo_sura_name">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="has-entry">True</property>
-                <items>
-                  <item translatable="yes">1. Al-Baqarah</item>
-                </items>
                 <child internal-child="entry">
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="entry_sura_name">
                     <property name="can-focus">True</property>
-                    <property name="width-chars">12</property>
-                    <property name="text" translatable="yes">1. Al-Baqarah</property>
                     <property name="caps-lock-warning">False</property>
-                    <property name="completion">completion_sura_name</property>
+                    <property name="progress-pulse-step">0</property>
+                    <property name="placeholder-text" translatable="yes">Type sura name...</property>
+                    <property name="completion">complete_sura_name</property>
                   </object>
                 </child>
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">1</property>
+                <property name="top-attach">3</property>
               </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSeparator">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
@@ -268,15 +190,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="spin_hizb_no">
+              <object class="GtkSpinButton" id="spin_juz_no">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="text" translatable="yes">1</property>
                 <property name="caps-lock-warning">False</property>
                 <property name="progress-pulse-step">0</property>
-                <property name="placeholder-text" translatable="yes">Page Number</property>
+                <property name="placeholder-text" translatable="yes">Type juz number...</property>
                 <property name="input-purpose">number</property>
-                <property name="adjustment">adjustment_hizb_no</property>
+                <property name="adjustment">adjust_juz_no</property>
                 <property name="climb-rate">1</property>
                 <property name="numeric">True</property>
                 <property name="update-policy">if-valid</property>
@@ -284,7 +205,75 @@
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">3</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can-focus">False</property>
+                <property name="homogeneous">True</property>
+                <child>
+                  <object class="GtkToggleButton">
+                    <property name="label" translatable="yes">0</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="active">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton">
+                    <property name="label" translatable="yes">¼</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton">
+                    <property name="label" translatable="yes">½</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton">
+                    <property name="label" translatable="yes">¾</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+                <style>
+                  <class name="linked"/>
+                </style>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">4</property>
               </packing>
             </child>
             <child>
@@ -305,42 +294,22 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="spin_juz_no">
+              <object class="GtkSpinButton" id="spin_hizb_no">
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
-                <property name="text" translatable="yes">1</property>
                 <property name="caps-lock-warning">False</property>
                 <property name="progress-pulse-step">0</property>
-                <property name="placeholder-text" translatable="yes">Page Number</property>
+                <property name="placeholder-text" translatable="yes">Type hizb number...</property>
                 <property name="input-purpose">number</property>
-                <property name="adjustment">adjustment_juz_no</property>
+                <property name="adjustment">adjust_hizb_no</property>
                 <property name="climb-rate">1</property>
                 <property name="numeric">True</property>
                 <property name="update-policy">if-valid</property>
-                <property name="value">1</property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
-                <property name="top-attach">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="valign">start</property>
-                <property name="label" translatable="yes">Type a juz number between 1 and 30, then a hizb between 1 and 7 to navigate to.</property>
-                <property name="wrap">True</property>
-                <property name="max-width-chars">15</property>
-                <attributes>
-                  <attribute name="scale" value="0.80000000000000004"/>
-                  <attribute name="foreground" value="#808080808080"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">4</property>
+                <property name="top-attach">3</property>
               </packing>
             </child>
           </object>
@@ -353,6 +322,7 @@
       </object>
       <packing>
         <property name="submenu">main</property>
+        <property name="position">1</property>
       </packing>
     </child>
   </template>
