@@ -17,6 +17,7 @@
 
 from gi.repository import Gdk, GdkPixbuf, Gtk
 import cairo
+import copy
 
 from .model import Model
 from .dialog import About
@@ -44,8 +45,8 @@ class MainWindow(Gtk.ApplicationWindow):
     hizb_no: int = 1
 
     bboxes = {'page_right': [], 'page_left': []}
-    bboxes_hovered = {'page': '', 'meta': []}
-    bboxes_focused = {'page': '', 'meta': []}
+    bboxes_hovered = {'page_no': 0, 'page_side': '', 'bbox': []}
+    bboxes_focused = {'page_no': 0, 'page_side': '', 'bbox': []}
 
     model = Model()
     popover_help = Help()
@@ -84,6 +85,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.btn_next_page.connect('clicked', self.go_next_page)
         self.page_left_evbox.connect('motion-notify-event', self.page_hovered)
         self.page_right_evbox.connect('motion-notify-event', self.page_hovered)
+        self.page_left_evbox.connect('button-press-event', self.focus_on_aya)
+        self.page_right_evbox.connect('button-press-event', self.focus_on_aya)
         self.page_left_darea.connect('draw', self.draw_bbox)
         self.page_right_darea.connect('draw', self.draw_bbox)
         self.popover_nav.spin_page_no.connect('value-changed', self.go_to_page)
@@ -110,7 +113,7 @@ class MainWindow(Gtk.ApplicationWindow):
             return
 
         # Sync other navigation variables
-        if updated == 'page':
+        if updated == 'page_side':
             self.sura_no = self.model.get_sura_no_by_page(self.page_no)
             self.aya_no = self.model.get_aya_no_by_page(self.page_no)
             self.juz_no = self.model.get_juz_no(self.sura_no, self.aya_no)
@@ -127,14 +130,20 @@ class MainWindow(Gtk.ApplicationWindow):
             self.juz_no = self.model.get_juz_no(self.sura_no, self.aya_no)
             self.hizb_no = self.model.get_hizb_no(self.sura_no, self.aya_no)
         elif updated == 'juz':
-            self.sura_no = self.model.get_sura_no_by_juz(juz_no=self.juz_no)
-            self.aya_no = self.model.get_aya_no_by_juz(juz_no=self.juz_no)
+            self.sura_no = self.model.get_sura_no_by_juz(self.juz_no)
+            self.aya_no = self.model.get_aya_no_by_juz(self.juz_no)
             self.page_no = self.model.get_page_no(self.sura_no, self.aya_no)
             self.hizb_no = self.HIZB_NO_MIN
             self.AYA_NO_MAX = self.model.get_aya_no_max(self.sura_no)
         elif updated == 'hizb':
             ...
+        elif updated == 'focus':
+            self.page_no = self.model.get_page_no(self.sura_no, self.aya_no)
+            self.juz_no = self.model.get_juz_no(self.sura_no, self.aya_no)
+            self.hizb_no = self.model.get_hizb_no(self.sura_no, self.aya_no)
+            self.AYA_NO_MAX = self.model.get_aya_no_max(self.sura_no)
 
+        # TODO: do not reset the images if not needed
         # Always set odd page numbers for right pages
         page_right_no = self.page_no
         if self.page_no % 2 == 0:
@@ -163,26 +172,42 @@ class MainWindow(Gtk.ApplicationWindow):
         sura_name = self.popover_nav.combo_sura_name.get_active_text()
         self.win_title.set_text(f'{sura_name.split()[1]} ({self.sura_no}) : '
                                 f'{self.aya_no}')
-        self.btn_back_page.set_visible(page_right_no > self.PAGE_NO_MIN)
-        self.btn_next_page.set_visible(page_right_no + 1 < self.PAGE_NO_MAX)
+        self.btn_back_page.set_visible(self.page_no > self.PAGE_NO_MIN)
+        self.btn_next_page.set_visible(self.page_no < self.PAGE_NO_MAX)
 
         self.on_update = False
 
         # Get all bounding box for the new two pages
-        self.bboxes['page_right'] = self.model.get_bboxes_by_page(page_right_no)
-        self.bboxes['page_left'] = self.model.get_bboxes_by_page(page_right_no + 1)
+        self.bboxes['page_right'] = self.model.get_bboxes_by_page(
+            page_right_no)
+        self.bboxes['page_left'] = self.model.get_bboxes_by_page(
+            page_right_no + 1)
+
+        # Get a new aya focus
+        if updated == 'focus':
+            self.bboxes_focused = copy.deepcopy(self.bboxes_hovered)
+            self.bboxes_focused['page_no'] = self.page_no
+        else:
+            page_id = ('page_left' if self.page_no % 2 == 0 else 'page_right')
+            bboxes = self.bboxes[page_id]
+            self.bboxes_focused = {
+                'page_no': self.page_no,
+                'page_side': page_id,
+                'bbox': [bbox for bbox in bboxes if bbox[1] == self.aya_no]}
+        self.page_right_darea.queue_draw()
+        self.page_left_darea.queue_draw()
 
     def go_previous_page(self, button: Gtk.Button) -> None:
-        self.page_no = max(self.page_no - 2, self.PAGE_NO_MIN)
-        self.update('page')
+        self.page_no = max(self.page_no - 1, self.PAGE_NO_MIN)
+        self.update('page_side')
 
     def go_next_page(self, button: Gtk.Button) -> None:
-        self.page_no = min(self.page_no + 2, self.PAGE_NO_MAX)
-        self.update('page')
+        self.page_no = min(self.page_no + 1, self.PAGE_NO_MAX)
+        self.update('page_side')
 
     def go_to_page(self, button: Gtk.SpinButton) -> None:
         self.page_no = int(button.get_value())
-        self.update('page')
+        self.update('page_side')
 
     def go_to_sura(self, box: Gtk.ComboBoxText) -> None:
         self.sura_no = int(box.get_active_id())
@@ -201,30 +226,44 @@ class MainWindow(Gtk.ApplicationWindow):
     #     self.update('hizb')
 
     def page_hovered(self, widget: Gtk.Widget, event: Gdk.EventMotion) -> None:
-        aya_hovered = None
+        aya_no_hovered = None
         bboxes = self.bboxes[widget.get_name()]
         for bbox in bboxes:
             if bbox[3] <= event.x <= bbox[3] + bbox[5] and \
-                bbox[4] <= event.y <= bbox[4] + bbox[6]:
-                aya_hovered = bbox[1]
+                    bbox[4] <= event.y <= bbox[4] + bbox[6]:
+                aya_no_hovered = bbox[1]
                 break
-        if aya_hovered:
+        if aya_no_hovered:
             self.bboxes_hovered = {
-                'page': widget.get_name(),
-                'meta': [bbox for bbox in bboxes if bbox[1] == aya_hovered]}
+                'page_no': self.page_no,
+                'page_side': widget.get_name(),
+                'bbox': [bbox for bbox in bboxes if bbox[1] == aya_no_hovered]}
             self.get_window().set_cursor(Gdk.Cursor(Gdk.CursorType.HAND2))
         else:
-            self.bboxes_hovered = {'page': '', 'meta': []}
+            self.bboxes_hovered = {'page_no': 0, 'page_side': '', 'bbox': []}
             self.get_window().set_cursor(Gdk.Cursor(Gdk.CursorType.ARROW))
         self.page_right_darea.queue_draw()
         self.page_left_darea.queue_draw()
 
+    def focus_on_aya(self, widget: Gtk.Widget, event: Gdk.EventButton) -> None:
+        if self.bboxes_hovered['bbox']:
+            first_bbox = self.bboxes_hovered['bbox'][0]
+            self.sura_no = first_bbox[0]
+            self.aya_no = first_bbox[1]
+            self.update('focus')
+
     def draw_bbox(self, widget: Gtk.Widget, context: cairo.Context) -> None:
-        if self.bboxes_hovered['page'] == widget.get_name():
-            # context.set_source_rgba(0.082, 0.325, 0.620, 0.3)
-            context.set_source_rgba(0.2, 0.2, 0.2, 0.2)
-            for coor in self.bboxes_hovered['meta']:
-                context.rectangle(*coor[3:])
+        if self.bboxes_focused['page_side'] == widget.get_name():
+            context.set_source_rgba(0.082, 0.325, 0.620, 0.2)
+            for pos in self.bboxes_focused['bbox']:
+                context.rectangle(*pos[3:])
+            context.fill()
+
+        if self.bboxes_hovered['page_side'] == widget.get_name() and \
+                self.bboxes_hovered['bbox'] != self.bboxes_focused['bbox']:
+            context.set_source_rgba(0.2, 0.2, 0.2, 0.15)
+            for pos in self.bboxes_hovered['bbox']:
+                context.rectangle(*pos[3:])
             context.fill()
 
     def show_about(self, button: Gtk.Button) -> None:
