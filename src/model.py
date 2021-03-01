@@ -17,13 +17,16 @@
 
 from typing import List
 import sqlite3
+import os
+
 
 class Model:
+    __dirname__ = os.path.dirname(os.path.abspath(__file__))
 
-    _main_db = sqlite3.connect('/app/share/grapik-quran/res/main.db')
+    _main_db = sqlite3.connect(os.path.join(__dirname__, '../res/main.db'))
     _main_cursor = _main_db.cursor()
 
-    _pages_db = sqlite3.connect('/app/share/grapik-quran/res/pages.db')
+    _pages_db = sqlite3.connect(os.path.join(__dirname__, '../res/pages.db'))
     _pages_cursor = _pages_db.cursor()
     _pages_type = 'medina'  # TODO: support page type changing
 
