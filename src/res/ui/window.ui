@@ -89,7 +89,6 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <signal name="clicked" handler="go_next_page" swapped="no"/>
                 <child>
                   <object class="GtkImage">
                     <property name="visible">True</property>
@@ -116,7 +115,6 @@
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
                 <property name="always-show-image">True</property>
-                <signal name="clicked" handler="go_previous_page" swapped="no"/>
                 <child>
                   <object class="GtkImage">
                     <property name="visible">True</property>

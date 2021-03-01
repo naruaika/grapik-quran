@@ -16,67 +16,58 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from typing import List
-import xml.etree.ElementTree as etree
-import gi
-
-gi.require_version('Gio', '2.0')
-
-from gi.repository import Gio
+import sqlite3
 
 class Model:
 
-    # Databases
-    # FIXME: for best performance, use SQLite instead
-    _map = etree.fromstring(Gio.resources_lookup_data(
-        '/org/naruaika/Quran/res/db/map.xml', 0).get_data())
+    _main_db = sqlite3.connect('/app/share/grapik-quran/res/main.db')
+    _main_cursor = _main_db.cursor()
+
+    _pages_db = sqlite3.connect('/app/share/grapik-quran/res/pages.db')
+    _pages_cursor = _pages_db.cursor()
+    _pages_type = 'medina'  # TODO: support page type changing
 
     def get_page_no(self, sura_no: int, aya_no: int) -> int:
-        pages = self._map.find('pages').findall('page')
-        for page in reversed(pages):
-            if sura_no == int(page.get('sura')):
-                if aya_no >= int(page.get('aya')):
-                    return int(page.get('index'))
-            elif sura_no > int(page.get('sura')):
-                return int(page.get('index'))
+        query = f'SELECT page FROM {self._pages_type} WHERE sura=? AND aya=? ' \
+            'ORDER BY id DESC LIMIT 1'
+        self._pages_cursor.execute(query, (sura_no, aya_no))
+        return self._pages_cursor.fetchone()[0]
 
     def get_suras(self) -> List:
-        suras = self._map.find('suras').findall('sura')
-        return suras
+        self._main_cursor.execute('SELECT * FROM suras')
+        return self._main_cursor.fetchall()
 
-    def get_page_sura_no(self, page_no: int) -> int:
-        pages = self._map.find('pages').findall('page')
-        sura_no = pages[page_no - 1].get('sura')
-        return int(sura_no)
+    def get_sura_no_by_page(self, page_no: int) -> int:
+        query = f'SELECT sura FROM {self._pages_type} WHERE page=? LIMIT 1'
+        self._pages_cursor.execute(query, (page_no,))
+        return self._pages_cursor.fetchone()[0]
 
-    def get_juz_sura_no(self, juz_no: int) -> int:
-        juzs = self._map.find('juzs').findall('juz')
-        sura_no = juzs[juz_no - 1].get('sura')
-        return int(sura_no)
+    def get_sura_no_by_juz(self, juz_no: int) -> int:
+        self._main_cursor.execute('SELECT sura FROM juzs WHERE id=?',
+                                  (juz_no,))
+        return self._main_cursor.fetchone()[0]
 
-    def get_page_aya_no(self, page_no: int) -> int:
-        pages = self._map.find('pages').findall('page')
-        aya_no = pages[page_no - 1].get('aya')
-        return int(aya_no)
+    def get_aya_no_by_page(self, page_no: int) -> int:
+        query = f'SELECT aya FROM {self._pages_type} WHERE page=? AND ' \
+            'type="ayah" LIMIT 1'
+        self._pages_cursor.execute(query, (page_no,))
+        return self._pages_cursor.fetchone()[0]
 
-    def get_juz_aya_no(self, juz_no: int) -> int:
-        juzs = self._map.find('juzs').findall('juz')
-        aya_no = juzs[juz_no - 1].get('aya')
-        return int(aya_no)
+    def get_aya_no_by_juz(self, juz_no: int) -> int:
+        self._main_cursor.execute('SELECT aya FROM juzs WHERE id=?', (juz_no,))
+        return self._main_cursor.fetchone()[0]
 
     def get_aya_no_max(self, sura_no: int) -> int:
-        suras = self._map.find('suras').findall('sura')
-        aya_no_max = suras[sura_no - 1].get('ayas')
-        return int(aya_no_max)
+        self._main_cursor.execute('SELECT ayas FROM suras WHERE id=?',
+                                  (sura_no,))
+        return self._main_cursor.fetchone()[0]
 
     def get_juz_no(self, sura_no: int, aya_no: int) -> int:
-        juzs = self._map.find('juzs').findall('juz')
-        for juz in reversed(juzs):
-            if sura_no == int(juz.get('sura')):
-                if aya_no >= int(juz.get('aya')):
-                    return int(juz.get('index'))
-            elif sura_no > int(juz.get('sura')):
-                return int(juz.get('index'))
+        self._main_cursor.execute('SELECT id FROM juzs WHERE (sura=? AND '
+                                  'aya<=?) OR sura<? ORDER BY id DESC LIMIT 1',
+                                  (sura_no, aya_no, sura_no))
+        return self._main_cursor.fetchone()[0]
 
     def get_hizb_no(self, sura_no: int, aya_no: int) -> int:
-        # hizbs = self._map.find('hizbs').findall('hizb')
+        # hizbs = self._metadata.find('hizbs').findall('hizb')
         return 1

@@ -24,16 +24,18 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gdk, GdkPixbuf, Gtk
 
 from .model import Model
-from .widget.dialog import About
-from .widget.popover import Navigation, Help
+from .dialog import About
+from .popover import Navigation, Help
 
 
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/window.ui')
 class MainWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'main_window'
 
-    PAGE_SIZE_WIDTH = 456
-    PAGE_SIZE_HEIGHT = 672
+    PAGE_SIZE_WIDTH = 456  # in pixels
+    PAGE_SIZE_HEIGHT = 672  # in pixels
+    PAGE_SCALE = 1.0
+    PAGE_MARGIN = 44  # in pixels
     PAGE_NO_MIN = 1
     PAGE_NO_MAX = 604
     AYA_NO_MIN = 1
@@ -88,8 +90,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Set default views
         for sura in self.model.get_suras():
-            sura_id = sura.get('index')
-            sura_name = f"{sura_id}. {sura.get('tname')}"
+            sura_id = str(sura[0])
+            sura_name = f'{sura_id}. {sura[4]}'
             self.popover_nav.combo_sura_name.append(sura_id, sura_name)
 
         # TODO: get last read page
@@ -101,8 +103,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Sync other navigation variables
         if updated == 'page':
-            self.sura_no = self.model.get_page_sura_no(self.page_no)
-            self.aya_no = self.model.get_page_aya_no(self.page_no)
+            self.sura_no = self.model.get_sura_no_by_page(self.page_no)
+            self.aya_no = self.model.get_aya_no_by_page(self.page_no)
             self.juz_no = self.model.get_juz_no(self.sura_no, self.aya_no)
             self.hizb_no = self.model.get_hizb_no(self.sura_no, self.aya_no)
             self.AYA_NO_MAX = self.model.get_aya_no_max(self.sura_no)
@@ -117,8 +119,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.juz_no = self.model.get_juz_no(self.sura_no, self.aya_no)
             self.hizb_no = self.model.get_hizb_no(self.sura_no, self.aya_no)
         elif updated == 'juz':
-            self.sura_no = self.model.get_juz_sura_no(juz_no=self.juz_no)
-            self.aya_no = self.model.get_juz_aya_no(juz_no=self.juz_no)
+            self.sura_no = self.model.get_sura_no_by_juz(juz_no=self.juz_no)
+            self.aya_no = self.model.get_aya_no_by_juz(juz_no=self.juz_no)
             self.page_no = self.model.get_page_no(self.sura_no, self.aya_no)
             self.hizb_no = self.HIZB_NO_MIN
             self.AYA_NO_MAX = self.model.get_aya_no_max(self.sura_no)
@@ -133,7 +135,8 @@ class MainWindow(Gtk.ApplicationWindow):
         def set_image(page: Gtk.Image, page_no: int) -> None:
             pixbuf = GdkPixbuf.Pixbuf.new_from_resource_at_scale(
                 f'/org/naruaika/Quran/res/pages/{page_no}.png',
-                self.PAGE_SIZE_WIDTH, self.PAGE_SIZE_HEIGHT, True)
+                self.PAGE_SIZE_WIDTH * self.PAGE_SCALE,
+                self.PAGE_SIZE_HEIGHT * self.PAGE_SCALE, True)
             page.set_from_pixbuf(pixbuf)
 
         # Set the image corresponding to each page
