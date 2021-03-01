@@ -73,3 +73,9 @@ class Model:
     def get_hizb_no(self, sura_no: int, aya_no: int) -> int:
         # hizbs = self._metadata.find('hizbs').findall('hizb')
         return 1
+
+    def get_bboxes_by_page(self, page_no: int) -> List:
+        query = 'SELECT sura, aya, type, x1, y1, x2-x1, y2-y1 FROM ' \
+            f'{self._pages_type} WHERE page=? AND type="ayah"'
+        self._pages_cursor.execute(query, (page_no,))
+        return self._pages_cursor.fetchall()

@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from gi.repository import Gdk, GdkPixbuf, Gtk
+import cairo
 
 from .model import Model
 from .dialog import About
@@ -42,6 +43,10 @@ class MainWindow(Gtk.ApplicationWindow):
     juz_no: int = 1
     hizb_no: int = 1
 
+    bboxes = {'page_right': [], 'page_left': []}
+    bboxes_hovered = {'page': '', 'meta': []}
+    bboxes_focused = {'page': '', 'meta': []}
+
     model = Model()
     popover_help = Help()
     popover_nav = Navigation()
@@ -54,6 +59,10 @@ class MainWindow(Gtk.ApplicationWindow):
     btn_next_page = Gtk.Template.Child('btn_next_page')
     page_left = Gtk.Template.Child('page_left')
     page_right = Gtk.Template.Child('page_right')
+    page_left_evbox = Gtk.Template.Child('page_left_evbox')
+    page_right_evbox = Gtk.Template.Child('page_right_evbox')
+    page_left_darea = Gtk.Template.Child('page_left_darea')
+    page_right_darea = Gtk.Template.Child('page_right_darea')
     win_title = Gtk.Template.Child('win_title')
 
     def __init__(self, **kwargs) -> None:
@@ -71,16 +80,21 @@ class MainWindow(Gtk.ApplicationWindow):
             screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
         # Set signal handlers
-        self.btn_open_menu.set_popover(self.popover_help)
-        self.btn_open_nav.set_popover(self.popover_nav)
         self.btn_back_page.connect('clicked', self.go_previous_page)
         self.btn_next_page.connect('clicked', self.go_next_page)
+        self.page_left_evbox.connect('motion-notify-event', self.page_hovered)
+        self.page_right_evbox.connect('motion-notify-event', self.page_hovered)
+        self.page_left_darea.connect('draw', self.draw_bbox)
+        self.page_right_darea.connect('draw', self.draw_bbox)
         self.popover_nav.spin_page_no.connect('value-changed', self.go_to_page)
         self.popover_nav.combo_sura_name.connect('changed', self.go_to_sura)
         self.popover_nav.spin_aya_no.connect('value-changed', self.go_to_aya)
         self.popover_nav.spin_juz_no.connect('value-changed', self.go_to_juz)
         # self.popover_nav.spin_hizb_no.connect('value-changed', self.go_to_hizb)
         self.popover_help.btn_about.connect('clicked', self.show_about)
+
+        self.btn_open_menu.set_popover(self.popover_help)
+        self.btn_open_nav.set_popover(self.popover_nav)
 
         # Set default views
         for sura in self.model.get_suras():
@@ -154,6 +168,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
         self.on_update = False
 
+        # Get all bounding box for the new two pages
+        self.bboxes['page_right'] = self.model.get_bboxes_by_page(page_right_no)
+        self.bboxes['page_left'] = self.model.get_bboxes_by_page(page_right_no + 1)
+
     def go_previous_page(self, button: Gtk.Button) -> None:
         self.page_no = max(self.page_no - 2, self.PAGE_NO_MIN)
         self.update('page')
@@ -181,6 +199,33 @@ class MainWindow(Gtk.ApplicationWindow):
     # def go_to_hizb(self, button: Gtk.SpinButton) -> None:
     #     self.hizb_no = int(button.get_value())
     #     self.update('hizb')
+
+    def page_hovered(self, widget: Gtk.Widget, event: Gdk.EventMotion) -> None:
+        aya_hovered = None
+        bboxes = self.bboxes[widget.get_name()]
+        for bbox in bboxes:
+            if bbox[3] <= event.x <= bbox[3] + bbox[5] and \
+                bbox[4] <= event.y <= bbox[4] + bbox[6]:
+                aya_hovered = bbox[1]
+                break
+        if aya_hovered:
+            self.bboxes_hovered = {
+                'page': widget.get_name(),
+                'meta': [bbox for bbox in bboxes if bbox[1] == aya_hovered]}
+            self.get_window().set_cursor(Gdk.Cursor(Gdk.CursorType.HAND2))
+        else:
+            self.bboxes_hovered = {'page': '', 'meta': []}
+            self.get_window().set_cursor(Gdk.Cursor(Gdk.CursorType.ARROW))
+        self.page_right_darea.queue_draw()
+        self.page_left_darea.queue_draw()
+
+    def draw_bbox(self, widget: Gtk.Widget, context: cairo.Context) -> None:
+        if self.bboxes_hovered['page'] == widget.get_name():
+            # context.set_source_rgba(0.082, 0.325, 0.620, 0.3)
+            context.set_source_rgba(0.2, 0.2, 0.2, 0.2)
+            for coor in self.bboxes_hovered['meta']:
+                context.rectangle(*coor[3:])
+            context.fill()
 
     def show_about(self, button: Gtk.Button) -> None:
         # TODO: modal attach to window
