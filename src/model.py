@@ -46,8 +46,7 @@ class Model:
         return self._pages_cursor.fetchone()[0]
 
     def get_sura_no_by_juz(self, juz_no: int) -> int:
-        self._main_cursor.execute('SELECT sura FROM juzs WHERE id=?',
-                                  (juz_no,))
+        self._main_cursor.execute('SELECT sura FROM juzs WHERE id=?', (juz_no,))
         return self._main_cursor.fetchone()[0]
 
     def get_aya_no_by_page(self, page_no: int) -> int:
