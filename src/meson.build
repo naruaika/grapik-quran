@@ -1,5 +1,5 @@
 pkgdatadir = join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
-moduledir = join_paths(pkgdatadir, 'grapik_quran')
+moduledir = join_paths(pkgdatadir, 'src')
 gnome = import('gnome')
 
 gnome.compile_resources('grapik-quran',
@@ -29,14 +29,16 @@ grapik_quran_sources = [
   '__init__.py',
   'main.py',
   'window.py',
+  'model.py',
+  'dialog.py',
+  'popover.py',
 ]
 
 install_data(grapik_quran_sources, install_dir: moduledir)
 
-grapik_quran_subsources = [
-  'widget/__init__.py',
-  'widget/dialog.py',
-  'widget/popover.py',
+grapik_quran_resources = [
+  'res/db/main.db',
+  'res/db/pages.db',
 ]
 
-install_data(grapik_quran_subsources, install_dir: join_paths(moduledir, 'widget'))
+install_data(grapik_quran_resources, install_dir: join_paths(pkgdatadir, 'res'))

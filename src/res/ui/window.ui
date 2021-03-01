@@ -17,79 +17,12 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <child>
-              <object class="GtkOverlay">
+              <object class="GtkImage" id="page_left">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="margin-start">50</property>
-                <child>
-                  <object class="GtkImage" id="page_left">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="margin-top">40</property>
-                    <property name="margin-bottom">40</property>
-                  </object>
-                  <packing>
-                    <property name="index">-1</property>
-                  </packing>
-                </child>
-                <child type="overlay">
-                  <object class="GtkLabel" id="page_left_no">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">center</property>
-                    <property name="valign">end</property>
-                    <property name="margin-bottom">15</property>
-                    <property name="label" translatable="yes">2</property>
-                    <property name="justify">center</property>
-                    <attributes>
-                      <attribute name="scale" value="0.90000000000000002"/>
-                      <attribute name="foreground" value="#000000000000"/>
-                    </attributes>
-                  </object>
-                  <packing>
-                    <property name="pass-through">True</property>
-                  </packing>
-                </child>
-                <child type="overlay">
-                  <object class="GtkLabel" id="page_left_verse">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <property name="margin-start">25</property>
-                    <property name="margin-top">15</property>
-                    <property name="label" translatable="yes">Surah Al-Baqarah</property>
-                    <property name="justify">center</property>
-                    <attributes>
-                      <attribute name="scale" value="0.90000000000000002"/>
-                      <attribute name="foreground" value="#000000000000"/>
-                    </attributes>
-                  </object>
-                  <packing>
-                    <property name="pass-through">True</property>
-                    <property name="index">1</property>
-                  </packing>
-                </child>
-                <child type="overlay">
-                  <object class="GtkLabel" id="page_left_juz">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="valign">start</property>
-                    <property name="margin-end">25</property>
-                    <property name="margin-top">15</property>
-                    <property name="label" translatable="yes">Juz 30</property>
-                    <property name="justify">center</property>
-                    <attributes>
-                      <attribute name="scale" value="0.90000000000000002"/>
-                      <attribute name="foreground" value="#000000000000"/>
-                    </attributes>
-                  </object>
-                  <packing>
-                    <property name="pass-through">True</property>
-                    <property name="index">2</property>
-                  </packing>
-                </child>
+                <property name="margin-start">20</property>
+                <property name="margin-top">20</property>
+                <property name="margin-bottom">20</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -128,79 +61,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkOverlay">
+              <object class="GtkImage" id="page_right">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="margin-end">50</property>
-                <child>
-                  <object class="GtkImage" id="page_right">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="margin-top">40</property>
-                    <property name="margin-bottom">40</property>
-                  </object>
-                  <packing>
-                    <property name="index">-1</property>
-                  </packing>
-                </child>
-                <child type="overlay">
-                  <object class="GtkLabel" id="page_right_no">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">center</property>
-                    <property name="valign">end</property>
-                    <property name="margin-bottom">15</property>
-                    <property name="label" translatable="yes">1</property>
-                    <property name="justify">center</property>
-                    <attributes>
-                      <attribute name="scale" value="0.90000000000000002"/>
-                      <attribute name="foreground" value="#000000000000"/>
-                    </attributes>
-                  </object>
-                  <packing>
-                    <property name="pass-through">True</property>
-                  </packing>
-                </child>
-                <child type="overlay">
-                  <object class="GtkLabel" id="page_right_verse">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="valign">start</property>
-                    <property name="margin-start">25</property>
-                    <property name="margin-top">15</property>
-                    <property name="label" translatable="yes">Surah Al-Fatihah</property>
-                    <property name="justify">center</property>
-                    <attributes>
-                      <attribute name="scale" value="0.90000000000000002"/>
-                      <attribute name="foreground" value="#000000000000"/>
-                    </attributes>
-                  </object>
-                  <packing>
-                    <property name="pass-through">True</property>
-                    <property name="index">1</property>
-                  </packing>
-                </child>
-                <child type="overlay">
-                  <object class="GtkLabel" id="page_right_juz">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="valign">start</property>
-                    <property name="margin-end">25</property>
-                    <property name="margin-top">15</property>
-                    <property name="label" translatable="yes">Juz 1</property>
-                    <property name="justify">center</property>
-                    <attributes>
-                      <attribute name="scale" value="0.90000000000000002"/>
-                      <attribute name="foreground" value="#000000000000"/>
-                    </attributes>
-                  </object>
-                  <packing>
-                    <property name="pass-through">True</property>
-                    <property name="index">2</property>
-                  </packing>
-                </child>
+                <property name="margin-end">20</property>
+                <property name="margin-top">20</property>
+                <property name="margin-bottom">20</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -223,7 +89,6 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <signal name="clicked" handler="go_next_page" swapped="no"/>
                 <child>
                   <object class="GtkImage">
                     <property name="visible">True</property>
@@ -245,12 +110,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_previous_page">
+              <object class="GtkButton" id="btn_back_page">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
                 <property name="always-show-image">True</property>
-                <signal name="clicked" handler="go_previous_page" swapped="no"/>
                 <child>
                   <object class="GtkImage">
                     <property name="visible">True</property>
@@ -346,14 +210,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkMenuButton" id="btn_nav">
+              <object class="GtkMenuButton" id="btn_open_nav">
                 <property name="width-request">300</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="focus-on-click">False</property>
                 <property name="receives-default">True</property>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="win_title">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="label" translatable="yes">Al-Mu'minun (114) : 286</property>
@@ -426,7 +290,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkMenuButton" id="btn_menu">
+          <object class="GtkMenuButton" id="btn_open_menu">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="focus-on-click">False</property>
