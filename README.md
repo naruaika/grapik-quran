@@ -11,3 +11,11 @@ All I'd like to do is have a digital Quran app installed on my desktop. I know v
 Why not just use the [Ayat](https://quran.ksu.edu.sa/ayat/?l=en) app desktop version which was officially developed by KSU? Unfortunately, due to [Adobe AIR](https://en.wikipedia.org/wiki/Adobe_AIR) has reached [end of life](https://www.adelaide.edu.au/technology/your-services/software/adobe-air-end-of-life) on December 31, 2020, we won't be able to get it from the official Linux distro's repository. Not to mention that Adobe has decided to [no longer support](https://helpx.adobe.com/air/kb/install-air-2-64-bit.html) Adobe AIR for Linux desktop as of June 14, 2011. So, it has been such a pain to install Ayat on Linux since then.
 
 There are many alternatives to Ayat, such as [Zekr](https://sourceforge.net/projects/zekr/), [Elforkane](https://github.com/zakariakov/elforkane), and [Albasheer](https://github.com/yucefsourani/albasheer-electronic-quran-browser). But they don't feel as great as Ayat to me. That's why I've been working hardly on **Grapik Quran** to meet my personal needs. Also that's not less important is learning to develop a real app from people as being open source.
+
+## Features
+
+Using this app, you'll be able to:
+
+- Read the full Quran
+- Navigate to any specific page/surah/ayah/juz number
+- Select and copy (by pressing `ctrl+C`) the selected ayah(s) as text
