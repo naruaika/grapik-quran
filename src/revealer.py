@@ -24,24 +24,12 @@ class Message(Gtk.Revealer):
 
     message = Gtk.Template.Child('message')
 
-    def notify(self, message, timeout=5):
+    def notify(self, message, timeout=3):
         self.message.set_text(message)
         self.set_reveal_child(True)
 
+        def hide():
+            self.set_reveal_child(False)
+
         if timeout > 0:
-            GLib.timeout_add(1000, _Runner(timeout, self))
-
-
-class _Runner:
-
-    def __init__(self, timeout: int, revealer: Gtk.Revealer) -> None:
-        self.timeout = timeout
-        self.revealer = revealer
-        self.timer = 0
-
-    def __call__(self) -> bool:
-        self.timer += 1
-        # is_running
-        if is_running := self.timer < self.timeout:
-            self.revealer.set_reveal_child(False)
-        return is_running
+            GLib.timeout_add(timeout * 1000, hide)
