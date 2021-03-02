@@ -312,7 +312,7 @@ class MainWindow(Gtk.ApplicationWindow):
     def focus_on_aya(self, widget: Gtk.Widget, event: Gdk.EventButton) -> None:
         page_id = widget.get_name()
         if self.bboxes_hovered[page_id]:
-            first_bbox = self.bboxes_hovered[page_id][0]
+            first_bbox = self.bboxes_hovered[page_id][-1]
             self.sura_no = first_bbox[0]
             self.aya_no = first_bbox[1]
             self.update('focus')
