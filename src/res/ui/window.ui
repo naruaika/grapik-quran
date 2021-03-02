@@ -9,7 +9,7 @@
     <property name="default-height">600</property>
     <property name="icon-name">application-x-executable</property>
     <child>
-      <object class="GtkOverlay">
+      <object class="GtkOverlay" id="main_overlay">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <child>
