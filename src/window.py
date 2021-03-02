@@ -130,11 +130,16 @@ class MainWindow(Gtk.ApplicationWindow):
         keyname = Gdk.keyval_name(event.keyval)
         if Gdk.ModifierType.CONTROL_MASK and keyname == 'c':
             texts = ''
-            for bboxes in (self.bboxes_focused['page_right'],
-                           self.bboxes_focused['page_left']):
-                for bbox in bboxes:
-                    texts += self.model.get_aya_text(*bbox[:2])
-                    texts += '\n'
+            bboxes = []
+            bboxes.extend([(bbox[0], bbox[1]) for bbox
+                           in self.bboxes_focused['page_right']])
+            bboxes.extend([(bbox[0], bbox[1]) for bbox
+                           in self.bboxes_focused['page_left']])
+            uniques = set()
+            bboxes = [x for x in bboxes if not (x in uniques or uniques.add(x))]
+            for bbox in bboxes:
+                texts += self.model.get_aya_text(*bbox[:2])
+                texts += '\n'
             if texts:
                 self.clipboard.set_text(texts, -1)
                 self.toast_message.notify('Selected ayah(s) copied')
