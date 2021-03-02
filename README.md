@@ -19,3 +19,7 @@ Using this app, you'll be able to:
 - Read the full Quran
 - Navigate to any specific page/surah/ayah/juz number
 - Select and copy (by pressing `ctrl+C`) the selected ayah(s) as text
+
+## How to Build
+
+The easiest way for beginners is clone this repository to your local computer and then build it using [GNOME Builder](https://wiki.gnome.org/Apps/Builder).
