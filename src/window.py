@@ -157,8 +157,8 @@ class MainWindow(Gtk.ApplicationWindow):
             return
 
         # Sync other navigation variables
-        if updated == 'page':
-            if self.page_no % 2 == 0:
+        if updated in ['page', '2page']:
+            if updated == '2page' and self.page_no % 2 == 0:
                 self.page_no -= 1
             self.sura_no = self.model.get_sura_no_by_page(self.page_no)
             self.aya_no = self.model.get_aya_no_by_page(self.page_no)
@@ -245,11 +245,11 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def go_previous_page(self, button: Gtk.Button) -> None:
         self.page_no = max(self.page_no - 2, self.PAGE_NO_MIN)
-        self.update('page')
+        self.update('2page')
 
     def go_next_page(self, button: Gtk.Button) -> None:
         self.page_no = min(self.page_no + 2, self.PAGE_NO_MAX)
-        self.update('page')
+        self.update('2page')
 
     def go_to_page(self, button: Gtk.SpinButton) -> None:
         self.page_no = int(button.get_value())
