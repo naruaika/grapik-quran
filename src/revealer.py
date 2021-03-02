@@ -1,4 +1,4 @@
-# message.py
+# revealer.py
 #
 # Copyright 2021 Naufan Rusyda Faikar
 #
@@ -18,9 +18,9 @@
 from gi.repository import Gtk, GLib
 
 
-@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/message.ui')
-class Action(Gtk.Revealer):
-    __gtype_name__ = 'revealer_action'
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/revealer/message.ui')
+class Message(Gtk.Revealer):
+    __gtype_name__ = 'revealer_message'
 
     message = Gtk.Template.Child('message')
 

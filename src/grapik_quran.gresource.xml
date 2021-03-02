@@ -2,10 +2,10 @@
 <gresources>
   <gresource prefix="/org/naruaika/Quran">
     <file compressed="true">res/ui/window.ui</file>
-    <file compressed="true">res/ui/message.ui</file>
     <file compressed="true">res/ui/dialog/about.ui</file>
     <file compressed="true">res/ui/popover/menu.ui</file>
     <file compressed="true">res/ui/popover/navigation.ui</file>
+    <file compressed="true">res/ui/revealer/message.ui</file>
 
     <file compressed="true">res/css/main.css</file>
 

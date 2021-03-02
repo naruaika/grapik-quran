@@ -22,7 +22,7 @@ import copy
 from .model import Model
 from .dialog import About
 from .popover import Navigation, Help
-from .message import Action
+from .revealer import Message
 
 
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/window.ui')
@@ -52,7 +52,7 @@ class MainWindow(Gtk.ApplicationWindow):
     model = Model()
     popover_help = Help()
     popover_nav = Navigation()
-    revealer_action = Action()
+    toast_message = Message()
 
     clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
@@ -112,7 +112,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.popover_nav.combo_sura_name.append(sura_id, sura_name)
         self.popover_nav.page_length.set_text(f'({self.PAGE_NO_MIN}–'
                                               f'{self.PAGE_NO_MAX})')
-        self.main_overlay.add_overlay(self.revealer_action)
+        self.main_overlay.add_overlay(self.toast_message)
 
         # TODO: get last read page
         self.popover_nav.combo_sura_name.set_active_id(str(self.sura_no))
@@ -123,7 +123,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.bboxes_focused['bbox']:
             self.clipboard.set_text(
                 self.model.get_aya_text(self.sura_no, self.aya_no), -1)
-            self.revealer_action.notify('Selected ayah(s) copied')
+            self.toast_message.notify('Selected ayah(s) copied')
 
     def update(self, updated: str = None) -> None:
         if self.on_update:

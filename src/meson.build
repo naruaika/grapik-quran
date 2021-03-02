@@ -32,7 +32,7 @@ grapik_quran_sources = [
   'model.py',
   'dialog.py',
   'popover.py',
-  'message.py',
+  'revealer.py',
 ]
 
 install_data(grapik_quran_sources, install_dir: moduledir)
