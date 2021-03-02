@@ -12,6 +12,10 @@ Why not just use the [Ayat](https://quran.ksu.edu.sa/ayat/?l=en) app desktop ver
 
 There are many alternatives to Ayat, such as [Zekr](https://sourceforge.net/projects/zekr/), [Elforkane](https://github.com/zakariakov/elforkane), and [Albasheer](https://github.com/yucefsourani/albasheer-electronic-quran-browser). But they don't feel as great as Ayat to me. That's why I've been working hardly on **Grapik Quran** to meet my personal needs. Also that's not less important is learning to develop a real app from people as being open source.
 
+## Motivation
+
+I used to be a user of Sabily OS and I've been amazed how wonderful it is.
+
 ## Features
 
 Using this app, you'll be able to:
