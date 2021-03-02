@@ -40,7 +40,7 @@
                       </packing>
                     </child>
                     <child type="overlay">
-                      <object class="GtkDrawingArea" id="page_left_darea">
+                      <object class="GtkDrawingArea" id="page_left_drawarea">
                         <property name="name">page_left</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -112,7 +112,7 @@
                       </packing>
                     </child>
                     <child type="overlay">
-                      <object class="GtkDrawingArea" id="page_right_darea">
+                      <object class="GtkDrawingArea" id="page_right_drawarea">
                         <property name="name">page_right</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>

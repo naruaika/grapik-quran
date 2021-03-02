@@ -64,6 +64,11 @@ class Model:
                                   (sura_no,))
         return self._main_cursor.fetchone()[0]
 
+    def get_aya_text(self, sura_no: int, aya_no: int) -> str:
+        self._main_cursor.execute('SELECT text FROM texts WHERE sura=? AND '
+                                  'aya=?', (sura_no, aya_no))
+        return self._main_cursor.fetchone()[0]
+
     def get_juz_no(self, sura_no: int, aya_no: int) -> int:
         self._main_cursor.execute('SELECT id FROM juzs WHERE (sura=? AND '
                                   'aya<=?) OR sura<? ORDER BY id DESC LIMIT 1',

@@ -52,6 +52,8 @@ class MainWindow(Gtk.ApplicationWindow):
     popover_help = Help()
     popover_nav = Navigation()
 
+    clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+
     on_update: bool = False  # to stop unwanted signal triggering
 
     btn_open_menu = Gtk.Template.Child('btn_open_menu')
@@ -62,8 +64,8 @@ class MainWindow(Gtk.ApplicationWindow):
     page_right = Gtk.Template.Child('page_right')
     page_left_evbox = Gtk.Template.Child('page_left_evbox')
     page_right_evbox = Gtk.Template.Child('page_right_evbox')
-    page_left_darea = Gtk.Template.Child('page_left_darea')
-    page_right_darea = Gtk.Template.Child('page_right_darea')
+    page_left_drawarea = Gtk.Template.Child('page_left_drawarea')
+    page_right_drawarea = Gtk.Template.Child('page_right_drawarea')
     win_title = Gtk.Template.Child('win_title')
 
     def __init__(self, **kwargs) -> None:
@@ -87,14 +89,15 @@ class MainWindow(Gtk.ApplicationWindow):
         self.page_right_evbox.connect('motion-notify-event', self.page_hovered)
         self.page_left_evbox.connect('button-press-event', self.focus_on_aya)
         self.page_right_evbox.connect('button-press-event', self.focus_on_aya)
-        self.page_left_darea.connect('draw', self.draw_bbox)
-        self.page_right_darea.connect('draw', self.draw_bbox)
+        self.page_left_drawarea.connect('draw', self.draw_bbox)
+        self.page_right_drawarea.connect('draw', self.draw_bbox)
         self.popover_nav.spin_page_no.connect('value-changed', self.go_to_page)
         self.popover_nav.combo_sura_name.connect('changed', self.go_to_sura)
         self.popover_nav.spin_aya_no.connect('value-changed', self.go_to_aya)
         self.popover_nav.spin_juz_no.connect('value-changed', self.go_to_juz)
         # self.popover_nav.spin_hizb_no.connect('value-changed', self.go_to_hizb)
         self.popover_help.btn_about.connect('clicked', self.show_about)
+        self.connect('key-press-event', self.key_press)
 
         self.btn_open_menu.set_popover(self.popover_help)
         self.btn_open_nav.set_popover(self.popover_nav)
@@ -104,9 +107,18 @@ class MainWindow(Gtk.ApplicationWindow):
             sura_id = str(sura[0])
             sura_name = f'{sura_id}. {sura[4]}'
             self.popover_nav.combo_sura_name.append(sura_id, sura_name)
+        self.popover_nav.page_length.set_text(f'({self.PAGE_NO_MIN}–'
+                                              f'{self.PAGE_NO_MAX})')
 
         # TODO: get last read page
         self.popover_nav.combo_sura_name.set_active_id(str(self.sura_no))
+
+    def key_press(self, window: Gtk.Window, event: Gdk.EventKey) -> None:
+        keyname = Gdk.keyval_name(event.keyval)
+        if Gdk.ModifierType.CONTROL_MASK and keyname == 'c' and \
+                self.bboxes_focused['bbox']:
+            self.clipboard.set_text(
+                self.model.get_aya_text(self.sura_no, self.aya_no), -1)
 
     def update(self, updated: str = None) -> None:
         if self.on_update:
@@ -169,6 +181,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.popover_nav.spin_aya_no.set_value(self.aya_no)
         self.popover_nav.spin_juz_no.set_value(self.juz_no)
         self.popover_nav.spin_hizb_no.set_value(self.hizb_no)
+        self.popover_nav.aya_length.set_text(f'({self.AYA_NO_MIN}–'
+                                             f'{self.AYA_NO_MAX})')
         sura_name = self.popover_nav.combo_sura_name.get_active_text()
         self.win_title.set_text(f'{sura_name.split()[1]} ({self.sura_no}) : '
                                 f'{self.aya_no}')
@@ -178,8 +192,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.on_update = False
 
         # Get all bounding box for the new two pages
-        self.bboxes['page_right'] = self.model.get_bboxes_by_page(
-            page_right_no)
+        self.bboxes['page_right'] = self.model.get_bboxes_by_page(page_right_no)
         self.bboxes['page_left'] = self.model.get_bboxes_by_page(
             page_right_no + 1)
 
@@ -194,8 +207,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 'page_no': self.page_no,
                 'page_side': page_id,
                 'bbox': [bbox for bbox in bboxes if bbox[1] == self.aya_no]}
-        self.page_right_darea.queue_draw()
-        self.page_left_darea.queue_draw()
+        self.page_right_drawarea.queue_draw()
+        self.page_left_drawarea.queue_draw()
 
     def go_previous_page(self, button: Gtk.Button) -> None:
         self.page_no = max(self.page_no - 1, self.PAGE_NO_MIN)
@@ -242,8 +255,8 @@ class MainWindow(Gtk.ApplicationWindow):
         else:
             self.bboxes_hovered = {'page_no': 0, 'page_side': '', 'bbox': []}
             self.get_window().set_cursor(Gdk.Cursor(Gdk.CursorType.ARROW))
-        self.page_right_darea.queue_draw()
-        self.page_left_darea.queue_draw()
+        self.page_right_drawarea.queue_draw()
+        self.page_left_drawarea.queue_draw()
 
     def focus_on_aya(self, widget: Gtk.Widget, event: Gdk.EventButton) -> None:
         if self.bboxes_hovered['bbox']:
@@ -261,7 +274,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if self.bboxes_hovered['page_side'] == widget.get_name() and \
                 self.bboxes_hovered['bbox'] != self.bboxes_focused['bbox']:
-            context.set_source_rgba(0.2, 0.2, 0.2, 0.15)
+            context.set_source_rgba(0.2, 0.2, 0.2, 0.075)
             for pos in self.bboxes_hovered['bbox']:
                 context.rectangle(*pos[3:])
             context.fill()

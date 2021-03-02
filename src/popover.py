@@ -27,6 +27,8 @@ class Navigation(Gtk.PopoverMenu):
     spin_aya_no = Gtk.Template.Child('spin_aya_no')
     spin_juz_no = Gtk.Template.Child('spin_juz_no')
     spin_hizb_no = Gtk.Template.Child('spin_hizb_no')
+    page_length = Gtk.Template.Child('page_length')
+    aya_length = Gtk.Template.Child('aya_length')
 
     # FIXME: list items is too long
     combo_sura_name = Gtk.Template.Child('combo_sura_name')
