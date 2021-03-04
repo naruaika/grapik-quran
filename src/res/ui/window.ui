@@ -16,40 +16,89 @@
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="margin-start">20</property>
+            <property name="margin-end">20</property>
             <child>
-              <object class="GtkEventBox" id="page_left_evbox">
-                <property name="name">page_left</property>
+              <object class="GtkOverlay">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="events">GDK_POINTER_MOTION_MASK | GDK_STRUCTURE_MASK</property>
-                <property name="margin-start">20</property>
                 <property name="margin-top">20</property>
                 <property name="margin-bottom">20</property>
                 <child>
-                  <object class="GtkOverlay">
+                  <object class="GtkImage" id="page_left">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="pass-through">True</property>
+                    <property name="index">-1</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkDrawingArea" id="page_left_drawarea">
+                    <property name="name">page_left</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="pass-through">True</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkEventBox" id="page_left_evbox">
+                    <property name="name">page_left</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="events">GDK_POINTER_MOTION_MASK | GDK_STRUCTURE_MASK</property>
                     <child>
-                      <object class="GtkImage" id="page_left">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                      </object>
-                      <packing>
-                        <property name="pass-through">True</property>
-                        <property name="index">-1</property>
-                      </packing>
-                    </child>
-                    <child type="overlay">
-                      <object class="GtkDrawingArea" id="page_left_drawarea">
-                        <property name="name">page_left</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                      </object>
-                      <packing>
-                        <property name="pass-through">True</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                   </object>
+                  <packing>
+                    <property name="index">1</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkScrolledWindow" id="page_left_scroll">
+                    <property name="can-focus">True</property>
+                    <property name="max-content-width">23</property>
+                    <child>
+                      <object class="GtkViewport">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <child>
+                          <object class="GtkListBox" id="page_left_listbox">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="selection-mode">none</property>
+                            <property name="activate-on-single-click">False</property>
+                            <child type="placeholder">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="xpad">20</property>
+                                <property name="label" translatable="yes">We are sorry, no translation found. Please connect to the internet to download it.</property>
+                                <property name="justify">center</property>
+                                <property name="wrap">True</property>
+                                <attributes>
+                                  <attribute name="foreground" value="#000000000000"/>
+                                </attributes>
+                              </object>
+                            </child>
+                            <style>
+                              <class name="box-overlay"/>
+                            </style>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <style>
+                      <class name="page-scroll"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="index">2</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -89,39 +138,85 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEventBox" id="page_right_evbox">
-                <property name="name">page_right</property>
+              <object class="GtkOverlay">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="events">GDK_POINTER_MOTION_MASK | GDK_STRUCTURE_MASK</property>
-                <property name="margin-end">20</property>
                 <property name="margin-top">20</property>
                 <property name="margin-bottom">20</property>
                 <child>
-                  <object class="GtkOverlay">
+                  <object class="GtkImage" id="page_right">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="pass-through">True</property>
+                    <property name="index">-1</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkDrawingArea" id="page_right_drawarea">
+                    <property name="name">page_right</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="pass-through">True</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkEventBox" id="page_right_evbox">
+                    <property name="name">page_right</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="events">GDK_POINTER_MOTION_MASK | GDK_STRUCTURE_MASK</property>
                     <child>
-                      <object class="GtkImage" id="page_right">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                      </object>
-                      <packing>
-                        <property name="pass-through">True</property>
-                        <property name="index">-1</property>
-                      </packing>
-                    </child>
-                    <child type="overlay">
-                      <object class="GtkDrawingArea" id="page_right_drawarea">
-                        <property name="name">page_right</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                      </object>
-                      <packing>
-                        <property name="pass-through">True</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                   </object>
+                  <packing>
+                    <property name="index">1</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkScrolledWindow" id="page_right_scroll">
+                    <property name="can-focus">True</property>
+                    <child>
+                      <object class="GtkViewport">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <child>
+                          <object class="GtkListBox" id="page_right_listbox">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="selection-mode">none</property>
+                            <property name="activate-on-single-click">False</property>
+                            <child type="placeholder">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="xpad">20</property>
+                                <property name="label" translatable="yes">We are sorry, no translation found. Please connect to the internet to download it.</property>
+                                <property name="justify">center</property>
+                                <property name="wrap">True</property>
+                                <attributes>
+                                  <attribute name="foreground" value="#000000000000"/>
+                                </attributes>
+                              </object>
+                            </child>
+                            <style>
+                              <class name="box-overlay"/>
+                            </style>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <style>
+                      <class name="page-scroll"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="index">2</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -136,7 +231,7 @@
           </packing>
         </child>
         <child type="overlay">
-          <object class="GtkBox">
+          <object class="GtkBox" id="box_nav_overlay">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="valign">center</property>
@@ -268,23 +363,56 @@
               </packing>
             </child>
             <child>
-              <object class="GtkMenuButton" id="btn_open_nav">
-                <property name="width-request">300</property>
+              <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="focus-on-click">False</property>
-                <property name="receives-default">True</property>
+                <property name="can-focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="win_title">
+                  <object class="GtkMenuButton" id="btn_open_nav">
+                    <property name="width-request">250</property>
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="label" translatable="yes">Al-Mu'minun (114) : 286</property>
-                    <property name="justify">center</property>
-                    <attributes>
-                      <attribute name="weight" value="bold"/>
-                    </attributes>
+                    <property name="can-focus">True</property>
+                    <property name="focus-on-click">False</property>
+                    <property name="receives-default">True</property>
+                    <child>
+                      <object class="GtkLabel" id="win_title">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">Al-Mu'minun (114) : 286</property>
+                        <property name="justify">center</property>
+                        <attributes>
+                          <attribute name="weight" value="bold"/>
+                        </attributes>
+                      </object>
+                    </child>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
                 </child>
+                <child>
+                  <object class="GtkToggleButton" id="btn_trans_toggle">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="icon-name">view-dual-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <style>
+                  <class name="linked"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>

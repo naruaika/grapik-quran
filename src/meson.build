@@ -40,6 +40,7 @@ install_data(grapik_quran_sources, install_dir: moduledir)
 grapik_quran_resources = [
   'res/db/main.db',
   'res/db/pages.db',
+  'res/db/translations.db',
 ]
 
 install_data(grapik_quran_resources, install_dir: join_paths(pkgdatadir, 'res'))

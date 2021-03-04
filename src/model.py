@@ -28,10 +28,15 @@ class Model:
 
     _pages_db = sqlite3.connect(os.path.join(__dirname__, '../res/pages.db'))
     _pages_cursor = _pages_db.cursor()
-    _pages_type = 'medina'  # TODO: support page type changing
+    _pages_id = 'medina'  # TODO: support page type changing
+
+    _translations_db = sqlite3.connect(os.path.join(__dirname__,
+                                                    '../res/translations.db'))
+    _translations_cursor = _translations_db.cursor()
+    _translations_id = 'id_indonesian'  # TODO: support translations changing
 
     def get_page_no(self, sura_no: int, aya_no: int) -> int:
-        query = f'SELECT page FROM {self._pages_type} WHERE sura=? AND aya=? ' \
+        query = f'SELECT page FROM {self._pages_id} WHERE sura=? AND aya=? ' \
             'ORDER BY id DESC LIMIT 1'
         self._pages_cursor.execute(query, (sura_no, aya_no))
         return self._pages_cursor.fetchone()[0]
@@ -41,7 +46,7 @@ class Model:
         return self._main_cursor.fetchall()
 
     def get_sura_no_by_page(self, page_no: int) -> int:
-        query = f'SELECT sura FROM {self._pages_type} WHERE page=? LIMIT 1'
+        query = f'SELECT sura FROM {self._pages_id} WHERE page=? LIMIT 1'
         self._pages_cursor.execute(query, (page_no,))
         return self._pages_cursor.fetchone()[0]
 
@@ -49,8 +54,13 @@ class Model:
         self._main_cursor.execute('SELECT sura FROM juzs WHERE id=?', (juz_no,))
         return self._main_cursor.fetchone()[0]
 
+    def get_sura_name_by_no(self, sura_no: int) -> int:
+        query = f'SELECT tname FROM suras WHERE id=?'
+        self._main_cursor.execute(query, (sura_no,))
+        return self._main_cursor.fetchone()[0]
+
     def get_aya_no_by_page(self, page_no: int) -> int:
-        query = f'SELECT aya FROM {self._pages_type} WHERE page=? AND ' \
+        query = f'SELECT aya FROM {self._pages_id} WHERE page=? AND ' \
             'type="ayah" LIMIT 1'
         self._pages_cursor.execute(query, (page_no,))
         return self._pages_cursor.fetchone()[0]
@@ -81,6 +91,12 @@ class Model:
 
     def get_bboxes_by_page(self, page_no: int) -> List:
         query = 'SELECT sura, aya, type, x1, y1, x2-x1, y2-y1 FROM ' \
-            f'{self._pages_type} WHERE page=? AND type="ayah"'
+            f'{self._pages_id} WHERE page=? AND type="ayah"'
         self._pages_cursor.execute(query, (page_no,))
         return self._pages_cursor.fetchall()
+
+    def get_translation_text(self, sura_no: int, aya_no: int) -> List:
+        query = f'SELECT sura, aya, text FROM {self._translations_id} WHERE ' \
+            'sura=? AND aya=?'
+        self._translations_cursor.execute(query, (sura_no, aya_no))
+        return self._translations_cursor.fetchone()

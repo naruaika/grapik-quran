@@ -39,7 +39,7 @@ class MainWindow(Gtk.ApplicationWindow):
     AYA_NO_MAX = -1
     HIZB_NO_MIN = 1
 
-    page_no: int = 1
+    page_no: int = -1
     sura_no: int = 1
     aya_no: int = 1
     juz_no: int = 1
@@ -62,17 +62,23 @@ class MainWindow(Gtk.ApplicationWindow):
 
     on_update: bool = False  # to stop unwanted signal triggering
     is_shift_pressed = False
+    is_transpanel_opened = False
 
     btn_open_menu = Gtk.Template.Child('btn_open_menu')
     btn_open_nav = Gtk.Template.Child('btn_open_nav')
     btn_back_page = Gtk.Template.Child('btn_back_page')
     btn_next_page = Gtk.Template.Child('btn_next_page')
+    btn_trans_toggle = Gtk.Template.Child('btn_trans_toggle')
     page_left = Gtk.Template.Child('page_left')
     page_right = Gtk.Template.Child('page_right')
     page_left_evbox = Gtk.Template.Child('page_left_evbox')
     page_right_evbox = Gtk.Template.Child('page_right_evbox')
     page_left_drawarea = Gtk.Template.Child('page_left_drawarea')
     page_right_drawarea = Gtk.Template.Child('page_right_drawarea')
+    page_left_scroll = Gtk.Template.Child('page_left_scroll')
+    page_right_scroll = Gtk.Template.Child('page_right_scroll')
+    page_left_listbox = Gtk.Template.Child('page_left_listbox')
+    page_right_listbox = Gtk.Template.Child('page_right_listbox')
     win_title = Gtk.Template.Child('win_title')
     main_overlay = Gtk.Template.Child('main_overlay')
 
@@ -96,6 +102,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Set signal handlers
         self.btn_back_page.connect('clicked', self.go_previous_page)
         self.btn_next_page.connect('clicked', self.go_next_page)
+        self.btn_trans_toggle.connect('clicked', self.toggle_translation_panel)
         self.page_left_evbox.connect('motion-notify-event', self.page_hovered)
         self.page_right_evbox.connect('motion-notify-event', self.page_hovered)
         self.page_left_evbox.connect('button-press-event', self.focus_on_aya)
@@ -130,12 +137,11 @@ class MainWindow(Gtk.ApplicationWindow):
         keyname = Gdk.keyval_name(event.keyval)
         if Gdk.ModifierType.CONTROL_MASK and keyname == 'c':
             texts = ''
-            bboxes = []
-            bboxes.extend([(bbox[0], bbox[1]) for bbox
-                           in self.bboxes_focused['page_right']])
+            bboxes = [(bbox[0], bbox[1]) for bbox
+                      in self.bboxes_focused['page_right']]
             bboxes.extend([(bbox[0], bbox[1]) for bbox
                            in self.bboxes_focused['page_left']])
-            uniques = set()
+            uniques = set()  # for removing duplicate surah-ayah pairs
             bboxes = [x for x in bboxes if not (x in uniques or uniques.add(x))]
             for bbox in bboxes:
                 texts += self.model.get_aya_text(*bbox[:2])
@@ -157,6 +163,8 @@ class MainWindow(Gtk.ApplicationWindow):
             return
 
         # Sync other navigation variables
+        is_page_no_updated = True
+        prev_page_no = self.page_no
         if updated in ['page', '2page']:
             if updated == '2page' and self.page_no % 2 == 0:
                 self.page_no -= 1
@@ -188,23 +196,33 @@ class MainWindow(Gtk.ApplicationWindow):
             self.juz_no = self.model.get_juz_no(self.sura_no, self.aya_no)
             self.hizb_no = self.model.get_hizb_no(self.sura_no, self.aya_no)
             self.AYA_NO_MAX = self.model.get_aya_no_max(self.sura_no)
+        if self.page_no == prev_page_no and updated not in ['page', '2page']:
+            is_page_no_updated = False
 
-        # TODO: do not reset the images if not needed
         # Always set odd page numbers for right pages
         page_right_no = self.page_no
         if self.page_no % 2 == 0:
             page_right_no -= 1
 
-        def set_image(page: Gtk.Image, page_no: int) -> None:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_resource_at_scale(
-                f'/org/naruaika/Quran/res/pages/{page_no}.png',
-                self.PAGE_SIZE_WIDTH * self.PAGE_SCALE,
-                self.PAGE_SIZE_HEIGHT * self.PAGE_SCALE, True)
-            page.set_from_pixbuf(pixbuf)
+        if is_page_no_updated:
+            def set_image(page: Gtk.Image, page_no: int) -> None:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_resource_at_scale(
+                    f'/org/naruaika/Quran/res/pages/{page_no}.png',
+                    self.PAGE_SIZE_WIDTH * self.PAGE_SCALE,
+                    self.PAGE_SIZE_HEIGHT * self.PAGE_SCALE, True)
+                page.set_from_pixbuf(pixbuf)
 
-        # Set the image corresponding to each page
-        set_image(self.page_right, page_right_no)
-        set_image(self.page_left, page_right_no + 1)
+            # Set the image corresponding to each page
+            set_image(self.page_right, page_right_no)
+            set_image(self.page_left, page_right_no + 1)
+
+            if self.is_transpanel_opened:
+                if self.page_no % 2 == 0:
+                    self.page_right_scroll.set_visible(True)
+                    self.page_left_scroll.set_visible(False)
+                else:
+                    self.page_right_scroll.set_visible(False)
+                    self.page_left_scroll.set_visible(True)
 
         self.on_update = True
 
@@ -243,13 +261,70 @@ class MainWindow(Gtk.ApplicationWindow):
         self.page_right_drawarea.queue_draw()
         self.page_left_drawarea.queue_draw()
 
+        if is_page_no_updated and self.is_transpanel_opened:
+            self.update_translation()
+
+    def update_translation(self) -> None:
+        # Clear previous translations
+        self.page_right_listbox.foreach(lambda x:
+            self.page_right_listbox.remove(x))
+        self.page_left_listbox.foreach(lambda x:
+            self.page_left_listbox.remove(x))
+
+        # Obtain surah-ayah number of the current page accordingly
+        page_id = ('page_left' if self.page_no % 2 == 0 else 'page_right')
+        bboxes = [(bbox[0], bbox[1]) for bbox in self.bboxes[page_id]]
+        uniques = set()  # for removing duplicate surah-ayah pairs
+        bboxes = [x for x in bboxes if not (x in uniques or uniques.add(x))]
+
+        # Obtain translations
+        for bbox in bboxes:
+            row = Gtk.ListBoxRow()
+            hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+            label = Gtk.Label()
+            markup = f'<span foreground="#555555"><i><small>{self.model.get_sura_name_by_no(bbox[0])} ' \
+                f'({bbox[0]}): {bbox[1]}</small></i></span>\n'
+            markup += self.model.get_translation_text(*bbox[:2])[2]
+            label.set_markup(markup)
+            label.set_line_wrap(True)
+            label.set_selectable(True)
+            label.set_justify(Gtk.Justification.FILL)
+            label.set_halign(Gtk.Align.START)
+
+            row.add(label)
+            hbox.pack_start(label, True, True, 0)
+            if page_id == 'page_left':
+                self.page_right_listbox.add(row)
+            else:
+                self.page_left_listbox.add(row)
+
+        # Display new translations
+        self.page_left_listbox.show_all()
+        self.page_right_listbox.show_all()
+
     def go_previous_page(self, button: Gtk.Button) -> None:
-        self.page_no = max(self.page_no - 2, self.PAGE_NO_MIN)
-        self.update('2page')
+        page_increment = (1 if self.is_transpanel_opened else 2)
+        self.page_no = max(self.page_no - page_increment, self.PAGE_NO_MIN)
+        self.update('page' if self.is_transpanel_opened else '2page')
 
     def go_next_page(self, button: Gtk.Button) -> None:
-        self.page_no = min(self.page_no + 2, self.PAGE_NO_MAX)
-        self.update('2page')
+        page_increment = (1 if self.is_transpanel_opened else 2)
+        self.page_no = min(self.page_no + page_increment, self.PAGE_NO_MAX)
+        self.update('page' if self.is_transpanel_opened else '2page')
+
+    def toggle_translation_panel(self, button: Gtk.Button) -> None:
+        self.is_transpanel_opened = button.get_active()
+        if self.is_transpanel_opened:
+            if self.page_no % 2 == 0:
+                self.page_right_scroll.set_visible(True)
+                self.page_left_scroll.set_visible(False)
+            else:
+                self.page_right_scroll.set_visible(False)
+                self.page_left_scroll.set_visible(True)
+            self.update_translation()
+        else:
+            self.page_right_scroll.set_visible(False)
+            self.page_left_scroll.set_visible(False)
 
     def go_to_page(self, button: Gtk.SpinButton) -> None:
         self.page_no = int(button.get_value())
@@ -295,10 +370,13 @@ class MainWindow(Gtk.ApplicationWindow):
                         [bbox for bbox in curr_page_bboxes
                          if bbox[1] <= ayano_hovered]
                 else:
-                    self.bboxes_hovered[page_id] = \
-                        [bbox for bbox in curr_page_bboxes
-                         if self.bboxes_focused[page_id][0][1] <= bbox[1]
-                         <= ayano_hovered]
+                    try:
+                        self.bboxes_hovered[page_id] = \
+                            [bbox for bbox in curr_page_bboxes
+                            if self.bboxes_focused[page_id][0][1] <= bbox[1]
+                            <= ayano_hovered]
+                    except:
+                        ...
             else:
                 self.bboxes_hovered[page_id] = \
                     [bbox for bbox in curr_page_bboxes
