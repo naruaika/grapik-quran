@@ -46,14 +46,10 @@
     border: 1px solid #dddddd;
 }
 
-/* .box-overlay row:focus,
-.box-overlay row:selected {
+#row-focused {
     color: #0076ff;
     background-color: #d0ddec;
-} */
-
-.box-overlay label::first-line {
-    color: red;
+    border: 1px solid #0076ff;
 }
 
 .osd {

@@ -261,15 +261,19 @@ class MainWindow(Gtk.ApplicationWindow):
         self.page_right_drawarea.queue_draw()
         self.page_left_drawarea.queue_draw()
 
-        if is_page_no_updated and self.is_transpanel_opened:
-            self.update_translation()
+        if self.is_transpanel_opened:
+            if is_page_no_updated:
+                self.update_translation()
+            else:
+                self.update_translation(False)
 
-    def update_translation(self) -> None:
-        # Clear previous translations
-        self.page_right_listbox.foreach(lambda x:
-            self.page_right_listbox.remove(x))
-        self.page_left_listbox.foreach(lambda x:
-            self.page_left_listbox.remove(x))
+    def update_translation(self, page_changed: bool = True) -> None:
+        if page_changed:
+            # Clear previous translations
+            self.page_right_listbox.foreach(lambda x:
+                self.page_right_listbox.remove(x))
+            self.page_left_listbox.foreach(lambda x:
+                self.page_left_listbox.remove(x))
 
         # Obtain surah-ayah number of the current page accordingly
         page_id = ('page_left' if self.page_no % 2 == 0 else 'page_right')
@@ -277,27 +281,39 @@ class MainWindow(Gtk.ApplicationWindow):
         uniques = set()  # for removing duplicate surah-ayah pairs
         bboxes = [x for x in bboxes if not (x in uniques or uniques.add(x))]
 
-        # Obtain translations
-        for bbox in bboxes:
-            row = Gtk.ListBoxRow()
-            hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-            label = Gtk.Label()
-            markup = f'<span foreground="#555555"><i><small>' \
-                f'{self.model.get_sura_name_by_no(bbox[0])} ' \
-                f'({bbox[0]}): {bbox[1]}</small></i></span>\n'
-            markup += self.model.get_translation_text(*bbox[:2])[2]
-            label.set_markup(markup)
-            label.set_line_wrap(True)
-            label.set_selectable(True)
-            label.set_justify(Gtk.Justification.FILL)
-            label.set_halign(Gtk.Align.START)
+        bboxes_focused = [(bbox[0], bbox[1]) for bbox in
+                          self.bboxes_focused[page_id]]
 
-            row.add(label)
-            hbox.pack_start(label, True, True, 0)
-            if page_id == 'page_left':
-                self.page_right_listbox.add(row)
+        if page_id == 'page_left':
+            listbox = self.page_right_listbox
+        else:
+            listbox = self.page_left_listbox
+
+        # Obtain translations
+        for idx_bbox, bbox in enumerate(bboxes):
+            if page_changed:
+                row = Gtk.ListBoxRow()
+                row.set_can_focus(False)
+                hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+                label = Gtk.Label()
+                markup = f'<span foreground="#555555"><i><small>' \
+                    f'{self.model.get_sura_name_by_no(bbox[0])} ' \
+                    f'({bbox[0]}): {bbox[1]}</small></i></span>\n'
+                markup += self.model.get_translation_text(*bbox[:2])[2]
+                label.set_markup(markup)
+                label.set_line_wrap(True)
+                label.set_selectable(True)
+                label.set_justify(Gtk.Justification.FILL)
+                label.set_halign(Gtk.Align.START)
+
+                row.add(label)
+                hbox.pack_start(label, True, True, 0)
+                listbox.add(row)
+
+            if bbox in bboxes_focused:
+                listbox.get_row_at_index(idx_bbox).set_name('row-focused')
             else:
-                self.page_left_listbox.add(row)
+                listbox.get_row_at_index(idx_bbox).set_name('row')
 
         # Display new translations
         self.page_left_listbox.show_all()
