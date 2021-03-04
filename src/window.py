@@ -204,14 +204,14 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.page_no % 2 == 0:
             page_right_no -= 1
 
-        if is_page_no_updated:
-            def set_image(page: Gtk.Image, page_no: int) -> None:
-                pixbuf = GdkPixbuf.Pixbuf.new_from_resource_at_scale(
-                    f'/org/naruaika/Quran/res/pages/{page_no}.png',
-                    self.PAGE_SIZE_WIDTH * self.PAGE_SCALE,
-                    self.PAGE_SIZE_HEIGHT * self.PAGE_SCALE, True)
-                page.set_from_pixbuf(pixbuf)
+        def set_image(page: Gtk.Image, page_no: int) -> None:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_resource_at_scale(
+                f'/org/naruaika/Quran/res/pages/{page_no}.png',
+                self.PAGE_SIZE_WIDTH * self.PAGE_SCALE,
+                self.PAGE_SIZE_HEIGHT * self.PAGE_SCALE, True)
+            page.set_from_pixbuf(pixbuf)
 
+        if is_page_no_updated:
             # Set the image corresponding to each page
             set_image(self.page_right, page_right_no)
             set_image(self.page_left, page_right_no + 1)
@@ -282,7 +282,8 @@ class MainWindow(Gtk.ApplicationWindow):
             row = Gtk.ListBoxRow()
             hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             label = Gtk.Label()
-            markup = f'<span foreground="#555555"><i><small>{self.model.get_sura_name_by_no(bbox[0])} ' \
+            markup = f'<span foreground="#555555"><i><small>' \
+                f'{self.model.get_sura_name_by_no(bbox[0])} ' \
                 f'({bbox[0]}): {bbox[1]}</small></i></span>\n'
             markup += self.model.get_translation_text(*bbox[:2])[2]
             label.set_markup(markup)
