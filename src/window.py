@@ -298,7 +298,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 label = Gtk.Label()
                 markup = f'<span foreground="#555555"><i><small>' \
                     f'{self.model.get_sura_name_by_no(bbox[0])} ' \
-                    f'({bbox[0]}): {bbox[1]}</small></i></span>\n'
+                    f'({bbox[0]}) : {bbox[1]}</small></i></span>\n'
                 markup += self.model.get_translation_text(*bbox[:2])[2]
                 label.set_markup(markup)
                 label.set_line_wrap(True)
