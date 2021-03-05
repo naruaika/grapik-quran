@@ -2,6 +2,11 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
+  <object class="GtkAdjustment" id="page_scroll_adjustment">
+    <property name="upper">100</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
   <template class="main_window" parent="GtkApplicationWindow">
     <property name="can-focus">False</property>
     <property name="resizable">False</property>
@@ -61,6 +66,7 @@
                 <child type="overlay">
                   <object class="GtkScrolledWindow" id="page_left_scroll">
                     <property name="can-focus">True</property>
+                    <property name="vadjustment">page_scroll_adjustment</property>
                     <property name="max-content-width">23</property>
                     <child>
                       <object class="GtkViewport">
@@ -180,6 +186,7 @@
                 <child type="overlay">
                   <object class="GtkScrolledWindow" id="page_right_scroll">
                     <property name="can-focus">True</property>
+                    <property name="vadjustment">page_scroll_adjustment</property>
                     <child>
                       <object class="GtkViewport">
                         <property name="visible">True</property>

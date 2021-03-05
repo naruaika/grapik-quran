@@ -79,6 +79,7 @@ class MainWindow(Gtk.ApplicationWindow):
     page_right_scroll = Gtk.Template.Child('page_right_scroll')
     page_left_listbox = Gtk.Template.Child('page_left_listbox')
     page_right_listbox = Gtk.Template.Child('page_right_listbox')
+    page_scroll_adjustment = Gtk.Template.Child('page_scroll_adjustment')
     win_title = Gtk.Template.Child('win_title')
     main_overlay = Gtk.Template.Child('main_overlay')
 
@@ -118,6 +119,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.connect('key-press-event', self.on_key_press)
         self.connect('key-release-event', self.on_key_release)
 
+        self.page_left_listbox.set_focus_vadjustment(self.page_scroll_adjustment)
+        self.page_right_listbox.set_focus_vadjustment(self.page_scroll_adjustment)
+
         self.btn_open_menu.set_popover(self.popover_help)
         self.btn_open_nav.set_popover(self.popover_nav)
 
@@ -150,7 +154,6 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.clipboard.set_text(texts, -1)
                 self.toast_message.notify('Selected ayah(s) copied')
 
-        self.is_shift_pressed = False
         if Gdk.ModifierType.SHIFT_MASK:
             self.is_shift_pressed = True
             self.page_hovered(self._tmp_widget, self._tmp_event)
@@ -292,6 +295,7 @@ class MainWindow(Gtk.ApplicationWindow):
             listbox = self.page_left_listbox
 
         # Obtain translations
+        was_scrolled = False
         for idx_bbox, bbox in enumerate(bboxes):
             if page_changed:
                 row = Gtk.ListBoxRow()
@@ -314,6 +318,9 @@ class MainWindow(Gtk.ApplicationWindow):
 
             if bbox in bboxes_focused:
                 listbox.get_row_at_index(idx_bbox).set_name('row-focused')
+                if not was_scrolled:
+                    listbox.get_row_at_index(idx_bbox).grab_focus()
+                    was_scrolled = True
             else:
                 listbox.get_row_at_index(idx_bbox).set_name('row')
 
