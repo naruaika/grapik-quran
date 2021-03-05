@@ -366,6 +366,9 @@ class MainWindow(Gtk.ApplicationWindow):
     #     self.update('hizb')
 
     def page_hovered(self, widget: Gtk.Widget, event: Gdk.EventMotion) -> None:
+        if not widget or not event:
+            return
+
         # Save parameters only for the purpose of making hovering more
         # interactive
         self._tmp_widget = widget

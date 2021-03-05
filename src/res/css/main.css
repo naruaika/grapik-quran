@@ -13,9 +13,15 @@
     background: linear-gradient(to right, #eeeeee, white);
 }
 
-/* .page-scroll {
-    border: 1px solid #cccccc;
-} */
+/* TODO: add a border ornament */
+.page-scroll {
+    padding: 10px;
+    background-color: rgba(255, 255, 255, .8);
+}
+
+.page-scroll viewport {
+    border-radius: 5px;
+}
 
 .box-overlay {
     background-color: white;
@@ -25,12 +31,12 @@
     padding: 20px;
     font-size: 13pt;
     font-weight: 500;
-    margin-top: 15px;
+    margin: 0px 15px 15px 15px;
     border-radius: 5px;
 }
 
 .box-overlay row:first-child {
-    margin-top: 0px;
+    margin-top: 15px;
 }
 
 .box-overlay row:nth-child(2n+1) {

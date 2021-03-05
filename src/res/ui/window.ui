@@ -403,6 +403,7 @@
                         <property name="icon-name">view-dual-symbolic</property>
                       </object>
                     </child>
+                    <accelerator key="t" signal="activate" modifiers="GDK_MOD1_MASK"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
