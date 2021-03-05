@@ -149,6 +149,8 @@ class MainWindow(Gtk.ApplicationWindow):
             if texts:
                 self.clipboard.set_text(texts, -1)
                 self.toast_message.notify('Selected ayah(s) copied')
+
+        self.is_shift_pressed = False
         if Gdk.ModifierType.SHIFT_MASK:
             self.is_shift_pressed = True
             self.page_hovered(self._tmp_widget, self._tmp_event)
@@ -256,8 +258,8 @@ class MainWindow(Gtk.ApplicationWindow):
         else:
             page_id = ('page_left' if self.page_no % 2 == 0 else 'page_right')
             bboxes = self.bboxes[page_id]
-            self.bboxes_focused[page_id] = [bbox for bbox in bboxes
-                                            if bbox[1] == self.aya_no]
+            self.bboxes_focused[page_id] = [bbox for bbox in bboxes if bbox[:2]
+                                            == (self.sura_no, self.aya_no)]
         self.page_right_drawarea.queue_draw()
         self.page_left_drawarea.queue_draw()
 
@@ -364,50 +366,52 @@ class MainWindow(Gtk.ApplicationWindow):
     #     self.update('hizb')
 
     def page_hovered(self, widget: Gtk.Widget, event: Gdk.EventMotion) -> None:
+        # Save parameters only for the purpose of making hovering more
+        # interactive
         self._tmp_widget = widget
-        self._tmp_event = event.copy()
+        self._tmp_event = event
 
-        ayano_hovered = None
-        page_id = widget.get_name()
-        curr_page_bboxes = self.bboxes[page_id]
-        for bbox in curr_page_bboxes:
+        # Find the sura-aya under the cursor
+        suraya_hovered = None
+        pageid_hovered = widget.get_name()
+        page_bboxes = self.bboxes[pageid_hovered]
+        for bbox in page_bboxes:
             if bbox[3] <= event.x <= bbox[3] + bbox[5] and \
                     bbox[4] <= event.y <= bbox[4] + bbox[6]:
-                ayano_hovered = bbox[1]
+                suraya_hovered = bbox[:2]
                 break
+
         self.bboxes_hovered['page_right'] = []
         self.bboxes_hovered['page_left'] = []
-        if ayano_hovered:
-            if self.is_shift_pressed:
-                if self.bboxes_focused['page_right'] and page_id == 'page_left':
-                    self.bboxes_hovered['page_right'] = \
-                        [bbox for bbox in self.bboxes['page_right']
-                         if self.bboxes_focused['page_right'][0][1] <= bbox[1]]
-                    self.bboxes_hovered['page_left'] = \
-                        [bbox for bbox in curr_page_bboxes
-                         if bbox[1] <= ayano_hovered]
-                else:
-                    try:
-                        self.bboxes_hovered[page_id] = \
-                            [bbox for bbox in curr_page_bboxes
-                            if self.bboxes_focused[page_id][0][1] <= bbox[1]
-                            <= ayano_hovered]
-                    except:
-                        ...
+
+        if suraya_hovered:
+            if self.is_shift_pressed:  # for multiple surah-ayah selections
+                suraya_candidates = [suraya_hovered]
+                suraya_candidates += \
+                    [bbox[:2] for bbox in self.bboxes_focused['page_right']]
+                suraya_candidates += \
+                    [bbox[:2] for bbox in self.bboxes_focused['page_left']]
+                suraya_start = min(suraya_candidates)
+                suraya_end = max(suraya_candidates)
+                self.bboxes_hovered['page_right'] = \
+                    [bbox for bbox in self.bboxes['page_right']
+                        if suraya_start <= bbox[:2] <= suraya_end]
+                self.bboxes_hovered['page_left'] = \
+                    [bbox for bbox in self.bboxes['page_left']
+                        if suraya_start <= bbox[:2] <= suraya_end]
             else:
-                self.bboxes_hovered[page_id] = \
-                    [bbox for bbox in curr_page_bboxes
-                     if bbox[1] == ayano_hovered]
-            self.get_window().set_cursor(Gdk.Cursor(Gdk.CursorType.HAND2))
-        else:
-            self.get_window().set_cursor(Gdk.Cursor(Gdk.CursorType.ARROW))
+                self.bboxes_hovered[pageid_hovered] = \
+                    [bbox for bbox in page_bboxes if bbox[:2] == suraya_hovered]
+        #     self.get_window().set_cursor(Gdk.Cursor(Gdk.CursorType.HAND2))
+        # else:
+        #     self.get_window().set_cursor(Gdk.Cursor(Gdk.CursorType.ARROW))
         self.page_right_drawarea.queue_draw()
         self.page_left_drawarea.queue_draw()
 
     def focus_on_aya(self, widget: Gtk.Widget, event: Gdk.EventButton) -> None:
         page_id = widget.get_name()
         if self.bboxes_hovered[page_id]:
-            first_bbox = self.bboxes_hovered[page_id][-1]
+            first_bbox = self.bboxes_hovered[page_id][0]
             self.sura_no = first_bbox[0]
             self.aya_no = first_bbox[1]
             self.update('focus')
