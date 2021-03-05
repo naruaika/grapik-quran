@@ -103,7 +103,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Set signal handlers
         self.btn_back_page.connect('clicked', self.go_previous_page)
         self.btn_next_page.connect('clicked', self.go_next_page)
-        self.btn_trans_toggle.connect('clicked', self.toggle_translation_panel)
+        self.btn_trans_toggle.connect('clicked', self.toggle_translation)
         self.page_left_evbox.connect('motion-notify-event', self.page_hovered)
         self.page_right_evbox.connect('motion-notify-event', self.page_hovered)
         self.page_left_evbox.connect('button-press-event', self.focus_on_aya)
@@ -309,6 +309,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 label.set_markup(markup)
                 label.set_line_wrap(True)
                 label.set_selectable(True)
+                label.set_can_focus(False)
                 label.set_justify(Gtk.Justification.FILL)
                 label.set_halign(Gtk.Align.START)
 
@@ -328,17 +329,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.page_left_listbox.show_all()
         self.page_right_listbox.show_all()
 
-    def go_previous_page(self, button: Gtk.Button) -> None:
-        page_increment = (1 if self.is_transpanel_opened else 2)
-        self.page_no = max(self.page_no - page_increment, self.PAGE_NO_MIN)
-        self.update('page' if self.is_transpanel_opened else '2page')
-
-    def go_next_page(self, button: Gtk.Button) -> None:
-        page_increment = (1 if self.is_transpanel_opened else 2)
-        self.page_no = min(self.page_no + page_increment, self.PAGE_NO_MAX)
-        self.update('page' if self.is_transpanel_opened else '2page')
-
-    def toggle_translation_panel(self, button: Gtk.Button) -> None:
+    def toggle_translation(self, button: Gtk.Button) -> None:
         self.is_transpanel_opened = button.get_active()
         if self.is_transpanel_opened:
             if self.page_no % 2 == 0:
@@ -351,6 +342,16 @@ class MainWindow(Gtk.ApplicationWindow):
         else:
             self.page_right_scroll.set_visible(False)
             self.page_left_scroll.set_visible(False)
+
+    def go_previous_page(self, button: Gtk.Button) -> None:
+        page_increment = (1 if self.is_transpanel_opened else 2)
+        self.page_no = max(self.page_no - page_increment, self.PAGE_NO_MIN)
+        self.update('page' if self.is_transpanel_opened else '2page')
+
+    def go_next_page(self, button: Gtk.Button) -> None:
+        page_increment = (1 if self.is_transpanel_opened else 2)
+        self.page_no = min(self.page_no + page_increment, self.PAGE_NO_MAX)
+        self.update('page' if self.is_transpanel_opened else '2page')
 
     def go_to_page(self, button: Gtk.SpinButton) -> None:
         self.page_no = int(button.get_value())
@@ -368,6 +369,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.juz_no = int(button.get_value())
         self.update('juz')
 
+    # TODO: add navigation to a specific hizb and ruku
     # def go_to_hizb(self, button: Gtk.SpinButton) -> None:
     #     self.hizb_no = int(button.get_value())
     #     self.update('hizb')
