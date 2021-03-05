@@ -24,7 +24,8 @@
 .box-overlay row {
     padding: 20px;
     font-size: 13pt;
-    margin-top: 20px;
+    font-weight: 500;
+    margin-top: 15px;
     border-radius: 5px;
 }
 
@@ -45,7 +46,7 @@
 }
 
 #row-focused {
-    color: #0076ff;
+    color: black;
     background-color: #d0ddec;
     border: 1px solid #0076ff;
 }
