@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gdk, GdkPixbuf, GLib, Gtk, Pango
+from gi.repository import Gdk, GdkPixbuf, Gtk, Pango
 from threading import Thread
 import cairo
 import copy
@@ -51,7 +51,8 @@ class MainWindow(Gtk.ApplicationWindow):
 
     clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
-    on_update: bool = False  # to stop unwanted signal triggering
+    is_updating: bool = False  # to stop unwanted signal triggering
+    is_downloading: bool = False
     is_shift_pressed: bool = False
     is_tarajem_opened: bool = False
 
@@ -154,7 +155,6 @@ class MainWindow(Gtk.ApplicationWindow):
             hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             label = Gtk.Label(label=f'{language} - {translator}', xalign=0)
             label.set_ellipsize(Pango.EllipsizeMode.END)
-            # label.set_hexpand(True)
             if row.is_downloaded:
                 icon_name = 'object-select-symbolic'
             else:
@@ -202,7 +202,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.page_hovered(self._tmp_widget, self._tmp_event)
 
     def update(self, updated: str = None) -> None:
-        if self.on_update:
+        if self.is_updating:
             return
 
         # Sync other navigation variables
@@ -267,7 +267,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.page_right_scroll.set_visible(False)
                     self.page_left_scroll.set_visible(True)
 
-        self.on_update = True
+        self.is_updating = True
 
         # Sync navigation widget's attributes
         self.popover_nav.spin_page_no.set_value(self.page_no)
@@ -284,7 +284,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.btn_back_page.set_visible(self.page_no > self.PAGE_NO_MIN)
         self.btn_next_page.set_visible(self.page_no < self.PAGE_NO_MAX)
 
-        self.on_update = False
+        self.is_updating = False
 
         # Get all bounding box for the new two pages
         self.bboxes['page_right'] = self.model.get_bboxes_by_page(page_right_no)
@@ -351,6 +351,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     f'({bbox[0]}) : {bbox[1]}', xalign=0)
                 label.set_can_focus(False)
                 hbox.pack_start(label, True, True, 0)
+
                 for tid in self.model.get_selected_tarajem():
                     label = Gtk.Label()
                     tarajem = self.model.get_tarajem_meta(tid)
@@ -487,6 +488,10 @@ class MainWindow(Gtk.ApplicationWindow):
         container = row.get_children()[0]
         ic_selected = container.get_children()[1]
         if not row.is_downloaded:
+            if self.is_downloading:
+                return
+            self.is_downloading = True
+
             ic_selected.hide()
             spinner = Gtk.Spinner()
             spinner.set_halign(Gtk.Align.END)
@@ -501,6 +506,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     ic_selected.set_from_icon_name('object-select-symbolic',
                                                    Gtk.IconSize.BUTTON)
                 container.remove(spinner)
+                self.is_downloading = False
 
             Thread(target=add_tarajem).start()
         else:
