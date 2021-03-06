@@ -98,6 +98,11 @@
     border-bottom: 1px solid #111111;
 }
 
+.frame {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
 .osd {
     background: transparent;
 }

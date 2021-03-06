@@ -48,8 +48,8 @@ class Navigation(Gtk.PopoverMenu):
 class Translation(Gtk.PopoverMenu):
     __gtype_name__ = 'popover_tarajem'
 
-    listbox_tarajem = Gtk.Template.Child('listbox_tarajem')
-    listbox_tafaser = Gtk.Template.Child('listbox_tafaser')
+    searchentry = Gtk.Template.Child('searchentry')
+    listbox = Gtk.Template.Child('listbox')
 
 
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/popover/menu.ui')

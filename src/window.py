@@ -114,8 +114,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # self.popover_nav.spin_hizb_no.connect('value-changed', self.go_to_hizb)
         self.popover_more.btn_about.connect('clicked', self.show_about)
         self.btn_open_tarajem.connect('clicked', self.toggle_tarajem)
-        self.popover_tarajem.listbox_tarajem.connect('row-activated',
-                                                     self.select_tarajem)
+        self.popover_tarajem.listbox.connect('row-activated',
+                                             self.select_tarajem)
         self.connect('key-press-event', self.on_key_press)
         self.connect('key-release-event', self.on_key_release)
 
@@ -140,27 +140,34 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Get tarajem list
         selected_tarajem = self.model.get_selected_tarajem()
-        for tarajem in self.model.get_tarajem():
+        for tarajem in self.model.get_tarajem_metas():
             tarajem_id, translator = tarajem[:2]
             language = tarajem[2].title()
             row = Gtk.ListBoxRow()
             row.set_can_focus(False)
-            row.tarajem_id = tarajem_id
+            row.id = tarajem_id
+            if self.model.is_tarajem_exist(tarajem_id):
+                row.is_downloaded = True
+            else:
+                row.is_downloaded = False
             hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             label = Gtk.Label(label=f'{language} - {translator}', xalign=0)
             label.set_ellipsize(Pango.EllipsizeMode.END)
-            image = Gtk.Image.new_from_icon_name('object-select-symbolic',
-                                                 Gtk.IconSize.BUTTON)
+            if row.is_downloaded:
+                icon_name = 'object-select-symbolic'
+            else:
+                icon_name = 'folder-download-symbolic'
+            image = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
             image.set_halign(Gtk.Align.END)
             image.set_margin_start(5)
-            if tarajem_id not in selected_tarajem:
+            if row.is_downloaded and tarajem_id not in selected_tarajem:
                 image.set_no_show_all(True)
                 image.hide()
             hbox.pack_start(label, True, True, 0)
             hbox.pack_start(image, True, True, 1)
             row.add(hbox)
-            self.popover_tarajem.listbox_tarajem.add(row)
-        self.popover_tarajem.listbox_tarajem.show_all()
+            self.popover_tarajem.listbox.add(row)
+        self.popover_tarajem.listbox.show_all()
 
         self.main_overlay.add_overlay(self.toast_message)
 
@@ -342,7 +349,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 hbox.pack_start(label, True, True, 0)
                 for tid in self.model.get_selected_tarajem():
                     label = Gtk.Label()
-                    tarajem = self.model.get_tarajem_by_id(tid)
+                    tarajem = self.model.get_tarajem_meta(tid)
                     translator = tarajem[1]
                     language = tarajem[2].title()
                     markup = f'<span foreground="#444444" size="small">' \
@@ -474,11 +481,15 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def select_tarajem(self, box: Gtk.ListBox, row: Gtk.ListBoxRow) -> None:
         ic_selected = row.get_children()[0].get_children()[1]
-        if row.tarajem_id in self.model.get_selected_tarajem():
-            ic_selected.hide()
+        if not row.is_downloaded:
+            ResourceManager.add_tarajem(row.id)
+            row.is_downloaded = True
+            ic_selected.set_from_icon_name('object-select-symbolic',
+                                           Gtk.IconSize.BUTTON)
         else:
-            ic_selected.show()
-        self.model.update_selected_tarajem(row.tarajem_id)
+            ic_selected.set_visible(
+                row.id not in self.model.get_selected_tarajem())
+        self.model.update_selected_tarajem(row.id)
         self.update_tarajem()
 
     def draw_bbox(self, widget: Gtk.Widget, context: cairo.Context) -> None:
