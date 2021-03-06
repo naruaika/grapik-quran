@@ -15,7 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gdk, GdkPixbuf, Gtk, Pango
+from gi.repository import Gdk, GdkPixbuf, GLib, Gtk, Pango
+from threading import Thread
 import cairo
 import copy
 
@@ -153,6 +154,7 @@ class MainWindow(Gtk.ApplicationWindow):
             hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             label = Gtk.Label(label=f'{language} - {translator}', xalign=0)
             label.set_ellipsize(Pango.EllipsizeMode.END)
+            # label.set_hexpand(True)
             if row.is_downloaded:
                 icon_name = 'object-select-symbolic'
             else:
@@ -160,9 +162,11 @@ class MainWindow(Gtk.ApplicationWindow):
             image = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
             image.set_halign(Gtk.Align.END)
             image.set_margin_start(5)
+            image.set_no_show_all(True)
             if row.is_downloaded and tarajem_id not in selected_tarajem:
-                image.set_no_show_all(True)
                 image.hide()
+            else:
+                image.show()
             hbox.pack_start(label, True, True, 0)
             hbox.pack_start(image, True, True, 1)
             row.add(hbox)
@@ -480,17 +484,30 @@ class MainWindow(Gtk.ApplicationWindow):
             self.update('focus')
 
     def select_tarajem(self, box: Gtk.ListBox, row: Gtk.ListBoxRow) -> None:
-        ic_selected = row.get_children()[0].get_children()[1]
+        container = row.get_children()[0]
+        ic_selected = container.get_children()[1]
         if not row.is_downloaded:
-            ResourceManager.add_tarajem(row.id)
-            row.is_downloaded = True
-            ic_selected.set_from_icon_name('object-select-symbolic',
-                                           Gtk.IconSize.BUTTON)
+            ic_selected.hide()
+            spinner = Gtk.Spinner()
+            spinner.set_halign(Gtk.Align.END)
+            spinner.set_margin_start(5)
+            container.pack_end(spinner, True, True, 0)
+            container.show_all()
+            spinner.start()
+
+            def add_tarajem():
+                if ResourceManager.add_tarajem(row.id):
+                    row.is_downloaded = True
+                    ic_selected.set_from_icon_name('object-select-symbolic',
+                                                   Gtk.IconSize.BUTTON)
+                container.remove(spinner)
+
+            Thread(target=add_tarajem).start()
         else:
             ic_selected.set_visible(
                 row.id not in self.model.get_selected_tarajem())
-        self.model.update_selected_tarajem(row.id)
-        self.update_tarajem()
+            self.model.update_selected_tarajem(row.id)
+            self.update_tarajem()
 
     def draw_bbox(self, widget: Gtk.Widget, context: cairo.Context) -> None:
         page_id = widget.get_name()

@@ -189,3 +189,4 @@ class ResourceManager:
         # Close database connection
         con.commit()
         con.close()
+        return True
