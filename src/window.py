@@ -15,13 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gdk, GdkPixbuf, Gtk
+from gi.repository import Gdk, GdkPixbuf, Gtk, Pango
 import cairo
 import copy
 
 from .model import Model
 from .dialog import About
-from .popover import Navigation, Help
+from .popover import Navigation, Translation, More
 from .revealer import Message
 
 
@@ -32,12 +32,9 @@ class MainWindow(Gtk.ApplicationWindow):
     PAGE_SIZE_WIDTH = 456  # in pixels
     PAGE_SIZE_HEIGHT = 672  # in pixels
     PAGE_SCALE = 1.0
-    PAGE_MARGIN = 44  # in pixels
     PAGE_NO_MIN = 1
     PAGE_NO_MAX = 604
-    AYA_NO_MIN = 1
     AYA_NO_MAX = -1
-    HIZB_NO_MIN = 1
 
     page_no: int = -1
     sura_no: int = 1
@@ -54,21 +51,23 @@ class MainWindow(Gtk.ApplicationWindow):
     bboxes_focused = {'page_right': [], 'page_left': []}
 
     model = Model()
-    popover_help = Help()
     popover_nav = Navigation()
+    popover_tarajem = Translation()
+    popover_more = More()
     toast_message = Message()
 
     clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
     on_update: bool = False  # to stop unwanted signal triggering
     is_shift_pressed = False
-    is_transpanel_opened = False
+    is_tarajem_opened = False
 
-    btn_open_menu = Gtk.Template.Child('btn_open_menu')
     btn_open_nav = Gtk.Template.Child('btn_open_nav')
+    btn_open_more = Gtk.Template.Child('btn_open_more')
+    btn_open_tarajem = Gtk.Template.Child('btn_open_tarajem')
+    btn_tarajem_option = Gtk.Template.Child('btn_tarajem_option')
     btn_back_page = Gtk.Template.Child('btn_back_page')
     btn_next_page = Gtk.Template.Child('btn_next_page')
-    btn_trans_toggle = Gtk.Template.Child('btn_trans_toggle')
     page_left = Gtk.Template.Child('page_left')
     page_right = Gtk.Template.Child('page_right')
     page_left_evbox = Gtk.Template.Child('page_left_evbox')
@@ -103,7 +102,6 @@ class MainWindow(Gtk.ApplicationWindow):
         # Set signal handlers
         self.btn_back_page.connect('clicked', self.go_previous_page)
         self.btn_next_page.connect('clicked', self.go_next_page)
-        self.btn_trans_toggle.connect('clicked', self.toggle_translation)
         self.page_left_evbox.connect('motion-notify-event', self.page_hovered)
         self.page_right_evbox.connect('motion-notify-event', self.page_hovered)
         self.page_left_evbox.connect('button-press-event', self.focus_on_aya)
@@ -115,27 +113,57 @@ class MainWindow(Gtk.ApplicationWindow):
         self.popover_nav.spin_aya_no.connect('value-changed', self.go_to_aya)
         self.popover_nav.spin_juz_no.connect('value-changed', self.go_to_juz)
         # self.popover_nav.spin_hizb_no.connect('value-changed', self.go_to_hizb)
-        self.popover_help.btn_about.connect('clicked', self.show_about)
+        self.popover_more.btn_about.connect('clicked', self.show_about)
+        self.btn_open_tarajem.connect('clicked', self.toggle_tarajem)
+        self.popover_tarajem.listbox_tarajem.connect('row-activated',
+                                                     self.select_tarajem)
         self.connect('key-press-event', self.on_key_press)
         self.connect('key-release-event', self.on_key_release)
 
-        self.page_left_listbox.set_focus_vadjustment(self.page_scroll_adjustment)
-        self.page_right_listbox.set_focus_vadjustment(self.page_scroll_adjustment)
+        self.page_left_listbox.set_focus_vadjustment(
+            self.page_scroll_adjustment)
+        self.page_right_listbox.set_focus_vadjustment(
+            self.page_scroll_adjustment)
 
-        self.btn_open_menu.set_popover(self.popover_help)
+        self.btn_open_more.set_popover(self.popover_more)
         self.btn_open_nav.set_popover(self.popover_nav)
+        self.btn_tarajem_option.set_popover(self.popover_tarajem)
 
-        # Set default views
+        # Get surah list
+        # TODO: implement user setting
         for sura in self.model.get_suras():
             sura_id = str(sura[0])
             sura_name = f'{sura_id}. {sura[4]}'
             self.popover_nav.combo_sura_name.append(sura_id, sura_name)
         self.popover_nav.page_length.set_text(f'({self.PAGE_NO_MIN}–'
                                               f'{self.PAGE_NO_MAX})')
-        self.main_overlay.add_overlay(self.toast_message)
-
-        # TODO: get last read page
         self.popover_nav.combo_sura_name.set_active_id(str(self.sura_no))
+
+        # Get tarajem list
+        selected_tarajem = self.model.get_selected_tarajem()
+        for tarajem in self.model.get_tarajem():
+            tarajem_id, translator = tarajem[:2]
+            language = tarajem[2].title()
+            row = Gtk.ListBoxRow()
+            row.set_can_focus(False)
+            row.tarajem_id = tarajem_id
+            hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+            label = Gtk.Label(label=f'{language} - {translator}', xalign=0)
+            label.set_ellipsize(Pango.EllipsizeMode.END)
+            image = Gtk.Image.new_from_icon_name('object-select-symbolic',
+                                                 Gtk.IconSize.BUTTON)
+            image.set_halign(Gtk.Align.END)
+            image.set_margin_start(5)
+            if tarajem_id not in selected_tarajem:
+                image.set_no_show_all(True)
+                image.hide()
+            hbox.pack_start(label, True, True, 0)
+            hbox.pack_start(image, True, True, 1)
+            row.add(hbox)
+            self.popover_tarajem.listbox_tarajem.add(row)
+        self.popover_tarajem.listbox_tarajem.show_all()
+
+        self.main_overlay.add_overlay(self.toast_message)
 
     def on_key_press(self, window: Gtk.Window, event: Gdk.EventKey) -> None:
         keyname = Gdk.keyval_name(event.keyval)
@@ -179,7 +207,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.hizb_no = self.model.get_hizb_no(self.sura_no, self.aya_no)
             self.AYA_NO_MAX = self.model.get_aya_no_max(self.sura_no)
         elif updated == 'sura':
-            self.aya_no = self.AYA_NO_MIN
+            self.aya_no = 1
             self.page_no = self.model.get_page_no(self.sura_no, self.aya_no)
             self.juz_no = self.model.get_juz_no(self.sura_no, self.aya_no)
             self.hizb_no = self.model.get_hizb_no(self.sura_no, self.aya_no)
@@ -192,7 +220,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.sura_no = self.model.get_sura_no_by_juz(self.juz_no)
             self.aya_no = self.model.get_aya_no_by_juz(self.juz_no)
             self.page_no = self.model.get_page_no(self.sura_no, self.aya_no)
-            self.hizb_no = self.HIZB_NO_MIN
+            self.hizb_no = 1
             self.AYA_NO_MAX = self.model.get_aya_no_max(self.sura_no)
         elif updated == 'hizb':
             ...
@@ -221,7 +249,7 @@ class MainWindow(Gtk.ApplicationWindow):
             set_image(self.page_right, page_right_no)
             set_image(self.page_left, page_right_no + 1)
 
-            if self.is_transpanel_opened:
+            if self.is_tarajem_opened:
                 if self.page_no % 2 == 0:
                     self.page_right_scroll.set_visible(True)
                     self.page_left_scroll.set_visible(False)
@@ -238,7 +266,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.popover_nav.spin_aya_no.set_value(self.aya_no)
         self.popover_nav.spin_juz_no.set_value(self.juz_no)
         self.popover_nav.spin_hizb_no.set_value(self.hizb_no)
-        self.popover_nav.aya_length.set_text(f'({self.AYA_NO_MIN}–'
+        self.popover_nav.aya_length.set_text(f'({1}–'
                                              f'{self.AYA_NO_MAX})')
         sura_name = self.popover_nav.combo_sura_name.get_active_text()
         self.win_title.set_text(f'{sura_name.split()[1]} ({self.sura_no}) : '
@@ -266,19 +294,25 @@ class MainWindow(Gtk.ApplicationWindow):
         self.page_right_drawarea.queue_draw()
         self.page_left_drawarea.queue_draw()
 
-        if self.is_transpanel_opened:
+        if self.is_tarajem_opened:
             if is_page_no_updated:
-                self.update_translation()
+                self.update_tarajem()
             else:
-                self.update_translation(False)
+                self.update_tarajem(False)
 
-    def update_translation(self, page_changed: bool = True) -> None:
-        if page_changed:
+    def update_tarajem(self, content_changed: bool = True) -> None:
+        if content_changed:
             # Clear previous translations
             self.page_right_listbox.foreach(lambda x:
                 self.page_right_listbox.remove(x))
             self.page_left_listbox.foreach(lambda x:
                 self.page_left_listbox.remove(x))
+
+        if not self.model.get_selected_tarajem():
+            # self.btn_open_tarajem.set_active(False)
+            return
+        elif not self.is_tarajem_opened:
+            self.btn_open_tarajem.set_active(True)
 
         # Obtain surah-ayah number of the current page accordingly
         page_id = ('page_left' if self.page_no % 2 == 0 else 'page_right')
@@ -297,28 +331,39 @@ class MainWindow(Gtk.ApplicationWindow):
         # Obtain translations
         was_scrolled = False
         for idx_bbox, bbox in enumerate(bboxes):
-            if page_changed:
+            if content_changed:
                 row = Gtk.ListBoxRow()
                 row.set_can_focus(False)
-                hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-                label = Gtk.Label()
-                markup = f'<span foreground="#555555"><i><small>' \
-                    f'{self.model.get_sura_name_by_no(bbox[0])} ' \
-                    f'({bbox[0]}) : {bbox[1]}</small></i></span>\n'
-                markup += self.model.get_translation_text(*bbox[:2])[2]
-                label.set_markup(markup)
-                label.set_line_wrap(True)
-                label.set_selectable(True)
+                hbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+                label = Gtk.Label(
+                    label=f'{self.model.get_sura_name_by_no(bbox[0])} '
+                    f'({bbox[0]}) : {bbox[1]}', xalign=0)
                 label.set_can_focus(False)
-                label.set_justify(Gtk.Justification.FILL)
-                label.set_halign(Gtk.Align.START)
-
-                row.add(label)
                 hbox.pack_start(label, True, True, 0)
+                for tid in self.model.get_selected_tarajem():
+                    label = Gtk.Label()
+                    tarajem = self.model.get_tarajem_by_id(tid)
+                    translator = tarajem[1]
+                    language = tarajem[2].title()
+                    markup = f'<span foreground="#444444" size="small">' \
+                        f'{language} - {translator}</span>\n' \
+                        f'{self.model.get_tarajem_text(tid, *bbox[:2])[2]}'
+                    label.set_markup(markup)
+                    label.set_line_wrap(True)
+                    label.set_selectable(True)
+                    label.set_can_focus(False)
+                    label.set_justify(Gtk.Justification.FILL)
+                    label.set_halign(Gtk.Align.START)
+                    # label.set_hexpand_set(True)
+                    label.set_hexpand(True)
+                    hbox.pack_start(label, True, True, 1)
+                row.add(hbox)
                 listbox.add(row)
 
             if bbox in bboxes_focused:
                 listbox.get_row_at_index(idx_bbox).set_name('row-focused')
+                # FIXME: scroll to the selected row after changing translation
+                # or after showing tarajem panel
                 if not was_scrolled:
                     listbox.get_row_at_index(idx_bbox).grab_focus()
                     was_scrolled = True
@@ -329,29 +374,29 @@ class MainWindow(Gtk.ApplicationWindow):
         self.page_left_listbox.show_all()
         self.page_right_listbox.show_all()
 
-    def toggle_translation(self, button: Gtk.Button) -> None:
-        self.is_transpanel_opened = button.get_active()
-        if self.is_transpanel_opened:
+    def toggle_tarajem(self, button: Gtk.Button) -> None:
+        self.is_tarajem_opened = button.get_active()
+        if self.is_tarajem_opened:
             if self.page_no % 2 == 0:
                 self.page_right_scroll.set_visible(True)
                 self.page_left_scroll.set_visible(False)
             else:
                 self.page_right_scroll.set_visible(False)
                 self.page_left_scroll.set_visible(True)
-            self.update_translation()
+            self.update_tarajem()
         else:
             self.page_right_scroll.set_visible(False)
             self.page_left_scroll.set_visible(False)
 
     def go_previous_page(self, button: Gtk.Button) -> None:
-        page_increment = (1 if self.is_transpanel_opened else 2)
+        page_increment = (1 if self.is_tarajem_opened else 2)
         self.page_no = max(self.page_no - page_increment, self.PAGE_NO_MIN)
-        self.update('page' if self.is_transpanel_opened else '2page')
+        self.update('page' if self.is_tarajem_opened else '2page')
 
     def go_next_page(self, button: Gtk.Button) -> None:
-        page_increment = (1 if self.is_transpanel_opened else 2)
+        page_increment = (1 if self.is_tarajem_opened else 2)
         self.page_no = min(self.page_no + page_increment, self.PAGE_NO_MAX)
-        self.update('page' if self.is_transpanel_opened else '2page')
+        self.update('page' if self.is_tarajem_opened else '2page')
 
     def go_to_page(self, button: Gtk.SpinButton) -> None:
         self.page_no = int(button.get_value())
@@ -427,6 +472,15 @@ class MainWindow(Gtk.ApplicationWindow):
             self.sura_no = first_bbox[0]
             self.aya_no = first_bbox[1]
             self.update('focus')
+
+    def select_tarajem(self, box: Gtk.ListBox, row: Gtk.ListBoxRow) -> None:
+        ic_selected = row.get_children()[0].get_children()[1]
+        if row.tarajem_id in self.model.get_selected_tarajem():
+            ic_selected.hide()
+        else:
+            ic_selected.show()
+        self.model.update_selected_tarajem(row.tarajem_id)
+        self.update_tarajem()
 
     def draw_bbox(self, widget: Gtk.Widget, context: cairo.Context) -> None:
         page_id = widget.get_name()

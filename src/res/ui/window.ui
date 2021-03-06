@@ -83,7 +83,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="xpad">20</property>
-                                <property name="label" translatable="yes">We are sorry, no translation found. Please connect to the internet to download it.</property>
+                                <property name="label" translatable="yes">No translation selected. If there is, it looks like you haven't downloaded it yet. Please connect to the internet to get it.</property>
                                 <property name="justify">center</property>
                                 <property name="wrap">True</property>
                                 <attributes>
@@ -92,7 +92,7 @@
                               </object>
                             </child>
                             <style>
-                              <class name="box-overlay"/>
+                              <class name="box-tarajem"/>
                             </style>
                           </object>
                         </child>
@@ -202,7 +202,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="xpad">20</property>
-                                <property name="label" translatable="yes">We are sorry, no translation found. Please connect to the internet to download it.</property>
+                                <property name="label" translatable="yes">No translation selected. If there is, it looks like you haven't downloaded it yet. Please connect to the internet to get it.</property>
                                 <property name="justify">center</property>
                                 <property name="wrap">True</property>
                                 <attributes>
@@ -211,7 +211,7 @@
                               </object>
                             </child>
                             <style>
-                              <class name="box-overlay"/>
+                              <class name="box-tarajem"/>
                             </style>
                           </object>
                         </child>
@@ -321,7 +321,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <child>
-                  <object class="GtkToggleButton">
+                  <object class="GtkToggleButton" id="btn_open_tarajem">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -329,7 +329,7 @@
                       <object class="GtkImage">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="icon-name">user-bookmarks-symbolic</property>
+                        <property name="icon-name">view-dual-symbolic</property>
                       </object>
                     </child>
                     <accelerator key="b" signal="activate" modifiers="GDK_MOD1_MASK"/>
@@ -341,7 +341,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkMenuButton">
+                  <object class="GtkMenuButton" id="btn_tarajem_option">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="focus-on-click">False</property>
@@ -385,7 +385,6 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes">Al-Mu'minun (114) : 286</property>
-                        <property name="justify">center</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -396,26 +395,6 @@
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkToggleButton" id="btn_trans_toggle">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="icon-name">view-dual-symbolic</property>
-                      </object>
-                    </child>
-                    <accelerator key="t" signal="activate" modifiers="GDK_MOD1_MASK"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
                   </packing>
                 </child>
                 <style>
@@ -484,7 +463,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkMenuButton" id="btn_open_menu">
+          <object class="GtkMenuButton" id="btn_open_more">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="focus-on-click">False</property>
@@ -513,6 +492,57 @@
           </object>
           <packing>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <child>
+              <object class="GtkToggleButton">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="icon-name">user-bookmarks-symbolic</property>
+                  </object>
+                </child>
+                <accelerator key="b" signal="activate" modifiers="GDK_MOD1_MASK"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkMenuButton">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="focus-on-click">False</property>
+                <property name="receives-default">True</property>
+                <child>
+                  <placeholder/>
+                </child>
+                <style>
+                  <class name="btn-option"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <style>
+              <class name="linked"/>
+            </style>
+          </object>
+          <packing>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>

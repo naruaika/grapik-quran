@@ -28,16 +28,18 @@ class Model:
 
     _pages_db = sqlite3.connect(os.path.join(__dirname__, '../res/pages.db'))
     _pages_cursor = _pages_db.cursor()
-    _pages_id = 'medina'  # TODO: support page type changing
 
-    _translations_db = sqlite3.connect(os.path.join(__dirname__,
-                                                    '../res/translations.db'))
-    _translations_cursor = _translations_db.cursor()
-    _translations_id = 'id_indonesian'  # TODO: support translations changing
+    _tarajem_db = sqlite3.connect(os.path.join(
+        __dirname__, '../res/translations.db'))
+    _tarajem_cursor = _tarajem_db.cursor()
+
+    # Selection(s)
+    _selected_pages = 'medina'  # TODO: support page type changing
+    _selected_tarajem = []
 
     def get_page_no(self, sura_no: int, aya_no: int) -> int:
-        query = f'SELECT page FROM {self._pages_id} WHERE sura=? AND aya=? ' \
-            'ORDER BY id DESC LIMIT 1'
+        query = f'SELECT page FROM {self._selected_pages} WHERE sura=? AND ' \
+            'aya=? ORDER BY id DESC LIMIT 1'
         self._pages_cursor.execute(query, (sura_no, aya_no))
         return self._pages_cursor.fetchone()[0]
 
@@ -46,7 +48,7 @@ class Model:
         return self._main_cursor.fetchall()
 
     def get_sura_no_by_page(self, page_no: int) -> int:
-        query = f'SELECT sura FROM {self._pages_id} WHERE page=? LIMIT 1'
+        query = f'SELECT sura FROM {self._selected_pages} WHERE page=? LIMIT 1'
         self._pages_cursor.execute(query, (page_no,))
         return self._pages_cursor.fetchone()[0]
 
@@ -60,7 +62,7 @@ class Model:
         return self._main_cursor.fetchone()[0]
 
     def get_aya_no_by_page(self, page_no: int) -> int:
-        query = f'SELECT aya FROM {self._pages_id} WHERE page=? AND ' \
+        query = f'SELECT aya FROM {self._selected_pages} WHERE page=? AND ' \
             'type="ayah" LIMIT 1'
         self._pages_cursor.execute(query, (page_no,))
         return self._pages_cursor.fetchone()[0]
@@ -86,17 +88,44 @@ class Model:
         return self._main_cursor.fetchone()[0]
 
     def get_hizb_no(self, sura_no: int, aya_no: int) -> int:
-        # hizbs = self._metadata.find('hizbs').findall('hizb')
         return 1
 
     def get_bboxes_by_page(self, page_no: int) -> List:
         query = 'SELECT sura, aya, type, x1, y1, x2-x1, y2-y1 FROM ' \
-            f'{self._pages_id} WHERE page=? AND type="ayah"'
+            f'{self._selected_pages} WHERE page=? AND type="ayah"'
         self._pages_cursor.execute(query, (page_no,))
         return self._pages_cursor.fetchall()
 
-    def get_translation_text(self, sura_no: int, aya_no: int) -> List:
-        query = f'SELECT sura, aya, text FROM {self._translations_id} WHERE ' \
-            'sura=? AND aya=?'
-        self._translations_cursor.execute(query, (sura_no, aya_no))
-        return self._translations_cursor.fetchone()
+    def get_tarajem(self) -> List:
+        self._tarajem_cursor.execute('SELECT * FROM meta ORDER BY language ASC')
+        return self._tarajem_cursor.fetchall()
+
+    def get_tarajem_by_id(self, tarajem_id: str) -> List:
+        self._tarajem_cursor.execute('SELECT * FROM meta WHERE id=?',
+                                     (tarajem_id,))
+        return self._tarajem_cursor.fetchone()
+
+    def get_tarajem_text(self, tarajem_id: str, sura_no: int,
+                         aya_no: int) -> List:
+        self._tarajem_cursor.execute('SELECT * FROM meta WHERE id=?',
+                                     (tarajem_id,))
+        if self._tarajem_cursor.fetchone():
+            query = f'SELECT sura, aya, text FROM {tarajem_id} WHERE sura=? ' \
+                'AND aya=?'
+            self._tarajem_cursor.execute(query, (sura_no, aya_no))
+            return self._tarajem_cursor.fetchone()
+        return []
+
+    def get_selected_tarajem(self) -> List:
+        return self._selected_tarajem
+
+    def update_selected_tarajem(self, tarajem_id: str) -> List:
+        if tarajem_id in self._selected_tarajem:
+            self._selected_tarajem.remove(tarajem_id)
+        else:
+            self._tarajem_cursor.execute('SELECT * FROM meta WHERE id=?',
+                                        (tarajem_id,))
+            if self._tarajem_cursor.fetchone():
+                self._selected_tarajem.append(tarajem_id)
+        # TODO: sort `self._selected_tarajem` by language name
+        return self._selected_tarajem

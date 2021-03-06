@@ -39,8 +39,16 @@ class Navigation(Gtk.PopoverMenu):
     adjust_aya_no = Gtk.Template.Child('adjust_aya_no')
 
 
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/popover/translation.ui')
+class Translation(Gtk.PopoverMenu):
+    __gtype_name__ = 'popover_tarajem'
+
+    listbox_tarajem = Gtk.Template.Child('listbox_tarajem')
+    listbox_tafaser = Gtk.Template.Child('listbox_tafaser')
+
+
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/popover/menu.ui')
-class Help(Gtk.PopoverMenu):
+class More(Gtk.PopoverMenu):
     __gtype_name__ = 'popover_menu'
 
     btn_preferences = Gtk.Template.Child('btn_preferences')

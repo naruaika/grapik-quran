@@ -3,12 +3,14 @@
   <gresource prefix="/org/naruaika/Quran">
     <file compressed="true">res/ui/window.ui</file>
     <file compressed="true">res/ui/dialog/about.ui</file>
-    <file compressed="true">res/ui/popover/menu.ui</file>
     <file compressed="true">res/ui/popover/navigation.ui</file>
+    <file compressed="true">res/ui/popover/translation.ui</file>
+    <file compressed="true">res/ui/popover/menu.ui</file>
     <file compressed="true">res/ui/revealer/message.ui</file>
 
     <file compressed="true">res/css/main.css</file>
 
+    <!-- TODO: generate these programatically -->
     <file>res/pages/1.png</file>
     <file>res/pages/2.png</file>
     <file>res/pages/3.png</file>
