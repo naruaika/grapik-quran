@@ -22,8 +22,9 @@ Using this app, you'll be able to:
 
 - Read the full Quran
 - Navigate to any specific page/surah/ayah/juz number
+- Read the translation in many languages
 - Select and copy (by pressing `ctrl+C`) the selected ayah(s) as text
 
-## How to Build
+## Contribute
 
-The easiest way for beginners is clone this repository to your local computer and then build it using [GNOME Builder](https://wiki.gnome.org/Apps/Builder).
+The easiest way for beginners is clone this repository to your local computer and then build it using [GNOME Builder](https://wiki.gnome.org/Apps/Builder). To enable GTK Inspector, run `gsettings set org.gtk.Settings.Debug enable-inspector-keybinding true` in the runtime terminal.
