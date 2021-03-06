@@ -33,7 +33,7 @@
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="min-content-width">350</property>
-            <property name="min-content-height">200</property>
+            <property name="min-content-height">220</property>
             <child>
               <object class="GtkViewport">
                 <property name="visible">True</property>

@@ -95,6 +95,9 @@
 
 .box-tarajem-option row {
     padding: 10px;
+}
+
+.box-tarajem-option row:not(:last-child) {
     border-bottom: 1px solid #111111;
 }
 
