@@ -19,10 +19,8 @@ from gi.repository import Gdk, GdkPixbuf, Gtk, Pango
 import cairo
 import copy
 
-from .model import Model
-from .dialog import About
-from .popover import Navigation, Translation, More
-from .revealer import Message
+from .model import Reader, ResourceManager
+from .widget import About, Navigation, Translation, More, Message
 
 
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/window.ui')
@@ -50,17 +48,18 @@ class MainWindow(Gtk.ApplicationWindow):
     bboxes_hovered = {'page_right': [], 'page_left': []}
     bboxes_focused = {'page_right': [], 'page_left': []}
 
-    model = Model()
+    clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+
+    on_update: bool = False  # to stop unwanted signal triggering
+    is_shift_pressed: bool = False
+    is_tarajem_opened: bool = False
+
+    model = Reader()
+
     popover_nav = Navigation()
     popover_tarajem = Translation()
     popover_more = More()
     toast_message = Message()
-
-    clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-
-    on_update: bool = False  # to stop unwanted signal triggering
-    is_shift_pressed = False
-    is_tarajem_opened = False
 
     btn_open_nav = Gtk.Template.Child('btn_open_nav')
     btn_open_more = Gtk.Template.Child('btn_open_more')
@@ -354,7 +353,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     label.set_can_focus(False)
                     label.set_justify(Gtk.Justification.FILL)
                     label.set_halign(Gtk.Align.START)
-                    # label.set_hexpand_set(True)
                     label.set_hexpand(True)
                     hbox.pack_start(label, True, True, 1)
                 row.add(hbox)

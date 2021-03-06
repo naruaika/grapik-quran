@@ -20,7 +20,7 @@ import sqlite3
 import os
 
 
-class Model:
+class Reader:
     __dirname__ = os.path.dirname(os.path.abspath(__file__))
 
     _main_db = sqlite3.connect(os.path.join(__dirname__, '../res/main.db'))
@@ -37,6 +37,9 @@ class Model:
     _selected_pages = 'medina'  # TODO: support page type changing
     _selected_tarajem = []
 
+    ##############################
+    # Navigation
+    ##############################
     def get_page_no(self, sura_no: int, aya_no: int) -> int:
         query = f'SELECT page FROM {self._selected_pages} WHERE sura=? AND ' \
             'aya=? ORDER BY id DESC LIMIT 1'
@@ -90,12 +93,18 @@ class Model:
     def get_hizb_no(self, sura_no: int, aya_no: int) -> int:
         return 1
 
+    ##############################
+    # Pages
+    ##############################
     def get_bboxes_by_page(self, page_no: int) -> List:
         query = 'SELECT sura, aya, type, x1, y1, x2-x1, y2-y1 FROM ' \
             f'{self._selected_pages} WHERE page=? AND type="ayah"'
         self._pages_cursor.execute(query, (page_no,))
         return self._pages_cursor.fetchall()
 
+    ##############################
+    # Tarajem
+    ##############################
     def get_tarajem(self) -> List:
         self._tarajem_cursor.execute('SELECT * FROM meta ORDER BY language ASC')
         return self._tarajem_cursor.fetchall()
@@ -129,3 +138,14 @@ class Model:
                 self._selected_tarajem.append(tarajem_id)
         # TODO: sort `self._selected_tarajem` by language name
         return self._selected_tarajem
+
+
+class ResourceManager:
+
+    def add_new_tarajem(self, tarajem_id: str) -> None:
+        con = sqlite3.connect(os.path.join(self.__dirname__,
+                                           '../res/translations.db'))
+        cur = con.cursor()
+
+        con.commit()
+        con.close()
