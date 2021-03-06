@@ -312,6 +312,7 @@ class MainWindow(Gtk.ApplicationWindow):
             return
         elif not self.is_tarajem_opened:
             self.btn_open_tarajem.set_active(True)
+            return
 
         # Obtain surah-ayah number of the current page accordingly
         page_id = ('page_left' if self.page_no % 2 == 0 else 'page_right')
