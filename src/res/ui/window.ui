@@ -82,8 +82,7 @@
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="xpad">20</property>
-                                <property name="label" translatable="yes">No translation selected. If there is, it looks like you haven't downloaded it yet. Please connect to the internet to get it.</property>
+                                <property name="label" translatable="yes">No translation selected.</property>
                                 <property name="justify">center</property>
                                 <property name="wrap">True</property>
                                 <attributes>
@@ -201,8 +200,7 @@
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="xpad">20</property>
-                                <property name="label" translatable="yes">No translation selected. If there is, it looks like you haven't downloaded it yet. Please connect to the internet to get it.</property>
+                                <property name="label" translatable="yes">No translation selected.</property>
                                 <property name="justify">center</property>
                                 <property name="wrap">True</property>
                                 <attributes>

@@ -1,4 +1,4 @@
-# popover.py
+# widget.py
 #
 # Copyright 2021 Naufan Rusyda Faikar
 #
@@ -15,7 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk
+from gi.repository import Gtk, GLib
+
+
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/dialog/about.ui')
+class About(Gtk.AboutDialog):
+    __gtype_name__ = 'dialog_about'
 
 
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/popover/navigation.ui')
@@ -43,8 +48,8 @@ class Navigation(Gtk.PopoverMenu):
 class Translation(Gtk.PopoverMenu):
     __gtype_name__ = 'popover_tarajem'
 
-    listbox_tarajem = Gtk.Template.Child('listbox_tarajem')
-    listbox_tafaser = Gtk.Template.Child('listbox_tafaser')
+    searchentry = Gtk.Template.Child('searchentry')
+    listbox = Gtk.Template.Child('listbox')
 
 
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/popover/menu.ui')
@@ -56,3 +61,20 @@ class More(Gtk.PopoverMenu):
     btn_help = Gtk.Template.Child('btn_help')
     btn_about = Gtk.Template.Child('btn_about')
     btn_quit = Gtk.Template.Child('btn_quit')
+
+
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/revealer/message.ui')
+class Message(Gtk.Revealer):
+    __gtype_name__ = 'revealer_message'
+
+    message = Gtk.Template.Child('message')
+
+    def notify(self, message, timeout=3):
+        self.message.set_text(message)
+        self.set_reveal_child(True)
+
+        def hide():
+            self.set_reveal_child(False)
+
+        if timeout > 0:
+            GLib.timeout_add(timeout * 1000, hide)

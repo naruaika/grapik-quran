@@ -16,13 +16,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from gi.repository import Gdk, GdkPixbuf, Gtk, Pango
+from threading import Thread
 import cairo
 import copy
 
-from .model import Model
-from .dialog import About
-from .popover import Navigation, Translation, More
-from .revealer import Message
+from .model import Reader, ResourceManager
+from .widget import About, Navigation, Translation, More, Message
 
 
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/window.ui')
@@ -50,17 +49,19 @@ class MainWindow(Gtk.ApplicationWindow):
     bboxes_hovered = {'page_right': [], 'page_left': []}
     bboxes_focused = {'page_right': [], 'page_left': []}
 
-    model = Model()
+    clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+
+    is_updating: bool = False  # to stop unwanted signal triggering
+    is_downloading: bool = False
+    is_shift_pressed: bool = False
+    is_tarajem_opened: bool = False
+
+    model = Reader()
+
     popover_nav = Navigation()
     popover_tarajem = Translation()
     popover_more = More()
     toast_message = Message()
-
-    clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-
-    on_update: bool = False  # to stop unwanted signal triggering
-    is_shift_pressed = False
-    is_tarajem_opened = False
 
     btn_open_nav = Gtk.Template.Child('btn_open_nav')
     btn_open_more = Gtk.Template.Child('btn_open_more')
@@ -115,8 +116,8 @@ class MainWindow(Gtk.ApplicationWindow):
         # self.popover_nav.spin_hizb_no.connect('value-changed', self.go_to_hizb)
         self.popover_more.btn_about.connect('clicked', self.show_about)
         self.btn_open_tarajem.connect('clicked', self.toggle_tarajem)
-        self.popover_tarajem.listbox_tarajem.connect('row-activated',
-                                                     self.select_tarajem)
+        self.popover_tarajem.listbox.connect('row-activated',
+                                             self.select_tarajem)
         self.connect('key-press-event', self.on_key_press)
         self.connect('key-release-event', self.on_key_release)
 
@@ -141,27 +142,36 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Get tarajem list
         selected_tarajem = self.model.get_selected_tarajem()
-        for tarajem in self.model.get_tarajem():
+        for tarajem in self.model.get_tarajem_metas():
             tarajem_id, translator = tarajem[:2]
             language = tarajem[2].title()
             row = Gtk.ListBoxRow()
             row.set_can_focus(False)
-            row.tarajem_id = tarajem_id
+            row.id = tarajem_id
+            if self.model.is_tarajem_exist(tarajem_id):
+                row.is_downloaded = True
+            else:
+                row.is_downloaded = False
             hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             label = Gtk.Label(label=f'{language} - {translator}', xalign=0)
             label.set_ellipsize(Pango.EllipsizeMode.END)
-            image = Gtk.Image.new_from_icon_name('object-select-symbolic',
-                                                 Gtk.IconSize.BUTTON)
+            if row.is_downloaded:
+                icon_name = 'object-select-symbolic'
+            else:
+                icon_name = 'folder-download-symbolic'
+            image = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
             image.set_halign(Gtk.Align.END)
             image.set_margin_start(5)
-            if tarajem_id not in selected_tarajem:
-                image.set_no_show_all(True)
+            image.set_no_show_all(True)
+            if row.is_downloaded and tarajem_id not in selected_tarajem:
                 image.hide()
+            else:
+                image.show()
             hbox.pack_start(label, True, True, 0)
             hbox.pack_start(image, True, True, 1)
             row.add(hbox)
-            self.popover_tarajem.listbox_tarajem.add(row)
-        self.popover_tarajem.listbox_tarajem.show_all()
+            self.popover_tarajem.listbox.add(row)
+        self.popover_tarajem.listbox.show_all()
 
         self.main_overlay.add_overlay(self.toast_message)
 
@@ -192,7 +202,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.page_hovered(self._tmp_widget, self._tmp_event)
 
     def update(self, updated: str = None) -> None:
-        if self.on_update:
+        if self.is_updating:
             return
 
         # Sync other navigation variables
@@ -257,7 +267,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.page_right_scroll.set_visible(False)
                     self.page_left_scroll.set_visible(True)
 
-        self.on_update = True
+        self.is_updating = True
 
         # Sync navigation widget's attributes
         self.popover_nav.spin_page_no.set_value(self.page_no)
@@ -274,7 +284,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.btn_back_page.set_visible(self.page_no > self.PAGE_NO_MIN)
         self.btn_next_page.set_visible(self.page_no < self.PAGE_NO_MAX)
 
-        self.on_update = False
+        self.is_updating = False
 
         # Get all bounding box for the new two pages
         self.bboxes['page_right'] = self.model.get_bboxes_by_page(page_right_no)
@@ -313,6 +323,7 @@ class MainWindow(Gtk.ApplicationWindow):
             return
         elif not self.is_tarajem_opened:
             self.btn_open_tarajem.set_active(True)
+            return
 
         # Obtain surah-ayah number of the current page accordingly
         page_id = ('page_left' if self.page_no % 2 == 0 else 'page_right')
@@ -340,9 +351,10 @@ class MainWindow(Gtk.ApplicationWindow):
                     f'({bbox[0]}) : {bbox[1]}', xalign=0)
                 label.set_can_focus(False)
                 hbox.pack_start(label, True, True, 0)
+
                 for tid in self.model.get_selected_tarajem():
                     label = Gtk.Label()
-                    tarajem = self.model.get_tarajem_by_id(tid)
+                    tarajem = self.model.get_tarajem_meta(tid)
                     translator = tarajem[1]
                     language = tarajem[2].title()
                     markup = f'<span foreground="#444444" size="small">' \
@@ -354,7 +366,6 @@ class MainWindow(Gtk.ApplicationWindow):
                     label.set_can_focus(False)
                     label.set_justify(Gtk.Justification.FILL)
                     label.set_halign(Gtk.Align.START)
-                    # label.set_hexpand_set(True)
                     label.set_hexpand(True)
                     hbox.pack_start(label, True, True, 1)
                 row.add(hbox)
@@ -474,13 +485,35 @@ class MainWindow(Gtk.ApplicationWindow):
             self.update('focus')
 
     def select_tarajem(self, box: Gtk.ListBox, row: Gtk.ListBoxRow) -> None:
-        ic_selected = row.get_children()[0].get_children()[1]
-        if row.tarajem_id in self.model.get_selected_tarajem():
+        container = row.get_children()[0]
+        ic_selected = container.get_children()[1]
+        if not row.is_downloaded:
+            if self.is_downloading:
+                return
+            self.is_downloading = True
+
             ic_selected.hide()
+            spinner = Gtk.Spinner()
+            spinner.set_halign(Gtk.Align.END)
+            spinner.set_margin_start(5)
+            container.pack_end(spinner, True, True, 0)
+            container.show_all()
+            spinner.start()
+
+            def add_tarajem():
+                if ResourceManager.add_tarajem(row.id):
+                    row.is_downloaded = True
+                    ic_selected.set_from_icon_name('object-select-symbolic',
+                                                   Gtk.IconSize.BUTTON)
+                container.remove(spinner)
+                self.is_downloading = False
+
+            Thread(target=add_tarajem).start()
         else:
-            ic_selected.show()
-        self.model.update_selected_tarajem(row.tarajem_id)
-        self.update_tarajem()
+            ic_selected.set_visible(
+                row.id not in self.model.get_selected_tarajem())
+            self.model.update_selected_tarajem(row.id)
+            self.update_tarajem()
 
     def draw_bbox(self, widget: Gtk.Widget, context: cairo.Context) -> None:
         page_id = widget.get_name()

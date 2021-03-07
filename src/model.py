@@ -20,7 +20,7 @@ import sqlite3
 import os
 
 
-class Model:
+class Reader:
     __dirname__ = os.path.dirname(os.path.abspath(__file__))
 
     _main_db = sqlite3.connect(os.path.join(__dirname__, '../res/main.db'))
@@ -37,6 +37,9 @@ class Model:
     _selected_pages = 'medina'  # TODO: support page type changing
     _selected_tarajem = []
 
+    #################
+    # Navigation
+    #################
     def get_page_no(self, sura_no: int, aya_no: int) -> int:
         query = f'SELECT page FROM {self._selected_pages} WHERE sura=? AND ' \
             'aya=? ORDER BY id DESC LIMIT 1'
@@ -90,17 +93,23 @@ class Model:
     def get_hizb_no(self, sura_no: int, aya_no: int) -> int:
         return 1
 
+    #################
+    # Pages
+    #################
     def get_bboxes_by_page(self, page_no: int) -> List:
         query = 'SELECT sura, aya, type, x1, y1, x2-x1, y2-y1 FROM ' \
             f'{self._selected_pages} WHERE page=? AND type="ayah"'
         self._pages_cursor.execute(query, (page_no,))
         return self._pages_cursor.fetchall()
 
-    def get_tarajem(self) -> List:
+    #################
+    # Tarajem
+    #################
+    def get_tarajem_metas(self) -> List:
         self._tarajem_cursor.execute('SELECT * FROM meta ORDER BY language ASC')
         return self._tarajem_cursor.fetchall()
 
-    def get_tarajem_by_id(self, tarajem_id: str) -> List:
+    def get_tarajem_meta(self, tarajem_id: str) -> List:
         self._tarajem_cursor.execute('SELECT * FROM meta WHERE id=?',
                                      (tarajem_id,))
         return self._tarajem_cursor.fetchone()
@@ -116,6 +125,13 @@ class Model:
             return self._tarajem_cursor.fetchone()
         return []
 
+    def is_tarajem_exist(self, tarajem_id: str) -> bool:
+        self._tarajem_cursor.execute('SELECT name FROM sqlite_master WHERE '
+                                     'name=?', (tarajem_id,))
+        if self._tarajem_cursor.fetchone():
+            return True
+        return False
+
     def get_selected_tarajem(self) -> List:
         return self._selected_tarajem
 
@@ -129,3 +145,48 @@ class Model:
                 self._selected_tarajem.append(tarajem_id)
         # TODO: sort `self._selected_tarajem` by language name
         return self._selected_tarajem
+
+
+class ResourceManager:
+
+    @staticmethod
+    def add_tarajem(tarajem_id: str) -> bool:
+        # Open database connection
+        con = sqlite3.connect(
+            os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         '../res/translations.db'))
+        cur = con.cursor()
+
+        # Check if the id is valid
+        cur.execute('SELECT * FROM meta WHERE id=?', (tarajem_id,))
+        meta = cur.fetchone()
+        if not meta:
+            con.close()
+            return False
+
+        # Try to download the file
+        import requests
+        sql = requests.get(url=meta[-1], timeout=30)
+
+        # Check if the file is downloaded
+        if not sql.ok:
+            con.close()
+            return False
+
+        # Execute SQL queries
+        query = f'''CREATE TABLE {tarajem_id} (
+            id   INT(4) PRIMARY KEY
+                        NOT NULL,
+            sura INT(3) NOT NULL,
+            aya  INT(3) NOT NULL,
+            text TEXT   NOT NULL
+        );'''
+        cur.execute(query)
+        cur.execute('PRAGMA encoding="UTF-8";')
+        cur.executescript('\n'.join(sql.text.replace('index', 'id')
+                                    .replace(r"\'", "''").split('\n')[46:]))
+
+        # Close database connection
+        con.commit()
+        con.close()
+        return True

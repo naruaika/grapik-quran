@@ -24,7 +24,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Gio', '2.0')
 gi.require_version('Pango', '1.0')
 
-from gi.repository import Gtk, Gio
+from gi.repository import Gdk, Gio, Gtk
 
 from .window import MainWindow
 
@@ -42,5 +42,6 @@ class Application(Gtk.Application):
 
 
 def main(version) -> int:
+    Gdk.threads_init()
     app = Application()
     return app.run(sys.argv)
