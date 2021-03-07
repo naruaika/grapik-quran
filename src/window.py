@@ -534,5 +534,6 @@ class MainWindow(Gtk.ApplicationWindow):
             context.fill()
 
     def show_about(self, button: Gtk.Button) -> None:
-        # TODO: modal has to be attached to the main window
-        About().show_all()
+        dialog = About()
+        dialog.set_transient_for(self)
+        dialog.show_all()
