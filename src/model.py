@@ -106,7 +106,8 @@ class Reader:
     # Tarajem
     #################
     def get_tarajem_metas(self) -> List:
-        self._tarajem_cursor.execute('SELECT * FROM meta ORDER BY language ASC')
+        self._tarajem_cursor.execute('SELECT * FROM meta ORDER BY language, ' \
+            'translator ASC')
         return self._tarajem_cursor.fetchall()
 
     def get_tarajem_meta(self, tarajem_id: str) -> List:
