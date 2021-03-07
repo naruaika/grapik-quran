@@ -48,7 +48,6 @@ class Navigation(Gtk.PopoverMenu):
 class Translation(Gtk.PopoverMenu):
     __gtype_name__ = 'popover_tarajem'
 
-    # TODO: implement search functionality
     searchentry = Gtk.Template.Child('searchentry')
     listbox = Gtk.Template.Child('listbox')
 

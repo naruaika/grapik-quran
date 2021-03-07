@@ -13,6 +13,7 @@
         <property name="margin-top">15</property>
         <property name="margin-bottom">15</property>
         <property name="orientation">vertical</property>
+        <property name="spacing">8</property>
         <child>
           <object class="GtkSearchEntry" id="searchentry">
             <property name="visible">True</property>
@@ -33,7 +34,7 @@
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="min-content-width">350</property>
-            <property name="min-content-height">220</property>
+            <property name="min-content-height">330</property>
             <child>
               <object class="GtkViewport">
                 <property name="visible">True</property>
@@ -61,12 +62,10 @@
             <property name="position">2</property>
           </packing>
         </child>
-        <style>
-          <class name="linked"/>
-        </style>
       </object>
       <packing>
         <property name="submenu">main</property>
+        <property name="position">1</property>
       </packing>
     </child>
   </template>

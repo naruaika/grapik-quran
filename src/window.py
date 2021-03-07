@@ -48,6 +48,7 @@ class MainWindow(Gtk.ApplicationWindow):
     bboxes = {'page_right': [], 'page_left': []}
     bboxes_hovered = {'page_right': [], 'page_left': []}
     bboxes_focused = {'page_right': [], 'page_left': []}
+    tarajem_filtered = []
 
     clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
@@ -118,6 +119,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.btn_open_tarajem.connect('clicked', self.toggle_tarajem)
         self.popover_tarajem.listbox.connect('row-activated',
                                              self.select_tarajem)
+        self.popover_tarajem.searchentry.connect('search-changed',
+                                                 self.filter_tarajem)
         self.connect('key-press-event', self.on_key_press)
         self.connect('key-release-event', self.on_key_release)
 
@@ -126,11 +129,13 @@ class MainWindow(Gtk.ApplicationWindow):
         self.page_right_listbox.set_focus_vadjustment(
             self.page_scroll_adjustment)
 
+        # Set widget behaviours
         self.btn_open_more.set_popover(self.popover_more)
         self.btn_open_nav.set_popover(self.popover_nav)
         self.btn_tarajem_option.set_popover(self.popover_tarajem)
+        self.main_overlay.add_overlay(self.toast_message)
 
-        # Get surah list
+        # Populate data
         # TODO: implement user setting
         for sura in self.model.get_suras():
             sura_id = str(sura[0])
@@ -140,40 +145,7 @@ class MainWindow(Gtk.ApplicationWindow):
                                               f'{self.PAGE_NO_MAX})')
         self.popover_nav.combo_sura_name.set_active_id(str(self.sura_no))
 
-        # Get tarajem list
-        selected_tarajem = self.model.get_selected_tarajem()
-        for tarajem in self.model.get_tarajem_metas():
-            tarajem_id, translator = tarajem[:2]
-            language = tarajem[2].title()
-            row = Gtk.ListBoxRow()
-            row.set_can_focus(False)
-            row.id = tarajem_id
-            if self.model.is_tarajem_exist(tarajem_id):
-                row.is_downloaded = True
-            else:
-                row.is_downloaded = False
-            hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-            label = Gtk.Label(label=f'{language} - {translator}', xalign=0)
-            label.set_ellipsize(Pango.EllipsizeMode.END)
-            if row.is_downloaded:
-                icon_name = 'object-select-symbolic'
-            else:
-                icon_name = 'folder-download-symbolic'
-            image = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
-            image.set_halign(Gtk.Align.END)
-            image.set_margin_start(5)
-            image.set_no_show_all(True)
-            if row.is_downloaded and tarajem_id not in selected_tarajem:
-                image.hide()
-            else:
-                image.show()
-            hbox.pack_start(label, True, True, 0)
-            hbox.pack_start(image, True, True, 1)
-            row.add(hbox)
-            self.popover_tarajem.listbox.add(row)
-        self.popover_tarajem.listbox.show_all()
-
-        self.main_overlay.add_overlay(self.toast_message)
+        self.populate_tarajem()
 
     def on_key_press(self, window: Gtk.Window, event: Gdk.EventKey) -> None:
         keyname = Gdk.keyval_name(event.keyval)
@@ -398,6 +370,49 @@ class MainWindow(Gtk.ApplicationWindow):
         else:
             self.page_right_scroll.set_visible(False)
             self.page_left_scroll.set_visible(False)
+
+    def populate_tarajem(self, query: str = '') -> None:
+        if query:
+            tarajem_filtered = [meta for meta in self.model.get_tarajem_metas()
+                                if query.lower() in meta[1].lower() or
+                                query.lower() in meta[2]]
+            if self.tarajem_filtered == tarajem_filtered:
+                return
+            self.tarajem_filtered = tarajem_filtered
+        else:
+            self.tarajem_filtered = self.model.get_tarajem_metas()
+
+        self.popover_tarajem.listbox.foreach(lambda x:
+            self.popover_tarajem.listbox.remove(x))
+        selected_tarajem = self.model.get_selected_tarajem()
+        for tarajem in self.tarajem_filtered:
+            tarajem_id, translator = tarajem[:2]
+            language = tarajem[2].title()
+            row = Gtk.ListBoxRow()
+            row.id = tarajem_id
+            row.is_downloaded = self.model.is_tarajem_exist(tarajem_id)
+            hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+            label = Gtk.Label(label=f'{language} - {translator}', xalign=0)
+            label.set_ellipsize(Pango.EllipsizeMode.END)
+            icon_name = ('object-select-symbolic' if row.is_downloaded else
+                         'folder-download-symbolic')
+            image = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
+            image.set_halign(Gtk.Align.END)
+            image.set_margin_start(5)
+            image.set_no_show_all(True)
+            if row.is_downloaded and tarajem_id not in selected_tarajem:
+                image.hide()
+            else:
+                image.show()
+            hbox.pack_start(label, True, True, 0)
+            hbox.pack_start(image, True, True, 1)
+            row.add(hbox)
+            self.popover_tarajem.listbox.add(row)
+        self.popover_tarajem.listbox.show_all()
+
+    def filter_tarajem(self, entry: Gtk.SearchEntry) -> None:
+        query = entry.get_text()
+        self.populate_tarajem(query)
 
     def go_previous_page(self, button: Gtk.Button) -> None:
         page_increment = (1 if self.is_tarajem_opened else 2)

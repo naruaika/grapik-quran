@@ -93,16 +93,13 @@
 
 .box-tarajem-option row {
     padding: 10px;
-}
-
-.box-tarajem-option row:not(:last-child) {
     border-bottom: 1px solid #111111;
 }
 
-.frame {
+/* .frame {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-}
+} */
 
 .osd {
     background: transparent;
