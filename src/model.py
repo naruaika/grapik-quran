@@ -144,7 +144,6 @@ class Reader:
                                         (tarajem_id,))
             if self._tarajem_cursor.fetchone():
                 self._selected_tarajem.append(tarajem_id)
-        # TODO: sort `self._selected_tarajem` by language name
         return self._selected_tarajem
 
 

@@ -8,7 +8,7 @@
     <property name="destroy-with-parent">True</property>
     <property name="type-hint">dialog</property>
     <property name="program-name">GRAPIK Quran</property>
-    <property name="version">0.1.0-alpha.1</property>
+    <property name="version">0.1.0-alpha.2</property>
     <property name="copyright">© 2021 Naufan Rusyda Faikar</property>
     <property name="comments" translatable="yes">Access and read the Quran at any time</property>
     <property name="website">https://github.com/naruaika/grapik-quran</property>
