@@ -15,25 +15,28 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gdk, GdkPixbuf, Gtk, Pango
+from gi.repository import Gdk, GdkPixbuf, GLib, Gtk, Pango
 from threading import Thread
 import cairo
 import copy
+import os
 
 from .model import Reader, ResourceManager
-from .widget import About, Navigation, Translation, More, Message
+from .widget import AboutDialog, NavPopover, TarajemPopover, MenuPopover, \
+    ToastMessage
 
 
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/window.ui')
 class MainWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'main_window'
 
+    # TODO: define page height automatically based on page width
     PAGE_SIZE_WIDTH = 456  # in pixels
     PAGE_SIZE_HEIGHT = 672  # in pixels
     PAGE_SCALE = 1.0
     PAGE_NO_MIN = 1
     PAGE_NO_MAX = 604
-    AYA_NO_MAX = -1
+    SURA_LENGTH = -1
 
     page_no: int = -1
     sura_no: int = 1
@@ -59,10 +62,10 @@ class MainWindow(Gtk.ApplicationWindow):
 
     model = Reader()
 
-    popover_nav = Navigation()
-    popover_tarajem = Translation()
-    popover_more = More()
-    toast_message = Message()
+    popover_nav = NavPopover()
+    popover_tarajem = TarajemPopover()
+    popover_more = MenuPopover()
+    toast_message = ToastMessage()
 
     btn_open_nav = Gtk.Template.Child('btn_open_nav')
     btn_open_more = Gtk.Template.Child('btn_open_more')
@@ -84,8 +87,8 @@ class MainWindow(Gtk.ApplicationWindow):
     win_title = Gtk.Template.Child('win_title')
     main_overlay = Gtk.Template.Child('main_overlay')
 
-    _tmp_widget = None
-    _tmp_event = None
+    _prev_page_widget = None
+    _prev_mouse_event = None
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -119,10 +122,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.btn_open_tarajem.connect('clicked', self.toggle_tarajem)
         self.popover_tarajem.listbox.connect('row-activated',
                                              self.select_tarajem)
-        self.popover_tarajem.searchentry.connect('search-changed',
+        self.popover_tarajem.entry.connect('search-changed',
                                                  self.filter_tarajem)
         self.connect('key-press-event', self.on_key_press)
         self.connect('key-release-event', self.on_key_release)
+        self.connect('focus-out-event', self.on_loses_focus)
 
         self.page_left_listbox.set_focus_vadjustment(
             self.page_scroll_adjustment)
@@ -136,7 +140,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.main_overlay.add_overlay(self.toast_message)
 
         # Populate data
-        # TODO: implement user setting
+        # TODO: implements user-settings
         for sura in self.model.get_suras():
             sura_id = str(sura[0])
             sura_name = f'{sura_id}. {sura[4]}'
@@ -164,14 +168,18 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.clipboard.set_text(texts, -1)
                 self.toast_message.notify('Selected ayah(s) copied')
 
-        if Gdk.ModifierType.SHIFT_MASK:
+        if event.keyval == 65505:  # shift key
             self.is_shift_pressed = True
-            self.page_hovered(self._tmp_widget, self._tmp_event)
+            # FIXME: force hovering isn't working by this commit
+            self.page_hovered(self._prev_page_widget, self._prev_mouse_event)
 
     def on_key_release(self, window: Gtk.Window, event: Gdk.EventKey) -> None:
-        if Gdk.ModifierType.SHIFT_MASK:
+        if event.keyval == 65505:  # shift key
             self.is_shift_pressed = False
-            self.page_hovered(self._tmp_widget, self._tmp_event)
+            self.page_hovered(self._prev_page_widget, self._prev_mouse_event)
+
+    def on_loses_focus(self, window: Gtk.Window, event: Gdk.EventFocus) -> None:
+        self.is_shift_pressed = False
 
     def update(self, updated: str = None) -> None:
         if self.is_updating:
@@ -183,34 +191,34 @@ class MainWindow(Gtk.ApplicationWindow):
         if updated in ['page', '2page']:
             if updated == '2page' and self.page_no % 2 == 0:
                 self.page_no -= 1
-            self.sura_no = self.model.get_sura_no_by_page(self.page_no)
-            self.aya_no = self.model.get_aya_no_by_page(self.page_no)
+            self.sura_no = self.model.get_sura_no(self.page_no)
+            self.aya_no = self.model.get_aya_no(self.page_no)
             self.juz_no = self.model.get_juz_no(self.sura_no, self.aya_no)
             self.hizb_no = self.model.get_hizb_no(self.sura_no, self.aya_no)
-            self.AYA_NO_MAX = self.model.get_aya_no_max(self.sura_no)
+            self.SURA_LENGTH = self.model.get_sura_length(self.sura_no)
         elif updated == 'sura':
             self.aya_no = 1
             self.page_no = self.model.get_page_no(self.sura_no, self.aya_no)
             self.juz_no = self.model.get_juz_no(self.sura_no, self.aya_no)
             self.hizb_no = self.model.get_hizb_no(self.sura_no, self.aya_no)
-            self.AYA_NO_MAX = self.model.get_aya_no_max(self.sura_no)
+            self.SURA_LENGTH = self.model.get_sura_length(self.sura_no)
         elif updated == 'aya':
             self.page_no = self.model.get_page_no(self.sura_no, self.aya_no)
             self.juz_no = self.model.get_juz_no(self.sura_no, self.aya_no)
             self.hizb_no = self.model.get_hizb_no(self.sura_no, self.aya_no)
         elif updated == 'juz':
-            self.sura_no = self.model.get_sura_no_by_juz(self.juz_no)
-            self.aya_no = self.model.get_aya_no_by_juz(self.juz_no)
+            self.sura_no = self.model.get_sura_no(juz_no=self.juz_no)
+            self.aya_no = self.model.get_aya_no(juz_no=self.juz_no)
             self.page_no = self.model.get_page_no(self.sura_no, self.aya_no)
             self.hizb_no = 1
-            self.AYA_NO_MAX = self.model.get_aya_no_max(self.sura_no)
+            self.SURA_LENGTH = self.model.get_sura_length(self.sura_no)
         elif updated == 'hizb':
             ...
         elif updated == 'focus':
             self.page_no = self.model.get_page_no(self.sura_no, self.aya_no)
             self.juz_no = self.model.get_juz_no(self.sura_no, self.aya_no)
             self.hizb_no = self.model.get_hizb_no(self.sura_no, self.aya_no)
-            self.AYA_NO_MAX = self.model.get_aya_no_max(self.sura_no)
+            self.SURA_LENGTH = self.model.get_sura_length(self.sura_no)
         if self.page_no == prev_page_no and updated not in ['page', '2page']:
             is_page_no_updated = False
 
@@ -220,8 +228,9 @@ class MainWindow(Gtk.ApplicationWindow):
             page_right_no -= 1
 
         def set_image(page: Gtk.Image, page_no: int) -> None:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_resource_at_scale(
-                f'/org/naruaika/Quran/res/pages/{page_no}.png',
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(os.path.join(
+                GLib.get_user_data_dir(), 'grapik-quran/pages/'
+                f'{self.model.get_selected_quran()}/{page_no}.png'),
                 self.PAGE_SIZE_WIDTH * self.PAGE_SCALE,
                 self.PAGE_SIZE_HEIGHT * self.PAGE_SCALE, True)
             page.set_from_pixbuf(pixbuf)
@@ -244,12 +253,12 @@ class MainWindow(Gtk.ApplicationWindow):
         # Sync navigation widget's attributes
         self.popover_nav.spin_page_no.set_value(self.page_no)
         self.popover_nav.combo_sura_name.set_active_id(str(self.sura_no))
-        self.popover_nav.adjust_aya_no.set_upper(self.AYA_NO_MAX)
+        self.popover_nav.adjust_aya_no.set_upper(self.SURA_LENGTH)
         self.popover_nav.spin_aya_no.set_value(self.aya_no)
         self.popover_nav.spin_juz_no.set_value(self.juz_no)
         self.popover_nav.spin_hizb_no.set_value(self.hizb_no)
         self.popover_nav.aya_length.set_text(f'({1}–'
-                                             f'{self.AYA_NO_MAX})')
+                                             f'{self.SURA_LENGTH})')
         sura_name = self.popover_nav.combo_sura_name.get_active_text()
         self.win_title.set_text(f'{sura_name.split()[1]} ({self.sura_no}) : '
                                 f'{self.aya_no}')
@@ -259,9 +268,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.is_updating = False
 
         # Get all bounding box for the new two pages
-        self.bboxes['page_right'] = self.model.get_bboxes_by_page(page_right_no)
+        self.bboxes['page_right'] = self.model.get_bboxes(page_right_no)
         self.bboxes['page_left'] = \
-            self.model.get_bboxes_by_page(page_right_no + 1)
+            self.model.get_bboxes(page_right_no + 1)
 
         # Get a new aya focus
         self.bboxes_focused['page_right'] = []
@@ -319,14 +328,14 @@ class MainWindow(Gtk.ApplicationWindow):
                 row.set_can_focus(False)
                 hbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
                 label = Gtk.Label(
-                    label=f'{self.model.get_sura_name_by_no(bbox[0])} '
+                    label=f'{self.model.get_sura_name(bbox[0])} '
                     f'({bbox[0]}) : {bbox[1]}', xalign=0)
                 label.set_can_focus(False)
                 hbox.pack_start(label, True, True, 0)
 
                 for tid in self.model.get_selected_tarajem():
                     label = Gtk.Label()
-                    tarajem = self.model.get_tarajem_meta(tid)
+                    tarajem = self.model.get_tarajem(tid)
                     translator = tarajem[1]
                     language = tarajem[2].title()
                     markup = f'<span foreground="#444444" size="small">' \
@@ -373,14 +382,14 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def populate_tarajem(self, query: str = '') -> None:
         if query:
-            tarajem_filtered = [meta for meta in self.model.get_tarajem_metas()
+            tarajem_filtered = [meta for meta in self.model.get_tarajems()
                                 if query.lower() in meta[1].lower() or
                                 query.lower() in meta[2]]
             if self.tarajem_filtered == tarajem_filtered:
                 return
             self.tarajem_filtered = tarajem_filtered
         else:
-            self.tarajem_filtered = self.model.get_tarajem_metas()
+            self.tarajem_filtered = self.model.get_tarajems()
 
         self.popover_tarajem.listbox.foreach(lambda x:
             self.popover_tarajem.listbox.remove(x))
@@ -390,7 +399,7 @@ class MainWindow(Gtk.ApplicationWindow):
             language = tarajem[2].title()
             row = Gtk.ListBoxRow()
             row.id = tarajem_id
-            row.is_downloaded = self.model.is_tarajem_exist(tarajem_id)
+            row.is_downloaded = self.model.check_tarajem(tarajem_id)
             hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             label = Gtk.Label(label=f'{language} - {translator}', xalign=0)
             label.set_ellipsize(Pango.EllipsizeMode.END)
@@ -449,10 +458,9 @@ class MainWindow(Gtk.ApplicationWindow):
         if not widget or not event:
             return
 
-        # Save parameters only for the purpose of making hovering more
-        # interactive
-        self._tmp_widget = widget
-        self._tmp_event = event
+        # Save parameters only for the purpose of forcing update hovering
+        self._prev_page_widget = widget
+        self._prev_mouse_event = event
 
         # Find the sura-aya under the cursor
         suraya_hovered = None
@@ -549,6 +557,6 @@ class MainWindow(Gtk.ApplicationWindow):
             context.fill()
 
     def show_about(self, button: Gtk.Button) -> None:
-        dialog = About()
+        dialog = AboutDialog()
         dialog.set_transient_for(self)
         dialog.show_all()

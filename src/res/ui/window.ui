@@ -8,6 +8,7 @@
     <property name="page-increment">10</property>
   </object>
   <template class="main_window" parent="GtkApplicationWindow">
+    <property name="name">page</property>
     <property name="can-focus">False</property>
     <property name="resizable">False</property>
     <property name="default-width">800</property>
@@ -67,7 +68,6 @@
                   <object class="GtkScrolledWindow" id="page_left_scroll">
                     <property name="can-focus">True</property>
                     <property name="vadjustment">page_scroll_adjustment</property>
-                    <property name="max-content-width">23</property>
                     <child>
                       <object class="GtkViewport">
                         <property name="visible">True</property>
@@ -98,7 +98,7 @@
                       </object>
                     </child>
                     <style>
-                      <class name="page-scroll"/>
+                      <class name="translation-scroll"/>
                     </style>
                   </object>
                   <packing>
@@ -114,11 +114,11 @@
             </child>
             <child>
               <object class="GtkSeparator">
+                <property name="name">page-fold-left</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <style>
                   <class name="wide"/>
-                  <class name="page-separator-left"/>
                 </style>
               </object>
               <packing>
@@ -129,11 +129,11 @@
             </child>
             <child>
               <object class="GtkSeparator">
+                <property name="name">page-fold-right</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <style>
                   <class name="wide"/>
-                  <class name="page-separator-right"/>
                 </style>
               </object>
               <packing>
@@ -216,7 +216,7 @@
                       </object>
                     </child>
                     <style>
-                      <class name="page-scroll"/>
+                      <class name="translation-scroll"/>
                     </style>
                   </object>
                   <packing>
@@ -545,8 +545,5 @@
         </child>
       </object>
     </child>
-    <style>
-      <class name="page"/>
-    </style>
   </template>
 </interface>

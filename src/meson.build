@@ -28,17 +28,11 @@ configure_file(
 grapik_quran_sources = [
   '__init__.py',
   'main.py',
-  'window.py',
   'model.py',
   'widget.py',
+  'window.py',
 ]
 
 install_data(grapik_quran_sources, install_dir: moduledir)
 
-grapik_quran_resources = [
-  'res/db/main.db',
-  'res/db/pages.db',
-  'res/db/translations.db',
-]
-
-install_data(grapik_quran_resources, install_dir: join_paths(pkgdatadir, 'res'))
+install_data(['res/db/main.db'], install_dir: pkgdatadir)

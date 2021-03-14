@@ -1,8 +1,17 @@
 # Grapik Quran
 
-This proof-of-concept application is specially made for the GNOME desktop. We use Quran images from [King Saud University (KSU)](http://quran.ksu.edu.sa/ayat/?l=ar&pg=patches) to provide the same experience of reading a non-digital Quran. For Quran indexes, texts (Uthmani), and translations, we use resources from [Tanzil](http://tanzil.net). Here's a prototype of the app:
+In the name of Allah, the Entirely Merciful, the Especially Merciful. This proof-of-concept application is specially made for the GNOME desktop. We use Quran images from [King Saud University (KSU)](http://quran.ksu.edu.sa/ayat/?l=ar&pg=patches) to provide the same experience of reading a non-digital Quran. For Quran indexes, texts (Uthmani), and translations, we use resources from [Tanzil](http://tanzil.net). Here's a prototype of the app:
 
 ![Application's propotype](screenshot.png)
+
+## Features
+
+Using this app, you'll be able to:
+
+- Read the full Quran
+- Navigate to any specific page/surah/ayah/juz number
+- Read the translation in many languages
+- Select and copy (by pressing `ctrl+C`) the selected ayah(s) as text
 
 ## Background
 
@@ -14,17 +23,8 @@ There are many alternatives to Ayat, such as [Zekr](https://sourceforge.net/proj
 
 ## Motivation
 
-I used to be a user of Sabily OS and I've been amazed how wonderful it is.
+I used to be a user of Sabily OS and I've been amazed how wonderful it is. May Allah forgive me all along the way by doing this project and I ask Allah for His _taufiq_ and _hidayah_ to the straight path.
 
-## Features
-
-Using this app, you'll be able to:
-
-- Read the full Quran
-- Navigate to any specific page/surah/ayah/juz number
-- Read the translation in many languages
-- Select and copy (by pressing `ctrl+C`) the selected ayah(s) as text
-
-## Contribute
+## Contribution
 
 The easiest way for beginners is clone this repository to your local computer and then build it using [GNOME Builder](https://wiki.gnome.org/Apps/Builder). To enable GTK Inspector, run `gsettings set org.gtk.Settings.Debug enable-inspector-keybinding true` in the runtime terminal.
