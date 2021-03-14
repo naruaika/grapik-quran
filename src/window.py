@@ -220,8 +220,6 @@ class MainWindow(Gtk.ApplicationWindow):
             self.juz_no = self.model.get_juz_no(self.sura_no, self.aya_no)
             self.hizb_no = self.model.get_hizb_no(self.sura_no, self.aya_no)
             self.SURA_LENGTH = self.model.get_sura_length(self.sura_no)
-        if self.page_no == prev_page_no and updated not in ['page', '2page']:
-            is_page_no_updated = False
 
         # Always set odd page numbers for right pages
         page_right_no = self.page_no
@@ -236,18 +234,18 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.PAGE_SIZE_HEIGHT * self.PAGE_SCALE, True)
             page.set_from_pixbuf(pixbuf)
 
+        if self.page_no == prev_page_no and updated not in ['page', '2page']:
+            is_page_no_updated = False
+
         if is_page_no_updated:
             # Set the image corresponding to each page
             set_image(self.page_right, page_right_no)
             set_image(self.page_left, page_right_no + 1)
 
             if self.is_tarajem_opened:
-                if self.page_no % 2 == 0:
-                    self.page_right_scroll.set_visible(True)
-                    self.page_left_scroll.set_visible(False)
-                else:
-                    self.page_right_scroll.set_visible(False)
-                    self.page_left_scroll.set_visible(True)
+                is_pageno_even = self.page_no % 2 == 0
+                self.page_right_scroll.set_visible(is_pageno_even)
+                self.page_left_scroll.set_visible(not is_pageno_even)
 
         self.is_updating = True
 
@@ -270,8 +268,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Get all bounding box for the new two pages
         self.bboxes['page_right'] = self.model.get_bboxes(page_right_no)
-        self.bboxes['page_left'] = \
-            self.model.get_bboxes(page_right_no + 1)
+        self.bboxes['page_left'] = self.model.get_bboxes(page_right_no + 1)
 
         # Get a new aya focus
         self.bboxes_focused['page_right'] = []
@@ -286,13 +283,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.page_right_drawarea.queue_draw()
         self.page_left_drawarea.queue_draw()
 
-        if self.is_tarajem_opened:
-            if is_page_no_updated:
-                self.update_tarajem()
-            else:
-                self.update_tarajem(False)
+        self.update_tarajem(is_page_no_updated, False)
 
-    def update_tarajem(self, content_changed: bool = True) -> None:
+    def update_tarajem(self, content_changed: bool = True,
+                       trigger_open: bool = True) -> None:
         if content_changed:
             # Clear previous translations
             self.page_right_listbox.foreach(lambda x:
@@ -301,27 +295,21 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.page_left_listbox.remove(x))
 
         if not self.model.get_selected_tarajem():
-            # self.btn_open_tarajem.set_active(False)
             return
-        elif not self.is_tarajem_opened:
-            self.btn_open_tarajem.set_active(True)
-            return
+        if trigger_open:
+            self.btn_open_tarajem.set_active(True)  # trigger a click to open
+                                                    # tarajem panel
 
         # Obtain surah-ayah number of the current page accordingly
         page_id = ('page_left' if self.page_no % 2 == 0 else 'page_right')
-        bboxes = [(bbox[0], bbox[1]) for bbox in self.bboxes[page_id]]
+        bboxes = [bbox[:2] for bbox in self.bboxes[page_id]]
         uniques = set()  # for removing duplicate surah-ayah pairs
         bboxes = [x for x in bboxes if not (x in uniques or uniques.add(x))]
 
-        bboxes_focused = [(bbox[0], bbox[1]) for bbox in
-                          self.bboxes_focused[page_id]]
-
-        if page_id == 'page_left':
-            listbox = self.page_right_listbox
-        else:
-            listbox = self.page_left_listbox
-
         # Obtain translations
+        listbox = (self.page_right_listbox if page_id == 'page_left' else
+                   self.page_left_listbox)
+        bboxes_focused = [bbox[:2] for bbox in self.bboxes_focused[page_id]]
         was_scrolled = False
         for idx_bbox, bbox in enumerate(bboxes):
             if content_changed:
@@ -355,14 +343,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
             if bbox in bboxes_focused:
                 listbox.get_row_at_index(idx_bbox).set_name('row-focused')
-                # FIXME: scroll to the selected row after changing translation
-                # or after showing tarajem panel
                 if not was_scrolled:
                     self.prev_card_focused = listbox.get_row_at_index(idx_bbox)
-                    self.prev_card_focused.grab_focus()
                     was_scrolled = True
             else:
                 listbox.get_row_at_index(idx_bbox).set_name('row')
+        GLib.timeout_add(100, self.prev_card_focused.grab_focus)
 
         # Display new translations
         self.page_left_listbox.show_all()
@@ -371,13 +357,9 @@ class MainWindow(Gtk.ApplicationWindow):
     def toggle_tarajem(self, button: Gtk.Button) -> None:
         self.is_tarajem_opened = button.get_active()
         if self.is_tarajem_opened:
-            if self.page_no % 2 == 0:
-                self.page_right_scroll.set_visible(True)
-                self.page_left_scroll.set_visible(False)
-            else:
-                self.page_right_scroll.set_visible(False)
-                self.page_left_scroll.set_visible(True)
-            self.update_tarajem()
+            is_pageno_even = self.page_no % 2 == 0
+            self.page_right_scroll.set_visible(is_pageno_even)
+            self.page_left_scroll.set_visible(not is_pageno_even)
         else:
             self.page_right_scroll.set_visible(False)
             self.page_left_scroll.set_visible(False)
@@ -505,14 +487,13 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.is_tarajem_opened and self.model.get_selected_tarajem():
             if suraya_hovered:
                 for bbox in self.bboxes_hovered[pageid_hovered]:
+                    # TODO: optimise by setting metadata to listboxrow
                     row = listbox.get_row_at_index(self.model.get_suraya_seq(
                         *bbox[:2]) - 1)
                     if row.get_name() != 'row-focused':
                         row.set_name('row-hovered')
                     if suraya_hovered == bbox[:2]:
                         row.grab_focus()
-                if not self.bboxes_hovered[pageid_hovered]:
-                    self.prev_card_focused.grab_focus()
             else:
                 self.prev_card_focused.grab_focus()
 
@@ -529,11 +510,13 @@ class MainWindow(Gtk.ApplicationWindow):
             self.update('focus')
 
     def select_tarajem(self, box: Gtk.ListBox, row: Gtk.ListBoxRow) -> None:
+        # TODO: allow mutliple downloading at the same time
+        # FIXME: freeze when enabling a tarajem while dowloading another
+        if self.is_downloading:
+            return
         container = row.get_children()[0]
         ic_selected = container.get_children()[1]
         if not row.is_downloaded:
-            if self.is_downloading:
-                return
             self.is_downloading = True
 
             ic_selected.hide()
@@ -544,6 +527,7 @@ class MainWindow(Gtk.ApplicationWindow):
             container.show_all()
             spinner.start()
 
+            # TODO: enable a tarajem after downloading automatically
             def add_tarajem():
                 if ResourceManager.add_tarajem(row.id):
                     row.is_downloaded = True
