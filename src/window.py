@@ -87,8 +87,9 @@ class MainWindow(Gtk.ApplicationWindow):
     win_title = Gtk.Template.Child('win_title')
     main_overlay = Gtk.Template.Child('main_overlay')
 
-    _prev_page_widget = None
-    _prev_mouse_event = None
+    prev_card_focused = None
+    prev_page_focused = None
+    prev_mouse_event = None
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -123,7 +124,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.popover_tarajem.listbox.connect('row-activated',
                                              self.select_tarajem)
         self.popover_tarajem.entry.connect('search-changed',
-                                                 self.filter_tarajem)
+                                           self.filter_tarajem)
         self.connect('key-press-event', self.on_key_press)
         self.connect('key-release-event', self.on_key_release)
         self.connect('focus-out-event', self.on_loses_focus)
@@ -171,12 +172,12 @@ class MainWindow(Gtk.ApplicationWindow):
         if event.keyval == 65505:  # shift key
             self.is_shift_pressed = True
             # FIXME: force hovering isn't working by this commit
-            self.page_hovered(self._prev_page_widget, self._prev_mouse_event)
+            self.page_hovered(self.prev_page_focused, self.prev_mouse_event)
 
     def on_key_release(self, window: Gtk.Window, event: Gdk.EventKey) -> None:
         if event.keyval == 65505:  # shift key
             self.is_shift_pressed = False
-            self.page_hovered(self._prev_page_widget, self._prev_mouse_event)
+            self.page_hovered(self.prev_page_focused, self.prev_mouse_event)
 
     def on_loses_focus(self, window: Gtk.Window, event: Gdk.EventFocus) -> None:
         self.is_shift_pressed = False
@@ -357,7 +358,8 @@ class MainWindow(Gtk.ApplicationWindow):
                 # FIXME: scroll to the selected row after changing translation
                 # or after showing tarajem panel
                 if not was_scrolled:
-                    listbox.get_row_at_index(idx_bbox).grab_focus()
+                    self.prev_card_focused = listbox.get_row_at_index(idx_bbox)
+                    self.prev_card_focused.grab_focus()
                     was_scrolled = True
             else:
                 listbox.get_row_at_index(idx_bbox).set_name('row')
@@ -459,8 +461,8 @@ class MainWindow(Gtk.ApplicationWindow):
             return
 
         # Save parameters only for the purpose of forcing update hovering
-        self._prev_page_widget = widget
-        self._prev_mouse_event = event
+        self.prev_page_focused = widget
+        self.prev_mouse_event = event
 
         # Find the sura-aya under the cursor
         suraya_hovered = None
@@ -493,9 +495,28 @@ class MainWindow(Gtk.ApplicationWindow):
             else:
                 self.bboxes_hovered[pageid_hovered] = \
                     [bbox for bbox in page_bboxes if bbox[:2] == suraya_hovered]
-        #     self.get_window().set_cursor(Gdk.Cursor(Gdk.CursorType.HAND2))
-        # else:
-        #     self.get_window().set_cursor(Gdk.Cursor(Gdk.CursorType.ARROW))
+
+        # Draw bounding boxes over hovered aya(s) in tarajem viewer
+        listbox = (self.page_right_listbox if self.page_no % 2 == 0 else
+                   self.page_left_listbox)
+        for row in listbox:
+            if row.get_name() == 'row-hovered':
+                row.set_name('row')
+        if self.is_tarajem_opened and self.model.get_selected_tarajem():
+            if suraya_hovered:
+                for bbox in self.bboxes_hovered[pageid_hovered]:
+                    row = listbox.get_row_at_index(self.model.get_suraya_seq(
+                        *bbox[:2]) - 1)
+                    if row.get_name() != 'row-focused':
+                        row.set_name('row-hovered')
+                    if suraya_hovered == bbox[:2]:
+                        row.grab_focus()
+                if not self.bboxes_hovered[pageid_hovered]:
+                    self.prev_card_focused.grab_focus()
+            else:
+                self.prev_card_focused.grab_focus()
+
+        # Draw bounding boxes over hovered aya(s) in page viewer
         self.page_right_drawarea.queue_draw()
         self.page_left_drawarea.queue_draw()
 
@@ -540,7 +561,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def draw_bbox(self, widget: Gtk.Widget, context: cairo.Context) -> None:
         page_id = widget.get_name()
-        if self.bboxes_focused[page_id]:
+        if self.bboxes_focused[page_id]:  # draw focus
             context.set_source_rgba(0.082, 0.325, 0.620, 0.2)
             for bbox in self.bboxes_focused[page_id]:
                 context.rectangle(*bbox[3:])
@@ -548,7 +569,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if self.bboxes_hovered[page_id] and \
                 self.bboxes_hovered[page_id] != \
-                    self.bboxes_focused[page_id]:
+                    self.bboxes_focused[page_id]:  # draw hover
             context.set_source_rgba(0.2, 0.2, 0.2, 0.075)
             for bbox in self.bboxes_hovered[page_id]:
                 if bbox in self.bboxes_focused[page_id]:

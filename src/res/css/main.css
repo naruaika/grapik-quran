@@ -73,17 +73,27 @@
     border-bottom: 1px solid #dddddd;
 }
 
-/* For the translation contents being focused */
+/* For the translation contents being hovered/focused */
 #row-focused {
     color: black;
     background-color: #d0ddec;
     border: 1px solid #0076ff;
 }
-/* For the surah-ayah numbering being focused */
+#row-hovered {
+    color: black;
+    background-color: #cfcfcf;
+    border: 1px solid #a8a8a8;
+}
+/* For the surah-ayah numbering being hovered/focused */
 #row-focused box > label:first-child {
     color: #0076ff;
     background-color: #d0ddec;
     border-bottom: 1px solid #0076ff;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+#row-hovered box > label:first-child {
+    border-bottom: 1px solid #a8a8a8;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }

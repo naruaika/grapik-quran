@@ -82,6 +82,15 @@ class Reader:
                                   'aya=?', (sura_no, aya_no))
         return self._main_cursor.fetchone()[0]
 
+    def get_suraya_seq(self, sura_no: int, aya_no: int) -> int:
+        query = \
+            f'''SELECT seq from (SELECT ROW_NUMBER() OVER (ORDER BY id) seq,
+            sura, aya FROM {self._selected_quran} WHERE page=(SELECT page FROM
+            {self._selected_quran} WHERE sura=? AND aya=? LIMIT 1) AND
+            TYPE="ayah" GROUP BY aya) WHERE sura=? AND aya=?'''
+        self._page_cursor.execute(query, (sura_no, aya_no, sura_no, aya_no))
+        return self._page_cursor.fetchone()[0]
+
     def get_juz_no(self, sura_no: int, aya_no: int) -> int:
         self._main_cursor.execute('SELECT id FROM juzs WHERE (sura=? AND '
                                   'aya<=?) OR sura<? ORDER BY id DESC LIMIT 1',
