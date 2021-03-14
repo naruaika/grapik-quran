@@ -83,7 +83,6 @@ class MainWindow(Gtk.ApplicationWindow):
     page_right_scroll = Gtk.Template.Child('page_right_scroll')
     page_left_listbox = Gtk.Template.Child('page_left_listbox')
     page_right_listbox = Gtk.Template.Child('page_right_listbox')
-    page_scroll_adjustment = Gtk.Template.Child('page_scroll_adjustment')
     win_title = Gtk.Template.Child('win_title')
     main_overlay = Gtk.Template.Child('main_overlay')
 
@@ -130,11 +129,6 @@ class MainWindow(Gtk.ApplicationWindow):
         self.connect('key-release-event', self.on_key_release)
         self.connect('focus-out-event', self.on_loses_focus)
 
-        self.page_left_listbox.set_focus_vadjustment(
-            self.page_scroll_adjustment)
-        self.page_right_listbox.set_focus_vadjustment(
-            self.page_scroll_adjustment)
-
         # Set widget behaviours
         self.btn_open_more.set_popover(self.popover_more)
         self.btn_open_nav.set_popover(self.popover_nav)
@@ -154,8 +148,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.populate_tarajem()
 
     def on_key_press(self, window: Gtk.Window, event: Gdk.EventKey) -> None:
-        keyname = Gdk.keyval_name(event.keyval)
-        if Gdk.ModifierType.CONTROL_MASK and keyname == 'c':
+        if event.state == Gdk.ModifierType.CONTROL_MASK and \
+                event.keyval == Gdk.KEY_c:
             texts = ''
             bboxes = [(bbox[0], bbox[1]) for bbox
                       in self.bboxes_focused['page_right']]
@@ -171,13 +165,40 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.clipboard.set_text(texts, -1)
                 self.toast_message.notify('Selected ayah(s) copied')
 
-        if event.keyval == 65505:  # shift key
+        if event.keyval == Gdk.KEY_Left:
+            if self.page_no + 1 <= self.PAGE_NO_MAX:
+                self.page_no += 1
+                self.update('page')
+        elif event.keyval == Gdk.KEY_Right:
+            if self.page_no - 1 >= self.PAGE_NO_MIN:
+                self.page_no -= 1
+                self.update('page')
+        # FIXME: unexpected window scrolling
+        elif event.keyval == Gdk.KEY_Up:
+            if self.aya_no - 1 == 0:
+                if self.sura_no - 1 >= 1:
+                    self.sura_no -= 1
+                    self.SURA_LENGTH = self.model.get_sura_length(self.sura_no)
+                    self.aya_no = self.SURA_LENGTH
+                    self.update('aya')
+            else:
+                self.aya_no -= 1
+                self.update('aya')
+        elif event.keyval == Gdk.KEY_Down:
+            if self.aya_no + 1 > self.SURA_LENGTH:
+                if self.sura_no + 1 <= 114:
+                    self.sura_no += 1
+                    self.update('sura')
+            else:
+                self.aya_no += 1
+                self.update('aya')
+        elif event.keyval == Gdk.KEY_Shift_L:
             self.is_shift_pressed = True
-            # FIXME: force hovering isn't working by this commit
+            # FIXME: force hovering is not working anymore
             self.page_hovered(self.prev_page_focused, self.prev_mouse_event)
 
     def on_key_release(self, window: Gtk.Window, event: Gdk.EventKey) -> None:
-        if event.keyval == 65505:  # shift key
+        if event.keyval == Gdk.KEY_Shift_L:
             self.is_shift_pressed = False
             self.page_hovered(self.prev_page_focused, self.prev_mouse_event)
 
@@ -317,6 +338,9 @@ class MainWindow(Gtk.ApplicationWindow):
             if content_changed:
                 row = Gtk.ListBoxRow()
                 row.set_can_focus(False)
+                # row.set_activatable(False)
+                # row.set_selectable(False)
+                # row.set_sensitive(False)
                 hbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
                 label = Gtk.Label(
                     label=f'{self.model.get_sura_name(bbox[0])} '
