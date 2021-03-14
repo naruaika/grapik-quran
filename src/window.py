@@ -56,7 +56,7 @@ class MainWindow(Gtk.ApplicationWindow):
     clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
     is_updating: bool = False  # to stop unwanted signal triggering
-    is_downloading: bool = False
+    is_downloading: bool = False  # to limit download thread
     is_shift_pressed: bool = False
     is_tarajem_opened: bool = False
 
@@ -90,6 +90,7 @@ class MainWindow(Gtk.ApplicationWindow):
     prev_card_focused = None
     prev_page_focused = None
     prev_mouse_event = None
+    prev_scroll_y = None
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -161,7 +162,8 @@ class MainWindow(Gtk.ApplicationWindow):
             bboxes.extend([(bbox[0], bbox[1]) for bbox
                            in self.bboxes_focused['page_left']])
             uniques = set()  # for removing duplicate surah-ayah pairs
-            bboxes = [x for x in bboxes if not (x in uniques or uniques.add(x))]
+            bboxes = [x for x in bboxes if not (x in uniques or
+                                                uniques.add(x))]
             for bbox in bboxes:
                 texts += self.model.get_aya_text(*bbox[:2])
                 texts += '\n'
@@ -348,7 +350,12 @@ class MainWindow(Gtk.ApplicationWindow):
                     was_scrolled = True
             else:
                 listbox.get_row_at_index(idx_bbox).set_name('row')
-        GLib.timeout_add(100, self.prev_card_focused.grab_focus)
+
+        # TODO: needs a better solution
+        scrollwindow = (self.page_right_scroll if self.page_no % 2 == 0
+                        else self.page_left_scroll)
+        GLib.timeout_add(50, self.animate_scroll_to, scrollwindow,
+                         self.prev_card_focused)
 
         # Display new translations
         self.page_left_listbox.show_all()
@@ -389,7 +396,8 @@ class MainWindow(Gtk.ApplicationWindow):
             label.set_ellipsize(Pango.EllipsizeMode.END)
             icon_name = ('object-select-symbolic' if row.is_downloaded else
                          'folder-download-symbolic')
-            image = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
+            image = Gtk.Image.new_from_icon_name(icon_name,
+                                                 Gtk.IconSize.BUTTON)
             image.set_halign(Gtk.Align.END)
             image.set_margin_start(5)
             image.set_no_show_all(True)
@@ -476,11 +484,14 @@ class MainWindow(Gtk.ApplicationWindow):
                         if suraya_start <= bbox[:2] <= suraya_end]
             else:
                 self.bboxes_hovered[pageid_hovered] = \
-                    [bbox for bbox in page_bboxes if bbox[:2] == suraya_hovered]
+                    [bbox for bbox in page_bboxes if bbox[:2]
+                     == suraya_hovered]
 
         # Draw bounding boxes over hovered aya(s) in tarajem viewer
         listbox = (self.page_right_listbox if self.page_no % 2 == 0 else
                    self.page_left_listbox)
+        scrollwindow = (self.page_right_scroll if self.page_no % 2 == 0
+                        else self.page_left_scroll)
         for row in listbox:
             if row.get_name() == 'row-hovered':
                 row.set_name('row')
@@ -493,9 +504,9 @@ class MainWindow(Gtk.ApplicationWindow):
                     if row.get_name() != 'row-focused':
                         row.set_name('row-hovered')
                     if suraya_hovered == bbox[:2]:
-                        row.grab_focus()
+                        self.animate_scroll_to(scrollwindow, row)
             else:
-                self.prev_card_focused.grab_focus()
+                self.animate_scroll_to(scrollwindow, self.prev_card_focused)
 
         # Draw bounding boxes over hovered aya(s) in page viewer
         self.page_right_drawarea.queue_draw()
@@ -510,7 +521,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.update('focus')
 
     def select_tarajem(self, box: Gtk.ListBox, row: Gtk.ListBoxRow) -> None:
-        # TODO: allow mutliple downloading at the same time
+        # TODO: allow multiple downloading at the same time
         # FIXME: freeze when enabling a tarajem while dowloading another
         if self.is_downloading:
             return
@@ -560,6 +571,54 @@ class MainWindow(Gtk.ApplicationWindow):
                     continue
                 context.rectangle(*bbox[3:])
             context.fill()
+
+    # FIXME: it's too heavy on shift key pressed while hovering
+    def animate_scroll_to(self, window: Gtk.ScrolledWindow,
+                          widget: Gtk.Widget) -> None:
+        to = widget.get_allocation()
+        adjustment = window.get_vadjustment()
+        start = adjustment.get_value()
+
+        if start <= to.y and to.y + to.height <= \
+                start + adjustment.get_page_size():
+            return
+        else:
+            if to.y > start:
+                if to.height > adjustment.get_page_size():
+                    end = to.y
+                else:
+                    end = min(adjustment.get_upper() -
+                            adjustment.get_page_size(), to.y + to.height -
+                            adjustment.get_page_size())
+            else:
+                end = to.y
+            self.prev_scroll_y = end
+
+        clock = window.get_frame_clock()
+        duration = 600  # in millisecond
+        start_time = clock.get_frame_time()
+        end_time = start_time + 1000 * duration
+
+        def scroll(widget: Gtk.Widget, frame_clock: Gdk.FrameClock) -> bool:
+            if self.prev_scroll_y != end:
+                return GLib.SOURCE_REMOVE
+
+            now = clock.get_frame_time()
+
+            def ease_out_cubic(t) -> float:
+                p = t - 1
+                return p * p * p + 1
+
+            if now < end_time and adjustment.get_value() != end:
+                t = (now - start_time) / (end_time - start_time)
+                t = ease_out_cubic(t)
+                adjustment.set_value(start + t * (end - start))
+                return GLib.SOURCE_CONTINUE
+            else:
+                adjustment.set_value(end)
+                return GLib.SOURCE_REMOVE
+
+        window.add_tick_callback(scroll)
 
     def show_about(self, button: Gtk.Button) -> None:
         dialog = AboutDialog()
