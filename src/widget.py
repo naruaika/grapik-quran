@@ -23,6 +23,15 @@ class AboutDialog(Gtk.AboutDialog):
     __gtype_name__ = 'dialog_about'
 
 
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/musshaf.ui')
+class MusshafBox(Gtk.Box):
+    __gtype_name__ = 'box_musshaf'
+
+    listbox = Gtk.Template.Child('listbox')
+    progressbar = Gtk.Template.Child('progressbar')
+    btn_ok = Gtk.Template.Child('btn_ok')
+
+
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/navigation.ui')
 class NavPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'popover_nav'
@@ -42,9 +51,10 @@ class NavPopover(Gtk.PopoverMenu):
     # TODO: connect completion to entry
     complete_sura_name = Gtk.Template.Child('complete_sura_name')
     adjust_aya_no = Gtk.Template.Child('adjust_aya_no')
+    adjust_page_no = Gtk.Template.Child('adjust_page_no')
 
 
-@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/translation.ui')
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/tarajem.ui')
 class TarajemPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'popover_tarajem'
 
@@ -52,16 +62,16 @@ class TarajemPopover(Gtk.PopoverMenu):
     listbox = Gtk.Template.Child('listbox')
 
 
-@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/main_menu.ui')
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/main-menu.ui')
 class MenuPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'popover_menu'
 
+    btn_musshaf = Gtk.Template.Child('btn_musshaf')
     btn_preferences = Gtk.Template.Child('btn_preferences')
     btn_shortcut = Gtk.Template.Child('btn_shortcut')
     btn_help = Gtk.Template.Child('btn_help')
     btn_about = Gtk.Template.Child('btn_about')
     btn_quit = Gtk.Template.Child('btn_quit')
-
 
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/message.ui')
 class ToastMessage(Gtk.Revealer):

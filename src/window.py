@@ -22,8 +22,8 @@ import copy
 import os
 
 from .model import Reader, ResourceManager
-from .widget import AboutDialog, NavPopover, TarajemPopover, MenuPopover, \
-    ToastMessage
+from .widget import AboutDialog, MusshafBox, NavPopover, TarajemPopover, \
+    MenuPopover, ToastMessage
 
 
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/window.ui')
@@ -31,11 +31,11 @@ class MainWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'main_window'
 
     # TODO: define page height automatically based on page width
-    PAGE_SIZE_WIDTH = 456  # in pixels
-    PAGE_SIZE_HEIGHT = 672  # in pixels
+    PAGE_SIZE_WIDTH = None  # in pixels
+    PAGE_SIZE_HEIGHT = None  # in pixels
     PAGE_SCALE = 1.0
-    PAGE_NO_MIN = 1
-    PAGE_NO_MAX = 604
+    PAGE_NO_MIN = 0
+    PAGE_NO_MAX = None
     SURA_LENGTH = -1
 
     page_no: int = -1
@@ -59,20 +59,24 @@ class MainWindow(Gtk.ApplicationWindow):
     is_downloading: bool = False  # to limit download thread
     is_shift_pressed: bool = False
     is_tarajem_opened: bool = False
+    is_welcome_opened: bool = True
 
     model = Reader()
 
+    box_musshaf = MusshafBox()
+    popover_menu = MenuPopover()
     popover_nav = NavPopover()
     popover_tarajem = TarajemPopover()
-    popover_more = MenuPopover()
     toast_message = ToastMessage()
 
     btn_open_nav = Gtk.Template.Child('btn_open_nav')
     btn_open_more = Gtk.Template.Child('btn_open_more')
     btn_open_tarajem = Gtk.Template.Child('btn_open_tarajem')
+    btn_open_tarajem = Gtk.Template.Child('btn_open_tarajem')
     btn_tarajem_option = Gtk.Template.Child('btn_tarajem_option')
     btn_back_page = Gtk.Template.Child('btn_back_page')
     btn_next_page = Gtk.Template.Child('btn_next_page')
+    box_navbar = Gtk.Template.Child('box_navbar')
     page_left = Gtk.Template.Child('page_left')
     page_right = Gtk.Template.Child('page_right')
     page_left_evbox = Gtk.Template.Child('page_left_evbox')
@@ -83,8 +87,9 @@ class MainWindow(Gtk.ApplicationWindow):
     page_right_scroll = Gtk.Template.Child('page_right_scroll')
     page_left_listbox = Gtk.Template.Child('page_left_listbox')
     page_right_listbox = Gtk.Template.Child('page_right_listbox')
-    win_title = Gtk.Template.Child('win_title')
     main_overlay = Gtk.Template.Child('main_overlay')
+    musshaf_viewer = Gtk.Template.Child('musshaf_viewer')
+    win_title = Gtk.Template.Child('win_title')
 
     prev_card_focused = None
     prev_page_focused = None
@@ -119,37 +124,91 @@ class MainWindow(Gtk.ApplicationWindow):
         self.popover_nav.spin_aya_no.connect('value-changed', self.go_to_aya)
         self.popover_nav.spin_juz_no.connect('value-changed', self.go_to_juz)
         # self.popover_nav.spin_hizb_no.connect('value-changed', self.go_to_hizb)
-        self.popover_more.btn_about.connect('clicked', self.show_about)
+        self.popover_menu.btn_about.connect('clicked', self.show_about)
         self.btn_open_tarajem.connect('clicked', self.toggle_tarajem)
         self.popover_tarajem.listbox.connect('row-activated',
                                              self.select_tarajem)
         self.popover_tarajem.entry.connect('search-changed',
                                            self.filter_tarajem)
+        self.box_musshaf.listbox.connect('row-activated',
+                                         self.select_musshaf)
+        self.box_musshaf.btn_ok.connect('clicked', self.show_musshaf)
         self.connect('key-press-event', self.on_key_press)
         self.connect('key-release-event', self.on_key_release)
         self.connect('focus-out-event', self.on_loses_focus)
 
         # Set widget behaviours
-        self.btn_open_more.set_popover(self.popover_more)
         self.btn_open_nav.set_popover(self.popover_nav)
+        self.btn_open_more.set_popover(self.popover_menu)
         self.btn_tarajem_option.set_popover(self.popover_tarajem)
         self.main_overlay.add_overlay(self.toast_message)
+        self.main_overlay.add_overlay(self.box_musshaf)
 
-        # Populate data
+        # Populate static data
+        # for musshaf
         # TODO: implements user-settings
+        musshaf_dir = os.path.join(GLib.get_user_data_dir(),
+                                   'grapik-quran/musshaf')
+        if not os.path.isdir(musshaf_dir):
+            os.makedirs(os.path.join(GLib.get_user_data_dir(),
+                                     f'grapik-quran/musshaf'), exist_ok=True)
+        for musshaf in self.model.get_musshafs():
+            musshaf_id, musshaf_name = musshaf[:2]
+            musshaf_desc = musshaf[4]
+            row = Gtk.ListBoxRow()
+            row.id = musshaf_id
+            is_musshafdir_exist = os.path.isdir(os.path.join(musshaf_dir,
+                                                             musshaf_id))
+            is_musshafbbox_exist = self.model.check_musshaf(musshaf_id)
+            row.is_downloaded = is_musshafdir_exist and is_musshafbbox_exist
+            label1 = Gtk.Label()
+            label1.set_markup(f'<span weight="bold">{musshaf_name}</span>')
+            label1.set_halign(Gtk.Align.START)
+            label2 = Gtk.Label()
+            label2.set_halign(Gtk.Align.START)
+            label2.set_line_wrap(True)
+            label2.set_markup('<span size="small" foreground="#cccccc">'
+                              f'{musshaf_desc}</span>')
+            label2.set_justify(Gtk.Justification.FILL)
+            vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+            vbox.pack_start(label1, True, True, 0)
+            vbox.pack_start(label2, True, True, 1)
+            hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+            icon_name = ('object-select-symbolic' if row.is_downloaded else
+                         'folder-download-symbolic')
+            image = Gtk.Image.new_from_icon_name(icon_name,
+                                                 Gtk.IconSize.BUTTON)
+            image.set_margin_end(5)
+            image.set_valign(Gtk.Align.START)
+            hbox.pack_start(image, False, True, 0)
+            hbox.pack_end(vbox, True, True, 0)
+            if row.is_downloaded and musshaf_id != \
+                    self.model.get_selected_musshaf:
+                image.set_opacity(0)
+            else:
+                image.set_opacity(1)
+            row.add(hbox)
+            self.box_musshaf.listbox.add(row)
+
+        # for surah names
         for sura in self.model.get_suras():
             sura_id = str(sura[0])
             sura_name = f'{sura_id}. {sura[4]}'
             self.popover_nav.combo_sura_name.append(sura_id, sura_name)
-        self.popover_nav.page_length.set_text(f'({self.PAGE_NO_MIN}–'
-                                              f'{self.PAGE_NO_MAX})')
         self.popover_nav.combo_sura_name.set_active_id(str(self.sura_no))
 
+        # for tarajem
         self.populate_tarajem()
 
+        # if self.model.get_selected_musshaf():
+        self.btn_tarajem_option.set_sensitive(False)
+        self.btn_open_nav.set_sensitive(False)
+        self.box_musshaf.listbox.show_all()
+        self.is_welcome_opened = True
+
     def on_key_press(self, window: Gtk.Window, event: Gdk.EventKey) -> None:
-        if event.state == Gdk.ModifierType.CONTROL_MASK and \
-                event.keyval == Gdk.KEY_c:
+        if event.keyval == Gdk.KEY_c and event.state == \
+                Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.MOD2_MASK:
             texts = ''
             bboxes = [(bbox[0], bbox[1]) for bbox
                       in self.bboxes_focused['page_right']]
@@ -206,14 +265,14 @@ class MainWindow(Gtk.ApplicationWindow):
         self.is_shift_pressed = False
 
     def update(self, updated: str = None) -> None:
-        if self.is_updating:
+        if self.is_updating or self.is_welcome_opened:
             return
 
         # Sync other navigation variables
         is_page_no_updated = True
         prev_page_no = self.page_no
         if updated in ['page', '2page']:
-            if updated == '2page' and self.page_no % 2 == 0:
+            if updated == '2page' and self.page_no % 2 == 1:
                 self.page_no -= 1
             self.sura_no = self.model.get_sura_no(self.page_no)
             self.aya_no = self.model.get_aya_no(self.page_no)
@@ -244,18 +303,25 @@ class MainWindow(Gtk.ApplicationWindow):
             self.hizb_no = self.model.get_hizb_no(self.sura_no, self.aya_no)
             self.SURA_LENGTH = self.model.get_sura_length(self.sura_no)
 
-        # Always set odd page numbers for right pages
+        # Always set even page numbers for right pages
         page_right_no = self.page_no
-        if self.page_no % 2 == 0:
+        if self.page_no % 2 == 1:
             page_right_no -= 1
 
         def set_image(page: Gtk.Image, page_no: int) -> None:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(os.path.join(
-                GLib.get_user_data_dir(), 'grapik-quran/pages/'
-                f'{self.model.get_selected_quran()}/{page_no}.png'),
-                self.PAGE_SIZE_WIDTH * self.PAGE_SCALE,
-                self.PAGE_SIZE_HEIGHT * self.PAGE_SCALE, True)
-            page.set_from_pixbuf(pixbuf)
+            try:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(os.path.join(
+                    GLib.get_user_data_dir(), 'grapik-quran/musshaf/'
+                    f'{self.model.get_selected_musshaf()}/{page_no}.png'),
+                    round(self.PAGE_SIZE_WIDTH * self.PAGE_SCALE),
+                    round(self.PAGE_SIZE_HEIGHT * self.PAGE_SCALE), True)
+                page.set_from_pixbuf(pixbuf)
+            except:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_resource_at_scale(
+                    '/org/naruaika/Quran/res/img/page_null.png',
+                    round(self.PAGE_SIZE_WIDTH * self.PAGE_SCALE),
+                    round(self.PAGE_SIZE_HEIGHT * self.PAGE_SCALE), True)
+                page.set_from_pixbuf(pixbuf)
 
         if self.page_no == prev_page_no and updated not in ['page', '2page']:
             is_page_no_updated = False
@@ -266,24 +332,33 @@ class MainWindow(Gtk.ApplicationWindow):
             set_image(self.page_left, page_right_no + 1)
 
             if self.is_tarajem_opened:
-                is_pageno_even = self.page_no % 2 == 0
-                self.page_right_scroll.set_visible(is_pageno_even)
-                self.page_left_scroll.set_visible(not is_pageno_even)
+                is_pageno_odd = self.page_no % 2 == 1
+                self.page_right_scroll.set_visible(is_pageno_odd)
+                self.page_left_scroll.set_visible(not is_pageno_odd)
 
         self.is_updating = True
 
         # Sync navigation widget's attributes
         self.popover_nav.spin_page_no.set_value(self.page_no)
-        self.popover_nav.combo_sura_name.set_active_id(str(self.sura_no))
-        self.popover_nav.adjust_aya_no.set_upper(self.SURA_LENGTH)
-        self.popover_nav.spin_aya_no.set_value(self.aya_no)
-        self.popover_nav.spin_juz_no.set_value(self.juz_no)
-        self.popover_nav.spin_hizb_no.set_value(self.hizb_no)
-        self.popover_nav.aya_length.set_text(f'({1}–'
-                                             f'{self.SURA_LENGTH})')
-        sura_name = self.popover_nav.combo_sura_name.get_active_text()
-        self.win_title.set_text(f'{sura_name.split()[1]} ({self.sura_no}) : '
-                                f'{self.aya_no}')
+        if self.sura_no > 0:
+            self.popover_nav.combo_sura_name.set_active_id(str(self.sura_no))
+            self.popover_nav.adjust_aya_no.set_upper(self.SURA_LENGTH)
+            self.popover_nav.spin_aya_no.set_value(self.aya_no)
+            self.popover_nav.spin_juz_no.set_value(self.juz_no)
+            self.popover_nav.spin_hizb_no.set_value(self.hizb_no)
+            self.popover_nav.aya_length.set_text(f'({1}–'
+                                                 f'{self.SURA_LENGTH})')
+            sura_name = self.popover_nav.combo_sura_name.get_active_text()
+            self.win_title.set_text(f'{sura_name.split()[1]} ({self.sura_no}) '
+                                    f': {self.aya_no}')
+        else:
+            self.popover_nav.combo_sura_name.set_active_id('-1')
+            self.popover_nav.adjust_aya_no.set_upper(-1)
+            self.popover_nav.spin_aya_no.set_value(-1)
+            self.popover_nav.spin_juz_no.set_value(-1)
+            self.popover_nav.spin_hizb_no.set_value(-1)
+            self.popover_nav.aya_length.set_text('')
+            self.win_title.set_text('Quran')
         self.btn_back_page.set_visible(self.page_no > self.PAGE_NO_MIN)
         self.btn_next_page.set_visible(self.page_no < self.PAGE_NO_MAX)
 
@@ -299,7 +374,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if updated == 'focus':
             self.bboxes_focused = copy.deepcopy(self.bboxes_hovered)
         else:
-            page_id = ('page_left' if self.page_no % 2 == 0 else 'page_right')
+            page_id = ('page_left' if self.page_no % 2 == 1 else 'page_right')
             bboxes = self.bboxes[page_id]
             self.bboxes_focused[page_id] = [bbox for bbox in bboxes if bbox[:2]
                                             == (self.sura_no, self.aya_no)]
@@ -309,7 +384,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.update_tarajem(is_page_no_updated, False)
 
     def update_tarajem(self, content_changed: bool = True,
-                       trigger_open: bool = True) -> None:
+                       open_panel: bool = True) -> None:
         if content_changed:
             # Clear previous translations
             self.page_right_listbox.foreach(lambda x:
@@ -319,12 +394,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
         if not self.model.get_selected_tarajem():
             return
-        if trigger_open:
+        if open_panel:
             self.btn_open_tarajem.set_active(True)  # trigger a click to open
                                                     # tarajem panel
 
         # Obtain surah-ayah number of the current page accordingly
-        page_id = ('page_left' if self.page_no % 2 == 0 else 'page_right')
+        page_id = ('page_left' if self.page_no % 2 == 1 else 'page_right')
         bboxes = [bbox[:2] for bbox in self.bboxes[page_id]]
         uniques = set()  # for removing duplicate surah-ayah pairs
         bboxes = [x for x in bboxes if not (x in uniques or uniques.add(x))]
@@ -338,9 +413,6 @@ class MainWindow(Gtk.ApplicationWindow):
             if content_changed:
                 row = Gtk.ListBoxRow()
                 row.set_can_focus(False)
-                # row.set_activatable(False)
-                # row.set_selectable(False)
-                # row.set_sensitive(False)
                 hbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
                 label = Gtk.Label(
                     label=f'{self.model.get_sura_name(bbox[0])} '
@@ -376,7 +448,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 listbox.get_row_at_index(idx_bbox).set_name('row')
 
         # TODO: needs a better solution
-        scrollwindow = (self.page_right_scroll if self.page_no % 2 == 0
+        scrollwindow = (self.page_right_scroll if self.page_no % 2 == 1
                         else self.page_left_scroll)
         GLib.timeout_add(50, self.animate_scroll_to, scrollwindow,
                          self.prev_card_focused)
@@ -388,9 +460,9 @@ class MainWindow(Gtk.ApplicationWindow):
     def toggle_tarajem(self, button: Gtk.Button) -> None:
         self.is_tarajem_opened = button.get_active()
         if self.is_tarajem_opened:
-            is_pageno_even = self.page_no % 2 == 0
-            self.page_right_scroll.set_visible(is_pageno_even)
-            self.page_left_scroll.set_visible(not is_pageno_even)
+            is_pageno_odd = self.page_no % 2 == 1
+            self.page_right_scroll.set_visible(is_pageno_odd)
+            self.page_left_scroll.set_visible(not is_pageno_odd)
         else:
             self.page_right_scroll.set_visible(False)
             self.page_left_scroll.set_visible(False)
@@ -439,6 +511,81 @@ class MainWindow(Gtk.ApplicationWindow):
         query = entry.get_text()
         self.populate_tarajem(query)
 
+    def select_tarajem(self, box: Gtk.ListBox, row: Gtk.ListBoxRow) -> None:
+        # TODO: allow multiple downloading at the same time
+        # FIXME: freeze when enabling a tarajem while dowloading another
+        if self.is_downloading:
+            return
+
+        container = row.get_children()[0]
+        ic_selected = container.get_children()[1]
+
+        if not row.is_downloaded:
+            self.is_downloading = True
+
+            ic_selected.hide()
+            spinner = Gtk.Spinner()
+            spinner.set_halign(Gtk.Align.END)
+            spinner.set_margin_start(5)
+            container.pack_end(spinner, True, True, 0)
+            container.show_all()
+            spinner.start()
+
+            # TODO: enable a tarajem after downloading automatically
+            def add_tarajem():
+                if ResourceManager.add_tarajem(row.id):
+                    row.is_downloaded = True
+                    ic_selected.set_from_icon_name('object-select-symbolic',
+                                                   Gtk.IconSize.BUTTON)
+                container.remove(spinner)
+                self.is_downloading = False
+
+            Thread(target=add_tarajem).start()
+        else:
+            ic_selected.set_visible(
+                row.id not in self.model.get_selected_tarajem())
+            self.model.update_selected_tarajem(row.id)
+            self.update_tarajem()
+
+    def select_musshaf(self, box: Gtk.ListBox, row: Gtk.ListBoxRow) -> None:
+        if self.is_downloading:
+            return
+
+        container = row.get_children()[0]
+        ic_selected = container.get_children()[0]
+
+        if not row.is_downloaded:
+            self.is_downloading = True
+
+            spinner = Gtk.Spinner()
+            spinner.set_margin_end(5)
+            spinner.set_valign(Gtk.Align.START)
+            container.remove(ic_selected)
+            container.pack_start(spinner, False, True, 0)
+            container.show_all()
+            spinner.start()
+
+            def add_musshaf():
+                progressbar = self.box_musshaf.progressbar
+                progressbar.set_opacity(1)
+                if ResourceManager.add_musshaf(row.id, progressbar):
+                    row.is_downloaded = True
+                    ic_selected.set_from_icon_name('object-select-symbolic',
+                                                   Gtk.IconSize.BUTTON)
+                    ic_selected.set_opacity(0)
+                container.remove(spinner)
+                container.pack_start(ic_selected, False, True, 0)
+                progressbar.set_opacity(0)
+                self.is_downloading = False
+
+            Thread(target=add_musshaf).start()
+        else:
+            if self.model.get_selected_musshaf == row.id:
+                return
+            ic_selected.set_opacity(1)
+            self.model.update_selected_musshaf(row.id)
+            self.box_musshaf.btn_ok.set_sensitive(True)
+
     def go_previous_page(self, button: Gtk.Button) -> None:
         page_increment = (1 if self.is_tarajem_opened else 2)
         self.page_no = max(self.page_no - page_increment, self.PAGE_NO_MIN)
@@ -483,8 +630,8 @@ class MainWindow(Gtk.ApplicationWindow):
         pageid_hovered = widget.get_name()
         page_bboxes = self.bboxes[pageid_hovered]
         for bbox in page_bboxes:
-            if bbox[3] <= event.x <= bbox[3] + bbox[5] and \
-                    bbox[4] <= event.y <= bbox[4] + bbox[6]:
+            if bbox[2] <= event.x <= bbox[2] + bbox[4] and \
+                    bbox[3] <= event.y <= bbox[3] + bbox[5]:
                 suraya_hovered = bbox[:2]
                 break
 
@@ -512,9 +659,9 @@ class MainWindow(Gtk.ApplicationWindow):
                      == suraya_hovered]
 
         # Draw bounding boxes over hovered aya(s) in tarajem viewer
-        listbox = (self.page_right_listbox if self.page_no % 2 == 0 else
+        listbox = (self.page_right_listbox if self.page_no % 2 == 1 else
                    self.page_left_listbox)
-        scrollwindow = (self.page_right_scroll if self.page_no % 2 == 0
+        scrollwindow = (self.page_right_scroll if self.page_no % 2 == 1
                         else self.page_left_scroll)
         for row in listbox:
             if row.get_name() == 'row-hovered':
@@ -544,46 +691,12 @@ class MainWindow(Gtk.ApplicationWindow):
             self.aya_no = first_bbox[1]
             self.update('focus')
 
-    def select_tarajem(self, box: Gtk.ListBox, row: Gtk.ListBoxRow) -> None:
-        # TODO: allow multiple downloading at the same time
-        # FIXME: freeze when enabling a tarajem while dowloading another
-        if self.is_downloading:
-            return
-        container = row.get_children()[0]
-        ic_selected = container.get_children()[1]
-        if not row.is_downloaded:
-            self.is_downloading = True
-
-            ic_selected.hide()
-            spinner = Gtk.Spinner()
-            spinner.set_halign(Gtk.Align.END)
-            spinner.set_margin_start(5)
-            container.pack_end(spinner, True, True, 0)
-            container.show_all()
-            spinner.start()
-
-            # TODO: enable a tarajem after downloading automatically
-            def add_tarajem():
-                if ResourceManager.add_tarajem(row.id):
-                    row.is_downloaded = True
-                    ic_selected.set_from_icon_name('object-select-symbolic',
-                                                   Gtk.IconSize.BUTTON)
-                container.remove(spinner)
-                self.is_downloading = False
-
-            Thread(target=add_tarajem).start()
-        else:
-            ic_selected.set_visible(
-                row.id not in self.model.get_selected_tarajem())
-            self.model.update_selected_tarajem(row.id)
-            self.update_tarajem()
-
     def draw_bbox(self, widget: Gtk.Widget, context: cairo.Context) -> None:
         page_id = widget.get_name()
         if self.bboxes_focused[page_id]:  # draw focus
             context.set_source_rgba(0.082, 0.325, 0.620, 0.2)
             for bbox in self.bboxes_focused[page_id]:
-                context.rectangle(*bbox[3:])
+                context.rectangle(*bbox[2:])
             context.fill()
 
         if self.bboxes_hovered[page_id] and \
@@ -593,7 +706,7 @@ class MainWindow(Gtk.ApplicationWindow):
             for bbox in self.bboxes_hovered[page_id]:
                 if bbox in self.bboxes_focused[page_id]:
                     continue
-                context.rectangle(*bbox[3:])
+                context.rectangle(*bbox[2:])
             context.fill()
 
     # FIXME: it's too heavy on shift key pressed while hovering
@@ -643,6 +756,33 @@ class MainWindow(Gtk.ApplicationWindow):
                 return GLib.SOURCE_REMOVE
 
         window.add_tick_callback(scroll)
+
+    def show_musshaf(self, button: Gtk.Button) -> None:
+        self.is_welcome_opened = False
+
+        self.main_overlay.remove(self.box_musshaf)
+        self.musshaf_viewer.show()
+        self.box_navbar.show()
+
+        self.btn_open_tarajem.set_sensitive(True)
+        self.btn_tarajem_option.set_sensitive(True)
+        self.btn_open_nav.set_sensitive(True)
+
+        musshaf_dir = os.path.join(
+            GLib.get_user_data_dir(),
+            f'grapik-quran/musshaf/{self.model.get_selected_musshaf()}')
+
+        self.PAGE_NO_MAX = len(os.listdir(musshaf_dir))
+        self.popover_nav.page_length.set_text(f'({self.PAGE_NO_MIN}–'
+                                              f'{self.PAGE_NO_MAX})')
+        self.popover_nav.adjust_page_no.set_upper(self.PAGE_NO_MAX)
+
+        page = GdkPixbuf.Pixbuf.new_from_file(os.path.join(
+            musshaf_dir, '1.png'))
+        self.PAGE_SIZE_WIDTH = page.get_width()
+        self.PAGE_SIZE_HEIGHT = page.get_height()
+
+        self.update('sura')
 
     def show_about(self, button: Gtk.Button) -> None:
         dialog = AboutDialog()

@@ -23,7 +23,6 @@
         "*.a"
     ],
     "modules" : [
-        "pypi-dependencies.json",
         {
             "name" : "grapik-quran",
             "builddir" : true,

@@ -2,14 +2,18 @@
 <gresources>
   <gresource prefix="/org/naruaika/Quran">
     <!-- UI components -->
-    <file compressed="true">res/ui/window.ui</file>
     <file compressed="true">res/ui/about.ui</file>
-    <file compressed="true">res/ui/navigation.ui</file>
-    <file compressed="true">res/ui/translation.ui</file>
-    <file compressed="true">res/ui/main_menu.ui</file>
+    <file compressed="true">res/ui/main-menu.ui</file>
     <file compressed="true">res/ui/message.ui</file>
+    <file compressed="true">res/ui/musshaf.ui</file>
+    <file compressed="true">res/ui/navigation.ui</file>
+    <file compressed="true">res/ui/tarajem.ui</file>
+    <file compressed="true">res/ui/window.ui</file>
 
     <!-- Styling -->
     <file compressed="true">res/css/main.css</file>
+
+    <!-- Images -->
+    <file compressed="true">res/img/page_null.png</file>
   </gresource>
 </gresources>

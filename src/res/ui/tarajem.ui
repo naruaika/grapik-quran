@@ -26,40 +26,62 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <object class="GtkScrolledWindow">
+          <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="min-content-width">350</property>
-            <property name="min-content-height">330</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkViewport">
+              <object class="GtkScrolledWindow">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="shadow-type">none</property>
+                <property name="can-focus">True</property>
+                <property name="min-content-width">350</property>
+                <property name="min-content-height">330</property>
                 <child>
-                  <object class="GtkListBox" id="listbox">
+                  <object class="GtkViewport">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="selection-mode">none</property>
-                    <style>
-                      <class name="box-tarajem-option"/>
-                    </style>
+                    <property name="shadow-type">none</property>
+                    <child>
+                      <object class="GtkListBox" id="listbox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="selection-mode">none</property>
+                        <style>
+                          <class name="box-tarajem-option"/>
+                        </style>
+                      </object>
+                    </child>
                   </object>
                 </child>
+                <style>
+                  <class name="frame"/>
+                </style>
               </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
-            <style>
-              <class name="frame"/>
-            </style>
+            <child>
+              <object class="GtkProgressBar" id="progressbar">
+                <property name="can-focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>

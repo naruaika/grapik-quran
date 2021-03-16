@@ -21,7 +21,7 @@
 
 /* TODO: add a border caligraph ornament */
 .tarajem-scroll {
-    padding: 0px 10px;
+    padding: 20px 40px;
     background-color: rgba(255, 255, 255, .9);
 }
 
@@ -98,12 +98,17 @@
     border-top-right-radius: 5px;
 }
 
-.frame,
+/* .frame,
 .frame viewport {
     border-radius: 5px;
-}
+} */
 
 .box-tarajem-option row {
+    padding: 10px;
+    border-bottom: 1px solid #111111;
+}
+
+.box-quran-option row {
     padding: 10px;
     border-bottom: 1px solid #111111;
 }
@@ -127,4 +132,8 @@
 
 .btn-option {
     padding: 0px 4px;
+}
+
+progress, trough {
+    min-height: 4px;
 }
