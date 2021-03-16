@@ -565,7 +565,7 @@ class MainWindow(Gtk.ApplicationWindow):
             container.show_all()
             spinner.start()
 
-            def add_musshaf():
+            def add_musshaf() -> None:
                 progressbar = self.box_musshaf.progressbar
                 progressbar.set_opacity(1)
                 if ResourceManager.add_musshaf(row.id, progressbar):
@@ -582,6 +582,15 @@ class MainWindow(Gtk.ApplicationWindow):
         else:
             if self.model.get_selected_musshaf == row.id:
                 return
+
+            def uncheck_all(row) -> None:
+                if row.is_downloaded:
+                    container = row.get_children()[0]
+                    icon = container.get_children()[0]
+                    icon.set_opacity(0)
+
+            box.foreach(uncheck_all)
+
             ic_selected.set_opacity(1)
             self.model.update_selected_musshaf(row.id)
             self.box_musshaf.btn_ok.set_sensitive(True)
