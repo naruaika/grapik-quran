@@ -320,7 +320,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 pixbuf = GdkPixbuf.Pixbuf.new_from_resource_at_scale(
                     '/org/naruaika/Quran/res/img/page_null.png',
                     round(self.PAGE_SIZE_WIDTH * self.PAGE_SCALE),
-                    round(self.PAGE_SIZE_HEIGHT * self.PAGE_SCALE), True)
+                    round(self.PAGE_SIZE_HEIGHT * self.PAGE_SCALE), False)
                 page.set_from_pixbuf(pixbuf)
 
         if self.page_no == prev_page_no and updated not in ['page', '2page']:
