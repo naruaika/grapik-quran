@@ -534,11 +534,15 @@ class MainWindow(Gtk.ApplicationWindow):
 
             # TODO: enable a tarajem after downloading automatically
             def add_tarajem():
-                if ResourceManager.add_tarajem(row.id):
+                progressbar = self.popover_tarajem.progressbar
+                progressbar.show()
+                if ResourceManager.add_tarajem(row.id, progressbar):
                     row.is_downloaded = True
                     ic_selected.set_from_icon_name('object-select-symbolic',
                                                    Gtk.IconSize.BUTTON)
                 container.remove(spinner)
+                progressbar.hide()
+                progressbar.set_fraction(0)
                 self.is_downloading = False
 
             Thread(target=add_tarajem).start()
@@ -576,8 +580,8 @@ class MainWindow(Gtk.ApplicationWindow):
                     ic_selected.set_opacity(0)
                 container.remove(spinner)
                 container.pack_start(ic_selected, False, True, 0)
-                progressbar.set_fraction(0)
                 progressbar.set_opacity(0)
+                progressbar.set_fraction(0)
                 self.is_downloading = False
 
             Thread(target=add_musshaf).start()

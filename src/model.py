@@ -24,6 +24,7 @@ import shutil
 import sqlite3
 import tempfile
 import zipfile
+import faulthandler
 
 
 class Reader:
@@ -226,9 +227,10 @@ class ResourceManager:
 
         image_size = int(response_images.getheader('Content-Length'))
         bbox_size = int(response_bboxes.getheader('Content-Length'))
-        total_length = image_size + bbox_size
+        content_length = image_size + bbox_size
         dl = 0
 
+        faulthandler.enable()
         # Download archive file for the musshaf images
         # FIXME: segmentation fault caused by unstable internet connection(?)
         chunk_size = 4096
@@ -242,7 +244,7 @@ class ResourceManager:
                         break
                     dl += len(chunk)
                     if progressbar:
-                        progressbar.set_fraction(dl / total_length)
+                        progressbar.set_fraction(dl / content_length)
                     f.write(chunk)
 
                 f.seek(0)
@@ -270,7 +272,7 @@ class ResourceManager:
                         break
                     dl += len(chunk)
                     if progressbar:
-                        progressbar.set_fraction(dl / total_length)
+                        progressbar.set_fraction(dl / content_length)
                     f.write(chunk)
 
                 f.seek(0)
@@ -326,19 +328,24 @@ class ResourceManager:
 
         response = urlopen(url=meta[-1])
 
-        total_length = int(response.getheader('Content-Length'))
+        content_length = response.getheader('Content-Length')
+        content_length = (0 if not content_length else int(content_length))
         dl = 0
 
-        chunk_size = 4096
+        chunk_size = 1024
         with tempfile.TemporaryFile() as f:
             while True:
                 chunk = response.read(chunk_size)
                 if not chunk:
                     break
-                dl += len(chunk)
-                if progressbar:
-                    progressbar.set_fraction(dl / total_length)
+                if content_length > 0:
+                    dl += len(chunk)
+                    if progressbar:
+                        progressbar.set_fraction(dl / content_length)
                 f.write(chunk)
+
+            if progressbar:  # for when has no content length in its header
+                progressbar.set_fraction(1)
 
             f.seek(0)
             query = f'''CREATE TABLE {tarajem_id} (
@@ -350,8 +357,10 @@ class ResourceManager:
             );'''
             cur.execute(query)
             cur.execute('PRAGMA encoding="UTF-8";')
-            cur.executescript('\n'.join(f.read().decode('utf-8').replace('index', 'id')
-                                        .replace(r"\'", "''").split('\n')[46:]))
+            cur.executescript(
+                '\n'.join(f.read().decode('utf-8').replace('index', 'id')
+                          .replace(r"\'),", "'),").replace(r"\'", "''")
+                          .split('\n')[46:]))
 
         con.commit()
         con.close()

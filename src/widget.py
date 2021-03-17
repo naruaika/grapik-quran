@@ -60,6 +60,7 @@ class TarajemPopover(Gtk.PopoverMenu):
 
     entry = Gtk.Template.Child('entry')
     listbox = Gtk.Template.Child('listbox')
+    progressbar = Gtk.Template.Child('progressbar')
 
 
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/main-menu.ui')
