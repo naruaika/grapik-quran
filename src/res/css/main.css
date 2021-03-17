@@ -64,23 +64,28 @@
     padding: 10px 20px 0px 20px;
 }
 /* For the surah-ayah numbering */
-.box-tarajem box > label:first-child {
+.box-tarajem box > label {
     padding: 5px 20px;
-    font-size: 9pt;
+    font-size: 10pt;
     color: #333333;
 }
-/* For the translation contents */
-.box-tarajem box > label:nth-child(2) {
-    padding-top: 5px;
-}
-.box-tarajem box > label:last-child {
-    padding-bottom: 10px;
-}
-.box-tarajem row:nth-child(2n+1) box > label:first-child {
+.box-tarajem row:nth-child(2n+1) box > label {
     border-bottom: 1px solid #cccccc;
 }
-.box-tarajem row:nth-child(2n) box > label:first-child {
+.box-tarajem row:nth-child(2n) box > label {
     border-bottom: 1px solid #dddddd;
+}
+/* For the translation contents */
+.box-tarajem box > textview,
+.box-tarajem box > textview text {
+    color: inherit;
+    border: inherit;
+    padding: 5px 20px;
+    padding-top: 5px;
+    background-color: transparent;
+}
+.box-tarajem box:last-child {
+    padding-bottom: 10px
 }
 
 /* For the translation contents being hovered/focused */
@@ -95,29 +100,21 @@
     border: 1px solid #a8a8a8;
 }
 /* For the surah-ayah numbering being hovered/focused */
-#row-focused box > label:first-child {
+#row-focused box > label,
+#row-hovered box > label {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+#row-focused box > label {
     color: @primary-accent;
     background-color: #d0ddec;
     border-bottom: 1px solid @primary-accent;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
 }
-#row-hovered box > label:first-child {
+#row-hovered box > label {
     border-bottom: 1px solid #a8a8a8;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
 }
 
-/* .frame,
-.frame viewport {
-    border-radius: 5px;
-} */
-
-.box-tarajem-option row {
-    padding: 10px;
-    border-bottom: 1px solid #111111;
-}
-
+.box-tarajem-option row,
 .box-quran-option row {
     padding: 10px;
     border-bottom: 1px solid #111111;

@@ -422,21 +422,23 @@ class MainWindow(Gtk.ApplicationWindow):
                 hbox.pack_start(label, True, True, 0)
 
                 for tid in self.model.get_selected_tarajem():
-                    label = Gtk.Label()
+                    textview = Gtk.TextView()
+                    textview.set_editable(False)
+                    textview.set_wrap_mode(Gtk.WrapMode.WORD_CHAR )
+                    textview.set_can_focus(False)
+                    textview.set_hexpand(True)
                     tarajem = self.model.get_tarajem(tid)
                     translator = tarajem[1]
                     language = tarajem[2].title()
-                    markup = f'<span foreground="#444444" size="small">' \
-                        f'{language} - {translator}</span>\n' \
-                        f'{self.model.get_tarajem_text(tid, *bbox[:2])[2]}'
-                    label.set_markup(markup)
-                    label.set_line_wrap(True)
-                    label.set_selectable(True)
-                    label.set_can_focus(False)
-                    label.set_justify(Gtk.Justification.FILL)
-                    label.set_halign(Gtk.Align.START)
-                    label.set_hexpand(True)
-                    hbox.pack_start(label, True, True, 1)
+                    markup = '<span foreground="#444444" size="small">' \
+                        f'{language} - {translator}</span>\n<span ' \
+                        'size="medium">' \
+                        f'{self.model.get_tarajem_text(tid, *bbox[:2])[2]}' \
+                        '</span>'
+                    buffer = Gtk.TextBuffer()
+                    buffer.insert_markup(buffer.get_start_iter(), markup, -1)
+                    textview.set_buffer(buffer)
+                    hbox.pack_start(textview, True, True, 1)
                 row.add(hbox)
                 listbox.add(row)
 
