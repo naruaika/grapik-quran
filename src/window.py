@@ -30,15 +30,15 @@ from .widget import AboutDialog, MusshafBox, NavPopover, TarajemPopover, \
 class MainWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'main_window'
 
-    # TODO: define page height automatically based on page width
     PAGE_SIZE_WIDTH = None  # in pixels
     PAGE_SIZE_HEIGHT = None  # in pixels
     PAGE_SCALE = 1.0
     PAGE_NO_MIN = 1
     PAGE_NO_MAX = None
+    PAGE_NO_SHIFT = 0
     SURA_LENGTH = -1
 
-    page_no: int = -1
+    page_no: int = 1
     sura_no: int = 1
     aya_no: int = 1
     juz_no: int = 1
@@ -339,7 +339,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.is_updating = True
 
         # Sync navigation widget's attributes
-        self.popover_nav.spin_page_no.set_value(self.page_no)
+        page_no = self.page_no - self.PAGE_NO_SHIFT + 1
+        self.popover_nav.spin_page_no.set_value(page_no)
         if self.sura_no > 0:
             self.popover_nav.combo_sura_name.set_active_id(str(self.sura_no))
             self.popover_nav.adjust_aya_no.set_upper(self.SURA_LENGTH)
@@ -607,7 +608,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.update('page' if self.is_tarajem_opened else '2page')
 
     def go_to_page(self, button: Gtk.SpinButton) -> None:
-        self.page_no = int(button.get_value())
+        self.page_no = int(button.get_value()) + self.PAGE_NO_SHIFT - 1
         self.update('page')
 
     def go_to_sura(self, box: Gtk.ComboBoxText) -> None:
@@ -782,10 +783,15 @@ class MainWindow(Gtk.ApplicationWindow):
             GLib.get_user_data_dir(),
             f'grapik-quran/musshaf/{self.model.get_selected_musshaf()}')
 
+        self.PAGE_NO_SHIFT = self.model.get_page_no(1, 1)
         self.PAGE_NO_MAX = len(os.listdir(musshaf_dir))
-        self.popover_nav.page_length.set_text(f'({self.PAGE_NO_MIN}–'
-                                              f'{self.PAGE_NO_MAX})')
-        self.popover_nav.adjust_page_no.set_upper(self.PAGE_NO_MAX)
+        self.popover_nav.page_length.set_text(
+            f'({self.PAGE_NO_MIN}–'
+            f'{self.model.get_page_no(114, 1) - self.PAGE_NO_SHIFT + 1})')
+        self.popover_nav.adjust_page_no.set_upper(self.PAGE_NO_MAX -
+                                                  self.PAGE_NO_SHIFT + 1)
+        self.popover_nav.adjust_page_no.set_lower(self.PAGE_NO_MIN -
+                                                  self.PAGE_NO_SHIFT + 1)
 
         page = GdkPixbuf.Pixbuf.new_from_file(os.path.join(
             musshaf_dir, '1.png'))

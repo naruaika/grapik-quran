@@ -45,7 +45,10 @@ class Reader:
         query = f'SELECT page FROM {self._selected_musshaf} WHERE sura=? AND' \
             ' aya=? ORDER BY id DESC'
         self._musshaf_cursor.execute(query, (sura_no, aya_no))
-        return self._musshaf_cursor.fetchone()[0]
+        result = self._musshaf_cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
 
     def get_suras(self) -> List:
         self._main_cursor.execute('SELECT * FROM suras')
