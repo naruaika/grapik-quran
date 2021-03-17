@@ -1,3 +1,6 @@
+@define-color shadow #eeeeee;
+@define-color primary-accent #0076ff;
+
 /*
  * Customise the style of the application window with the Quran pages
  * TODO: should be matched programmatically with the Quran page colour
@@ -11,18 +14,25 @@
  **/
 #page-fold-left {
     padding: 10px;
-    background: linear-gradient(to left, #eeeeee, white);
+    background: linear-gradient(to left, @shadow, white);
 }
 #page-fold-right {
     padding: 10px;
     border-left: 1px solid #cccccc;
-    background: linear-gradient(to right, #eeeeee, white);
+    background: linear-gradient(to right, @shadow, white);
 }
 
 /* TODO: add a border caligraph ornament */
 .tarajem-scroll {
     padding: 20px 40px;
-    background-color: rgba(255, 255, 255, .9);
+    background-color: rgba(255, 255, 255, 1.0);
+}
+.tarajem-scroll-left {
+    background-image: linear-gradient(to left, @shadow, white, white 40px);
+}
+.tarajem-scroll-right {
+    border-left: 1px solid #cccccc;
+    background-image: linear-gradient(to right, @shadow, white, white 40px);
 }
 
 .box-tarajem {
@@ -34,7 +44,7 @@
     margin-top: 0px;
     font-size: 12pt;
     font-weight: 500;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 .box-tarajem row:first-child {
     margin-top: 15px;
@@ -77,7 +87,7 @@
 #row-focused {
     color: black;
     background-color: #d0ddec;
-    border: 1px solid #0076ff;
+    border: 1px solid @primary-accent;
 }
 #row-hovered {
     color: black;
@@ -86,16 +96,16 @@
 }
 /* For the surah-ayah numbering being hovered/focused */
 #row-focused box > label:first-child {
-    color: #0076ff;
+    color: @primary-accent;
     background-color: #d0ddec;
-    border-bottom: 1px solid #0076ff;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    border-bottom: 1px solid @primary-accent;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 #row-hovered box > label:first-child {
     border-bottom: 1px solid #a8a8a8;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 /* .frame,
