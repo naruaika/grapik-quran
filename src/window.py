@@ -113,12 +113,12 @@ class MainWindow(Gtk.ApplicationWindow):
         # Set signal handlers
         self.btn_back_page.connect('clicked', self.go_previous_page)
         self.btn_next_page.connect('clicked', self.go_next_page)
-        self.page_left_evbox.connect('motion-notify-event', self.page_hovered)
-        self.page_right_evbox.connect('motion-notify-event', self.page_hovered)
+        self.page_left_evbox.connect('motion-notify-event', self.hover_on_aya)
+        self.page_right_evbox.connect('motion-notify-event', self.hover_on_aya)
         self.page_left_evbox.connect('button-press-event', self.focus_on_aya)
         self.page_right_evbox.connect('button-press-event', self.focus_on_aya)
-        self.page_left_drawarea.connect('draw', self.draw_bbox)
-        self.page_right_drawarea.connect('draw', self.draw_bbox)
+        self.page_left_drawarea.connect('draw', self.draw_on_aya)
+        self.page_right_drawarea.connect('draw', self.draw_on_aya)
         self.popover_nav.spin_page_no.connect('value-changed', self.go_to_page)
         self.popover_nav.combo_sura_name.connect('changed', self.go_to_sura)
         self.popover_nav.spin_aya_no.connect('value-changed', self.go_to_aya)
@@ -254,12 +254,12 @@ class MainWindow(Gtk.ApplicationWindow):
         elif event.keyval == Gdk.KEY_Shift_L:
             self.is_shift_pressed = True
             # FIXME: force hovering is not working anymore
-            self.page_hovered(self.prev_page_focused, self.prev_mouse_event)
+            self.hover_on_aya(self.prev_page_focused, self.prev_mouse_event)
 
     def on_key_release(self, window: Gtk.Window, event: Gdk.EventKey) -> None:
         if event.keyval == Gdk.KEY_Shift_L:
             self.is_shift_pressed = False
-            self.page_hovered(self.prev_page_focused, self.prev_mouse_event)
+            self.hover_on_aya(self.prev_page_focused, self.prev_mouse_event)
 
     def on_loses_focus(self, window: Gtk.Window, event: Gdk.EventFocus) -> None:
         self.is_shift_pressed = False
@@ -628,7 +628,7 @@ class MainWindow(Gtk.ApplicationWindow):
     #     self.hizb_no = int(button.get_value())
     #     self.update('hizb')
 
-    def page_hovered(self, widget: Gtk.Widget, event: Gdk.EventMotion) -> None:
+    def hover_on_aya(self, widget: Gtk.Widget, event: Gdk.EventMotion) -> None:
         if not widget or not event:
             return
 
@@ -702,7 +702,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.aya_no = first_bbox[1]
             self.update('focus')
 
-    def draw_bbox(self, widget: Gtk.Widget, context: cairo.Context) -> None:
+    def draw_on_aya(self, widget: Gtk.Widget, context: cairo.Context) -> None:
         page_id = widget.get_name()
         if self.bboxes_focused[page_id]:  # draw focus
             context.set_source_rgba(0.082, 0.325, 0.620, 0.2)
