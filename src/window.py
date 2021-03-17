@@ -575,6 +575,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     ic_selected.set_opacity(0)
                 container.remove(spinner)
                 container.pack_start(ic_selected, False, True, 0)
+                progressbar.set_fraction(0)
                 progressbar.set_opacity(0)
                 self.is_downloading = False
 
