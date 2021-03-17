@@ -34,7 +34,7 @@ class MainWindow(Gtk.ApplicationWindow):
     PAGE_SIZE_WIDTH = None  # in pixels
     PAGE_SIZE_HEIGHT = None  # in pixels
     PAGE_SCALE = 1.0
-    PAGE_NO_MIN = 0
+    PAGE_NO_MIN = 1
     PAGE_NO_MAX = None
     SURA_LENGTH = -1
 
