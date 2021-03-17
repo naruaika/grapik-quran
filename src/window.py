@@ -161,18 +161,18 @@ class MainWindow(Gtk.ApplicationWindow):
                                                              musshaf_id))
             is_musshafbbox_exist = self.model.check_musshaf(musshaf_id)
             row.is_downloaded = is_musshafdir_exist and is_musshafbbox_exist
-            label1 = Gtk.Label()
-            label1.set_markup(f'<span weight="bold">{musshaf_name}</span>')
-            label1.set_halign(Gtk.Align.START)
-            label2 = Gtk.Label()
-            label2.set_halign(Gtk.Align.START)
-            label2.set_line_wrap(True)
-            label2.set_markup('<span size="small" foreground="#cccccc">'
+            name_label = Gtk.Label()
+            name_label.set_markup(f'<span weight="bold">{musshaf_name}</span>')
+            name_label.set_halign(Gtk.Align.START)
+            desc_label = Gtk.Label()
+            desc_label.set_halign(Gtk.Align.START)
+            desc_label.set_line_wrap(True)
+            desc_label.set_markup('<span size="small" foreground="#cccccc">'
                               f'{musshaf_desc}</span>')
-            label2.set_justify(Gtk.Justification.FILL)
+            desc_label.set_justify(Gtk.Justification.FILL)
             vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-            vbox.pack_start(label1, True, True, 0)
-            vbox.pack_start(label2, True, True, 1)
+            vbox.pack_start(name_label, True, True, 0)
+            vbox.pack_start(desc_label, True, True, 1)
             hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             icon_name = ('object-select-symbolic' if row.is_downloaded else
                          'folder-download-symbolic')
@@ -191,11 +191,21 @@ class MainWindow(Gtk.ApplicationWindow):
             self.box_musshaf.listbox.add(row)
 
         # for surah names
+        liststore = Gtk.ListStore(str, str)
         for sura in self.model.get_suras():
             sura_id = str(sura[0])
-            sura_name = f'{sura_id}. {sura[4]}'
-            self.popover_nav.combo_sura_name.append(sura_id, sura_name)
+            liststore.append([sura_id, f'{sura_id}. {sura[5]}'])
+            self.popover_nav.combo_sura_name.append(
+                sura_id, f'{sura_id}. {sura[4]}')
+        self.popover_nav.complete_sura_name.set_model(liststore)
+        self.popover_nav.complete_sura_name.set_text_column(1)
         self.popover_nav.combo_sura_name.set_active_id(str(self.sura_no))
+
+        def filter_surah(completion: Gtk.EntryCompletion, key: str,
+                         iter: Gtk.TreeIter, *user_data) -> bool:
+            suraname = completion.get_model()[iter][1]
+            return key in suraname.lower()
+        self.popover_nav.complete_sura_name.set_match_func(filter_surah, None)
 
         # for tarajem
         self.populate_tarajem()
@@ -349,7 +359,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.popover_nav.spin_hizb_no.set_value(self.hizb_no)
             self.popover_nav.aya_length.set_text(f'({1}–'
                                                  f'{self.SURA_LENGTH})')
-            sura_name = self.popover_nav.combo_sura_name.get_active_text()
+            sura_name = self.popover_nav.entry_sura_name.get_text()
             self.win_title.set_text(f'{sura_name.split()[1]} ({self.sura_no}) '
                                     f': {self.aya_no}')
         else:
@@ -520,7 +530,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.is_downloading:
             return
 
-        container = row.get_children()[0]
+        container = row.get_child()
         ic_selected = container.get_children()[1]
 
         if not row.is_downloaded:
@@ -558,7 +568,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if self.is_downloading:
             return
 
-        container = row.get_children()[0]
+        container = row.get_child()
         ic_selected = container.get_children()[0]
 
         if not row.is_downloaded:
@@ -618,8 +628,15 @@ class MainWindow(Gtk.ApplicationWindow):
         self.update('page')
 
     def go_to_sura(self, box: Gtk.ComboBoxText) -> None:
-        self.sura_no = int(box.get_active_id())
-        self.update('sura')
+        text = box.get_child().get_text()
+        if len(text) < 3:
+            return
+        # print(text)
+        try:
+            self.sura_no = int(text.split('.')[0])
+            self.update('sura')
+        except:
+            return
 
     def go_to_aya(self, button: Gtk.SpinButton) -> None:
         self.aya_no = int(button.get_value())

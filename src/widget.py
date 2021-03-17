@@ -47,8 +47,6 @@ class NavPopover(Gtk.PopoverMenu):
     # FIXME: list items is too long
     combo_sura_name = Gtk.Template.Child('combo_sura_name')
     entry_sura_name = Gtk.Template.Child('entry_sura_name')
-
-    # TODO: connect completion to entry
     complete_sura_name = Gtk.Template.Child('complete_sura_name')
     adjust_aya_no = Gtk.Template.Child('adjust_aya_no')
     adjust_page_no = Gtk.Template.Child('adjust_page_no')

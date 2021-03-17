@@ -28,9 +28,9 @@
     <property name="page-increment">10</property>
   </object>
   <object class="GtkEntryCompletion" id="complete_sura_name">
-    <property name="minimum-key-length">2</property>
     <property name="text-column">0</property>
     <property name="inline-completion">True</property>
+    <property name="inline-selection">True</property>
   </object>
   <template class="popover_nav" parent="GtkPopoverMenu">
     <property name="can-focus">False</property>
@@ -114,6 +114,7 @@
                 <child internal-child="entry">
                   <object class="GtkEntry" id="entry_sura_name">
                     <property name="can-focus">True</property>
+                    <property name="activates-default">True</property>
                     <property name="caps-lock-warning">False</property>
                     <property name="progress-pulse-step">0</property>
                     <property name="placeholder-text" translatable="yes">Type sura name...</property>
