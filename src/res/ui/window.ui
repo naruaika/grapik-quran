@@ -2,11 +2,6 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkAdjustment" id="page_scroll_adjustment">
-    <property name="upper">100</property>
-    <property name="step-increment">1</property>
-    <property name="page-increment">10</property>
-  </object>
   <template class="main_window" parent="GtkApplicationWindow">
     <property name="can-focus">False</property>
     <property name="resizable">False</property>
@@ -18,17 +13,13 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
+          <object class="GtkBox" id="musshaf_viewer">
+            <property name="name">page</property>
             <property name="can-focus">False</property>
-            <property name="margin-start">20</property>
-            <property name="margin-end">20</property>
             <child>
               <object class="GtkOverlay">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="margin-top">20</property>
-                <property name="margin-bottom">20</property>
                 <child>
                   <object class="GtkImage" id="page_left">
                     <property name="visible">True</property>
@@ -65,9 +56,7 @@
                 </child>
                 <child type="overlay">
                   <object class="GtkScrolledWindow" id="page_left_scroll">
-                    <property name="can-focus">True</property>
-                    <property name="vadjustment">page_scroll_adjustment</property>
-                    <property name="max-content-width">23</property>
+                    <property name="can-focus">False</property>
                     <child>
                       <object class="GtkViewport">
                         <property name="visible">True</property>
@@ -98,11 +87,27 @@
                       </object>
                     </child>
                     <style>
-                      <class name="page-scroll"/>
+                      <class name="tarajem-scroll"/>
+                      <class name="tarajem-scroll-left"/>
                     </style>
                   </object>
                   <packing>
                     <property name="index">2</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkSeparator">
+                    <property name="name">page-fold-left</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">end</property>
+                    <style>
+                      <class name="wide"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="pass-through">True</property>
+                    <property name="index">3</property>
                   </packing>
                 </child>
               </object>
@@ -113,41 +118,9 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSeparator">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <style>
-                  <class name="wide"/>
-                  <class name="page-separator-left"/>
-                </style>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSeparator">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <style>
-                  <class name="wide"/>
-                  <class name="page-separator-right"/>
-                </style>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkOverlay">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="margin-top">20</property>
-                <property name="margin-bottom">20</property>
                 <child>
                   <object class="GtkImage" id="page_right">
                     <property name="visible">True</property>
@@ -184,8 +157,7 @@
                 </child>
                 <child type="overlay">
                   <object class="GtkScrolledWindow" id="page_right_scroll">
-                    <property name="can-focus">True</property>
-                    <property name="vadjustment">page_scroll_adjustment</property>
+                    <property name="can-focus">False</property>
                     <child>
                       <object class="GtkViewport">
                         <property name="visible">True</property>
@@ -216,11 +188,27 @@
                       </object>
                     </child>
                     <style>
-                      <class name="page-scroll"/>
+                      <class name="tarajem-scroll"/>
+                      <class name="tarajem-scroll-right"/>
                     </style>
                   </object>
                   <packing>
                     <property name="index">2</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkSeparator">
+                    <property name="name">page-fold-right</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <style>
+                      <class name="wide"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="pass-through">True</property>
+                    <property name="index">3</property>
                   </packing>
                 </child>
               </object>
@@ -236,15 +224,14 @@
           </packing>
         </child>
         <child type="overlay">
-          <object class="GtkBox" id="box_nav_overlay">
-            <property name="visible">True</property>
+          <object class="GtkBox" id="box_navbar">
             <property name="can-focus">False</property>
             <property name="valign">center</property>
             <child>
               <object class="GtkButton" id="btn_next_page">
                 <property name="name">btn_next_page</property>
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
+                <property name="can-focus">False</property>
                 <property name="receives-default">True</property>
                 <child>
                   <object class="GtkImage">
@@ -255,7 +242,6 @@
                     <property name="icon-name">go-previous-symbolic</property>
                   </object>
                 </child>
-                <accelerator key="Left" signal="activate" modifiers="GDK_MOD1_MASK"/>
                 <style>
                   <class name="btn-overlay-left"/>
                 </style>
@@ -270,7 +256,7 @@
               <object class="GtkButton" id="btn_back_page">
                 <property name="name">btn_back_page</property>
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
+                <property name="can-focus">False</property>
                 <property name="receives-default">True</property>
                 <property name="always-show-image">True</property>
                 <child>
@@ -282,7 +268,6 @@
                     <property name="icon-name">go-next-symbolic</property>
                   </object>
                 </child>
-                <accelerator key="Right" signal="activate" modifiers="GDK_MOD1_MASK"/>
                 <style>
                   <class name="btn-overlay-right"/>
                 </style>
@@ -300,6 +285,7 @@
           </object>
           <packing>
             <property name="pass-through">True</property>
+            <property name="index">1</property>
           </packing>
         </child>
       </object>
@@ -321,7 +307,8 @@
                 <child>
                   <object class="GtkToggleButton" id="btn_open_tarajem">
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can-focus">False</property>
                     <property name="receives-default">True</property>
                     <child>
                       <object class="GtkImage">
@@ -330,7 +317,6 @@
                         <property name="icon-name">view-dual-symbolic</property>
                       </object>
                     </child>
-                    <accelerator key="b" signal="activate" modifiers="GDK_MOD1_MASK"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -341,7 +327,8 @@
                 <child>
                   <object class="GtkMenuButton" id="btn_tarajem_option">
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can-focus">False</property>
                     <property name="focus-on-click">False</property>
                     <property name="receives-default">True</property>
                     <child>
@@ -375,14 +362,15 @@
                   <object class="GtkMenuButton" id="btn_open_nav">
                     <property name="width-request">250</property>
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can-focus">False</property>
                     <property name="focus-on-click">False</property>
                     <property name="receives-default">True</property>
                     <child>
                       <object class="GtkLabel" id="win_title">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Al-Mu'minun (114) : 286</property>
+                        <property name="label" translatable="yes">Quran</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -412,7 +400,8 @@
                 <child>
                   <object class="GtkToggleButton">
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can-focus">False</property>
                     <property name="receives-default">True</property>
                     <child>
                       <object class="GtkImage">
@@ -421,7 +410,6 @@
                         <property name="icon-name">media-playback-start-symbolic</property>
                       </object>
                     </child>
-                    <accelerator key="p" signal="activate" modifiers="GDK_MOD1_MASK"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -432,7 +420,8 @@
                 <child>
                   <object class="GtkMenuButton">
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can-focus">False</property>
                     <property name="focus-on-click">False</property>
                     <property name="receives-default">True</property>
                     <child>
@@ -463,7 +452,7 @@
         <child>
           <object class="GtkMenuButton" id="btn_open_more">
             <property name="visible">True</property>
-            <property name="can-focus">True</property>
+            <property name="can-focus">False</property>
             <property name="focus-on-click">False</property>
             <property name="receives-default">True</property>
             <property name="direction">none</property>
@@ -478,7 +467,8 @@
         <child>
           <object class="GtkToggleButton" id="btn_search">
             <property name="visible">True</property>
-            <property name="can-focus">True</property>
+            <property name="sensitive">False</property>
+            <property name="can-focus">False</property>
             <property name="receives-default">True</property>
             <child>
               <object class="GtkImage">
@@ -487,6 +477,7 @@
                 <property name="icon-name">edit-find-symbolic</property>
               </object>
             </child>
+            <accelerator key="f" signal="activate" modifiers="GDK_CONTROL_MASK"/>
           </object>
           <packing>
             <property name="position">1</property>
@@ -499,7 +490,8 @@
             <child>
               <object class="GtkToggleButton">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
+                <property name="sensitive">False</property>
+                <property name="can-focus">False</property>
                 <property name="receives-default">True</property>
                 <child>
                   <object class="GtkImage">
@@ -508,7 +500,6 @@
                     <property name="icon-name">user-bookmarks-symbolic</property>
                   </object>
                 </child>
-                <accelerator key="b" signal="activate" modifiers="GDK_MOD1_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -519,7 +510,8 @@
             <child>
               <object class="GtkMenuButton">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
+                <property name="sensitive">False</property>
+                <property name="can-focus">False</property>
                 <property name="focus-on-click">False</property>
                 <property name="receives-default">True</property>
                 <child>
@@ -545,8 +537,5 @@
         </child>
       </object>
     </child>
-    <style>
-      <class name="page"/>
-    </style>
   </template>
 </interface>

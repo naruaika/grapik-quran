@@ -1,105 +1,124 @@
-.page {
+@define-color shadow #eeeeee;
+@define-color primary-accent #0076ff;
+
+/*
+ * Customise the style of the application window with the Quran pages
+ * TODO: should be matched programmatically with the Quran page colour
+ **/
+#page {
     background-color: white;
 }
 
-.page-separator-left {
+/*
+ * Draw a two-page fold line so it looks like the real book
+ **/
+#page-fold-left {
     padding: 10px;
-    background: linear-gradient(to left, #eeeeee, white);
+    background: linear-gradient(to left, @shadow, white);
 }
-
-.page-separator-right {
+#page-fold-right {
     padding: 10px;
     border-left: 1px solid #cccccc;
-    background: linear-gradient(to right, #eeeeee, white);
+    background: linear-gradient(to right, @shadow, white);
 }
 
-/* TODO: add a border ornament */
-.page-scroll {
-    padding: 0px 10px;
-    background-color: rgba(255, 255, 255, .9);
+/* TODO: add a border caligraph ornament */
+.tarajem-scroll {
+    padding: 20px 40px;
+    background-color: rgba(255, 255, 255, 1.0);
 }
-
-.page-scroll viewport {
-    border-radius: 5px;
+.tarajem-scroll-left {
+    background-image: linear-gradient(to left, @shadow, white, white 40px);
+}
+.tarajem-scroll-right {
+    border-left: 1px solid #cccccc;
+    background-image: linear-gradient(to right, @shadow, white, white 40px);
 }
 
 .box-tarajem {
     background-color: white;
 }
-
 .box-tarajem row {
     padding: 0px;
-    margin: 0px 15px 15px 15px;
-    font-size: 13pt;
+    margin: 15px;
+    margin-top: 0px;
+    font-size: 12pt;
     font-weight: 500;
-    border-radius: 5px;
+    border-radius: 10px;
 }
-
 .box-tarajem row:first-child {
     margin-top: 15px;
 }
-
 .box-tarajem row:nth-child(2n+1) {
     color: #111111;
     background-color: #e8e8e8;
     border: 1px solid #cccccc;
 }
-
 .box-tarajem row:nth-child(2n) {
     color: #222222;
     background-color: #f2f2f2;
     border: 1px solid #dddddd;
 }
 
-.box-tarajem row box > label {
+.box-tarajem box > label {
     padding: 10px 20px 0px 20px;
 }
-
-.box-tarajem row box > label:first-child {
+/* For the surah-ayah numbering */
+.box-tarajem box > label {
     padding: 5px 20px;
     font-size: 10pt;
     color: #333333;
 }
-
-.box-tarajem row box > label:nth-child(2) {
-    padding-top: 5px;
-}
-
-.box-tarajem row box > label:last-child {
-    padding-bottom: 10px;
-}
-
-.box-tarajem row:nth-child(2n+1) box > label:first-child {
+.box-tarajem row:nth-child(2n+1) box > label {
     border-bottom: 1px solid #cccccc;
 }
-
-.box-tarajem row:nth-child(2n) box > label:first-child {
+.box-tarajem row:nth-child(2n) box > label {
     border-bottom: 1px solid #dddddd;
 }
+/* For the translation contents */
+.box-tarajem box > textview,
+.box-tarajem box > textview text {
+    color: inherit;
+    border: inherit;
+    padding: 5px 20px;
+    padding-top: 5px;
+    background-color: transparent;
+}
+.box-tarajem box:last-child {
+    padding-bottom: 10px
+}
 
+/* For the translation contents being hovered/focused */
 #row-focused {
     color: black;
     background-color: #d0ddec;
-    border: 1px solid #0076ff;
+    border: 1px solid @primary-accent;
 }
-
-#row-focused box > label:first-child {
-    color: #0076ff;
+#row-hovered {
+    color: black;
+    background-color: #cfcfcf;
+    border: 1px solid #a8a8a8;
+}
+/* For the surah-ayah numbering being hovered/focused */
+#row-focused box > label,
+#row-hovered box > label {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+#row-focused box > label {
+    color: @primary-accent;
     background-color: #d0ddec;
-    border-bottom: 1px solid #0076ff;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    border-bottom: 1px solid @primary-accent;
+}
+#row-hovered box > label {
+    border-bottom: 1px solid #a8a8a8;
 }
 
-.box-tarajem-option row {
+.box-tarajem-option row,
+.box-quran-option row {
     padding: 10px;
     border-bottom: 1px solid #111111;
 }
-
-/* .frame {
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-} */
 
 .osd {
     background: transparent;
@@ -111,7 +130,6 @@
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
-
 .btn-overlay-right {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -120,6 +138,9 @@
 }
 
 .btn-option {
-    padding-left: 4px;
-    padding-right: 4px;
+    padding: 0px 4px;
+}
+
+progress, trough {
+    min-height: 4px;
 }

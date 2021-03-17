@@ -18,13 +18,22 @@
 from gi.repository import Gtk, GLib
 
 
-@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/dialog/about.ui')
-class About(Gtk.AboutDialog):
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/about.ui')
+class AboutDialog(Gtk.AboutDialog):
     __gtype_name__ = 'dialog_about'
 
 
-@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/popover/navigation.ui')
-class Navigation(Gtk.PopoverMenu):
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/musshaf.ui')
+class MusshafBox(Gtk.Box):
+    __gtype_name__ = 'box_musshaf'
+
+    listbox = Gtk.Template.Child('listbox')
+    progressbar = Gtk.Template.Child('progressbar')
+    btn_ok = Gtk.Template.Child('btn_ok')
+
+
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/navigation.ui')
+class NavPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'popover_nav'
 
     # TODO: select all text on focus
@@ -42,29 +51,31 @@ class Navigation(Gtk.PopoverMenu):
     # TODO: connect completion to entry
     complete_sura_name = Gtk.Template.Child('complete_sura_name')
     adjust_aya_no = Gtk.Template.Child('adjust_aya_no')
+    adjust_page_no = Gtk.Template.Child('adjust_page_no')
 
 
-@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/popover/translation.ui')
-class Translation(Gtk.PopoverMenu):
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/tarajem.ui')
+class TarajemPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'popover_tarajem'
 
-    searchentry = Gtk.Template.Child('searchentry')
+    entry = Gtk.Template.Child('entry')
     listbox = Gtk.Template.Child('listbox')
+    progressbar = Gtk.Template.Child('progressbar')
 
 
-@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/popover/menu.ui')
-class More(Gtk.PopoverMenu):
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/main-menu.ui')
+class MenuPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'popover_menu'
 
+    btn_musshaf = Gtk.Template.Child('btn_musshaf')
     btn_preferences = Gtk.Template.Child('btn_preferences')
     btn_shortcut = Gtk.Template.Child('btn_shortcut')
     btn_help = Gtk.Template.Child('btn_help')
     btn_about = Gtk.Template.Child('btn_about')
     btn_quit = Gtk.Template.Child('btn_quit')
 
-
-@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/revealer/message.ui')
-class Message(Gtk.Revealer):
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/message.ui')
+class ToastMessage(Gtk.Revealer):
     __gtype_name__ = 'revealer_message'
 
     message = Gtk.Template.Child('message')
