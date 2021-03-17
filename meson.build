@@ -1,5 +1,5 @@
 project('grapik-quran',
-          version: '0.1.0-alpha.2',
+          version: '0.1.0-alpha.3',
     meson_version: '>= 0.54.0',
   default_options: [ 'warning_level=2',
                    ],

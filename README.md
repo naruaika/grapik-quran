@@ -8,11 +8,10 @@ In the name of Allah, the Entirely Merciful, the Especially Merciful. This proof
 
 Using this app, you'll be able to:
 
-- Open any Quran variant (8 variants in 5 qira'at)
-- Read the full Quran
+- Download and read any variants of the complete Quran (8 variants in 5 qira'at)
 - Navigate to any specific page/surah/ayah/juz
-- Read translation in 39 languages
-- Select and copy (by pressing `ctrl+C`) the selected ayah(s) as text
+- Download and read translation in 39 languages
+- Select and copy the selected ayah(s) and translations as text
 
 ## Background
 
@@ -28,4 +27,13 @@ I used to be a user of Sabily OS and I've been amazed how wonderful it is. May A
 
 ## Contribution
 
-The easiest way for beginners is clone this repository to your local computer, then build and run it using [GNOME Builder](https://wiki.gnome.org/Apps/Builder). To enable GTK Inspector, run `gsettings set org.gtk.Settings.Debug enable-inspector-keybinding true` in the runtime terminal.
+The easiest way for beginners is clone this repository to your local computer, then build and run it using [GNOME Builder](https://wiki.gnome.org/Apps/Builder). To enable GTK Inspector, run `gsettings set org.gtk.Settings.Debug enable-inspector-keybinding true` in the runtime terminal. If you are not a developer, you can still contribute by praying for me so that my age will be lengthened and my intentions will be straightened out in working on this project. La Hawla Wala Quwwata illa Billah.
+
+## Useful Links
+
+- [High quality Musshaf PDFs for qira'at Hafs](https://qurancomplex.gov.sa/kfgqpc-quran-hafs/)
+- [High quality Musshaf PDFs for other qira'at](https://qurancomplex.gov.sa/kfgqpc-quran-qiraat/)
+- [Mostly acceptable Quran translations](https://tanzil.net/trans/)
+- [Quran indexing for qira'at Hafs](https://tanzil.net/docs/quran_metadata)
+- [Processed and labeled data for Grapik Quran](https://sourceforge.net/projects/grapik-quran-data/)
+- [Automatic Quran (ayah bounding boxes) labeller](https://github.com/naruaika/my-playground/blob/master/quran-ocr.py)
