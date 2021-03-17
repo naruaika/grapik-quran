@@ -88,6 +88,7 @@
                     </child>
                     <style>
                       <class name="tarajem-scroll"/>
+                      <class name="tarajem-scroll-left"/>
                     </style>
                   </object>
                   <packing>
@@ -188,6 +189,7 @@
                     </child>
                     <style>
                       <class name="tarajem-scroll"/>
+                      <class name="tarajem-scroll-right"/>
                     </style>
                   </object>
                   <packing>
