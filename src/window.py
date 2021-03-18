@@ -72,7 +72,6 @@ class MainWindow(Gtk.ApplicationWindow):
     btn_open_nav = Gtk.Template.Child('btn_open_nav')
     btn_open_more = Gtk.Template.Child('btn_open_more')
     btn_open_tarajem = Gtk.Template.Child('btn_open_tarajem')
-    btn_open_tarajem = Gtk.Template.Child('btn_open_tarajem')
     btn_tarajem_option = Gtk.Template.Child('btn_tarajem_option')
     btn_back_page = Gtk.Template.Child('btn_back_page')
     btn_next_page = Gtk.Template.Child('btn_next_page')
@@ -124,6 +123,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.popover_nav.spin_aya_no.connect('value-changed', self.go_to_aya)
         self.popover_nav.spin_juz_no.connect('value-changed', self.go_to_juz)
         # self.popover_nav.spin_hizb_no.connect('value-changed', self.go_to_hizb)
+        self.popover_menu.btn_musshaf.connect('clicked', self.show_welcome)
         self.popover_menu.btn_about.connect('clicked', self.show_about)
         self.btn_open_tarajem.connect('clicked', self.toggle_tarajem)
         self.popover_tarajem.listbox.connect('row-activated',
@@ -274,7 +274,7 @@ class MainWindow(Gtk.ApplicationWindow):
     def on_loses_focus(self, window: Gtk.Window, event: Gdk.EventFocus) -> None:
         self.is_shift_pressed = False
 
-    def update(self, updated: str = None) -> None:
+    def update(self, updated: str = None, forced: bool = False) -> None:
         if self.is_updating or self.is_welcome_opened:
             return
 
@@ -333,7 +333,8 @@ class MainWindow(Gtk.ApplicationWindow):
                     round(self.PAGE_SIZE_HEIGHT * self.PAGE_SCALE), False)
                 page.set_from_pixbuf(pixbuf)
 
-        if self.page_no == prev_page_no and updated not in ['page', '2page']:
+        if self.page_no == prev_page_no and updated not in ['page', '2page'] \
+                and not forced:
             is_page_no_updated = False
 
         if is_page_no_updated:
@@ -821,7 +822,21 @@ class MainWindow(Gtk.ApplicationWindow):
         self.PAGE_SIZE_WIDTH = page.get_width()
         self.PAGE_SIZE_HEIGHT = page.get_height()
 
-        self.update('sura')
+        self.update('aya', True)
+
+    def show_welcome(self, button: Gtk.Button) -> None:
+        if self.is_welcome_opened:
+            return
+
+        # Reset application window
+        self.resize(800, 600)
+        self.musshaf_viewer.hide()
+        self.box_navbar.hide()
+        self.main_overlay.add_overlay(self.box_musshaf)
+        self.btn_open_tarajem.set_sensitive(False)
+        self.btn_tarajem_option.set_sensitive(False)
+        self.btn_open_nav.set_sensitive(False)
+        self.is_welcome_opened = True
 
     def show_about(self, button: Gtk.Button) -> None:
         dialog = AboutDialog()
