@@ -1,8 +1,20 @@
 # Grapik Quran
 
-In the name of Allah, the Entirely Merciful, the Especially Merciful. This proof-of-concept application is specially made for the GNOME desktop. We use Quran images from [Quran Complex](https://qurancomplex.gov.sa/) to provide the same experience of reading a non-digital Quran. For Quran indexes, texts (Uthmani), and translations are from [Tanzil](http://tanzil.net). Here's a prototype of the app:
+**Announcement**: After I've played around with over 90 commits making a proof-of-concept, it's time to get serious. So, this time I'm going to put this main branch idle while redesigning and rewriting the entire code from scratch. I'll make sure to adopt a software design pattern and put documentation everywhere. Also to migrate to GTK4! :)
 
-![Application's propotype](screenshot.png)
+In the name of Allah, the Entirely Merciful, the Especially Merciful. This proof-of-concept application is specially made for the GNOME desktop. We use Quran images from [Quran Complex](https://qurancomplex.gov.sa/) to provide the same experience of reading a non-digital Quran; Quran indexes and translations are from [Tanzil](http://tanzil.net); recitations are from [EveryAyah](https://everyayah.com). Here're some prototypes of the app:
+
+<!-- TODO: replace by a video intro -->
+
+![Musshaf viewer](screenshot.png)
+
+![Tarajem list](screenshot1.png)
+
+![Navigation](screenshot2.png)
+
+![Telaawa list](screenshot3.png)
+
+![Musshaf list](screenshot4.png)
 
 ## Features
 
@@ -11,6 +23,7 @@ Using this app, you'll be able to:
 - Download and read any variants of the complete Quran (8 variants in 5 qira'at)
 - Navigate to any specific page/surah/ayah/juz
 - Download and read translation in 39 languages
+- Download/stream and listen recitation by 41 reciters
 - Select and copy the selected ayah(s) and translations as text
 
 ## Background
@@ -35,5 +48,6 @@ The easiest way for beginners is clone this repository to your local computer, t
 - [High quality Musshaf PDFs for other qira'at](https://qurancomplex.gov.sa/kfgqpc-quran-qiraat/)
 - [Mostly acceptable Quran translations](https://tanzil.net/trans/)
 - [Quran indexing for qira'at Hafs](https://tanzil.net/docs/quran_metadata)
+- [Recitations ayah by ayah](https://everyayah.com/recitations_ayat.html)
 - [Processed and labeled data for Grapik Quran](https://sourceforge.net/projects/grapik-quran-data/)
 - [Automatic Quran (ayah bounding boxes) labeller](https://github.com/naruaika/my-playground/blob/master/quran-ocr.py)
