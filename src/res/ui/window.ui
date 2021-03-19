@@ -71,7 +71,7 @@
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="label" translatable="yes">No translation selected.</property>
+                                <property name="label" translatable="yes">No tarajem/tafaser selected.</property>
                                 <property name="justify">center</property>
                                 <property name="wrap">True</property>
                                 <attributes>
@@ -172,7 +172,7 @@
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="label" translatable="yes">No translation selected.</property>
+                                <property name="label" translatable="yes">No tarajem/tafaser selected.</property>
                                 <property name="justify">center</property>
                                 <property name="wrap">True</property>
                                 <attributes>
@@ -398,7 +398,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <child>
-                  <object class="GtkToggleButton">
+                  <object class="GtkToggleButton" id="btn_play_telaawa">
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can-focus">False</property>
@@ -418,7 +418,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkMenuButton">
+                  <object class="GtkMenuButton" id="btn_telaawa_option">
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can-focus">False</property>

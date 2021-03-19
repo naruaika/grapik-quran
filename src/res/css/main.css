@@ -1,5 +1,6 @@
+@define-color accent #0076ff;
+@define-color border #111111;
 @define-color shadow #eeeeee;
-@define-color primary-accent #0076ff;
 
 /*
  * Customise the style of the application window with the Quran pages
@@ -88,11 +89,42 @@
     padding-bottom: 10px
 }
 
+.box-tarajem-option row,
+.box-musshaf-option row,
+.box-downloaded-option row {
+    padding: 10px;
+    border-bottom: 1px solid @border;
+}
+
+.box-qaree-option row {
+    padding: 0px 0px 0px 10px;
+    border-bottom: 1px solid @border;
+}
+.box-qaree-option row > box {
+    margin-right: -1px;
+}
+.box-qaree-option label,
+.box-qaree-option image,
+.box-qaree-option spinner {
+    margin: 10px 0px;
+}
+.box-qaree-option button {
+    border-left-color: @border;
+    border-radius: 0px;
+    padding: 4px 8px;
+}
+.box-qaree-option button:hover {
+    background: #444444;
+    border-color:#444444;
+    border-left-color: @border;
+    transition: none;
+}
+
 /* For the translation contents being hovered/focused */
 #row-focused {
     color: black;
     background-color: #d0ddec;
-    border: 1px solid @primary-accent;
+    border: 1px solid @accent;
 }
 #row-hovered {
     color: black;
@@ -106,18 +138,32 @@
     border-top-right-radius: 10px;
 }
 #row-focused box > label {
-    color: @primary-accent;
+    color: @accent;
     background-color: #d0ddec;
-    border-bottom: 1px solid @primary-accent;
+    border-bottom: 1px solid @accent;
 }
 #row-hovered box > label {
     border-bottom: 1px solid #a8a8a8;
 }
 
-.box-tarajem-option row,
-.box-quran-option row {
-    padding: 10px;
-    border-bottom: 1px solid #111111;
+.media-player {
+    /* FIXME: add support for Adwaita (light) theme */
+    background: #292929;
+    padding-bottom: 15px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-top: 1px solid @border;
+}
+.media-player > box {
+   padding: 0px 15px;
+}
+.media-player trough {
+    border: none;
+    border-bottom: 1px solid @border;
+}
+
+.popover-no-padding {
+    padding: 0px;
 }
 
 .osd {
@@ -143,4 +189,5 @@
 
 progress, trough {
     min-height: 4px;
+    border-radius: 0px;
 }

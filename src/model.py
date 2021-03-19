@@ -41,6 +41,7 @@ class Reader:
 
     _selected_musshaf = ''
     _selected_tarajem = []
+    _selected_telaawa = ''
 
     def get_page_no(self, sura_no: int, aya_no: int) -> int:
         query = f'SELECT page FROM {self._selected_musshaf} WHERE sura=? AND' \
@@ -173,6 +174,26 @@ class Reader:
         if self._tarajem_cursor.fetchone():
             return True
         return False
+
+    def get_telaawas(self) -> List:
+        self._main_cursor.execute('SELECT * FROM telaawa ORDER BY qiraat, '
+                                  'qaree, bitrate, style ASC')
+        return self._main_cursor.fetchall()
+
+    def get_selected_telaawa(self) -> str:
+        return self._selected_telaawa
+
+    def update_selected_telaawa(self, telaawa_id: str) -> str:
+        self._main_cursor.execute('SELECT * FROM telaawa WHERE id=?',
+                                  (telaawa_id,))
+        if self._main_cursor.fetchone():
+            self._selected_telaawa = telaawa_id
+        return self._selected_telaawa
+
+    def check_telaawa(self, telaawa_id: str) -> bool:
+        telaawa_dir = os.path.join(
+            GLib.get_user_data_dir(), f'grapik-quran/telaawa/{telaawa_id}')
+        return os.path.isdir(telaawa_dir)
 
     def get_musshafs(self) -> List:
         self._main_cursor.execute('SELECT * FROM musshaf ORDER BY name')

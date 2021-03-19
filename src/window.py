@@ -23,7 +23,7 @@ import os
 
 from .model import Reader, ResourceManager
 from .widget import AboutDialog, MusshafBox, NavPopover, TarajemPopover, \
-    MenuPopover, ToastMessage
+    TelaawaPopover, MenuPopover, ToastMessage
 
 
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/window.ui')
@@ -67,12 +67,15 @@ class MainWindow(Gtk.ApplicationWindow):
     popover_menu = MenuPopover()
     popover_nav = NavPopover()
     popover_tarajem = TarajemPopover()
+    popover_telaawa = TelaawaPopover()
     toast_message = ToastMessage()
 
     btn_open_nav = Gtk.Template.Child('btn_open_nav')
     btn_open_more = Gtk.Template.Child('btn_open_more')
     btn_open_tarajem = Gtk.Template.Child('btn_open_tarajem')
+    btn_play_telaawa = Gtk.Template.Child('btn_play_telaawa')
     btn_tarajem_option = Gtk.Template.Child('btn_tarajem_option')
+    btn_telaawa_option = Gtk.Template.Child('btn_telaawa_option')
     btn_back_page = Gtk.Template.Child('btn_back_page')
     btn_next_page = Gtk.Template.Child('btn_next_page')
     box_navbar = Gtk.Template.Child('box_navbar')
@@ -130,6 +133,10 @@ class MainWindow(Gtk.ApplicationWindow):
                                              self.select_tarajem)
         self.popover_tarajem.entry.connect('search-changed',
                                            self.filter_tarajem)
+        self.popover_telaawa.list_qaree.connect('row-activated',
+                                                self.select_telaawa)
+        self.popover_telaawa.entry.connect('search-changed',
+                                           self.filter_telaawa)
         self.box_musshaf.listbox.connect('row-activated',
                                          self.select_musshaf)
         self.box_musshaf.btn_ok.connect('clicked', self.show_musshaf)
@@ -141,6 +148,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.btn_open_nav.set_popover(self.popover_nav)
         self.btn_open_more.set_popover(self.popover_menu)
         self.btn_tarajem_option.set_popover(self.popover_tarajem)
+        self.btn_telaawa_option.set_popover(self.popover_telaawa)
         self.main_overlay.add_overlay(self.toast_message)
         self.main_overlay.add_overlay(self.box_musshaf)
 
@@ -168,7 +176,7 @@ class MainWindow(Gtk.ApplicationWindow):
             desc_label.set_halign(Gtk.Align.START)
             desc_label.set_line_wrap(True)
             desc_label.set_markup('<span size="small" foreground="#cccccc">'
-                              f'{musshaf_desc}</span>')
+                                  f'{musshaf_desc}</span>')
             desc_label.set_justify(Gtk.Justification.FILL)
             vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
             vbox.pack_start(name_label, True, True, 0)
@@ -183,7 +191,7 @@ class MainWindow(Gtk.ApplicationWindow):
             hbox.pack_start(image, False, True, 0)
             hbox.pack_end(vbox, True, True, 0)
             if row.is_downloaded and musshaf_id != \
-                    self.model.get_selected_musshaf:
+                    self.model.get_selected_musshaf():
                 image.set_opacity(0)
             else:
                 image.set_opacity(1)
@@ -210,8 +218,12 @@ class MainWindow(Gtk.ApplicationWindow):
         # for tarajem
         self.populate_tarajem()
 
+        # for telaawa
+        self.populate_telaawa()
+
         # if self.model.get_selected_musshaf():
         self.btn_tarajem_option.set_sensitive(False)
+        self.btn_telaawa_option.set_sensitive(False)
         self.btn_open_nav.set_sensitive(False)
         self.box_musshaf.listbox.show_all()
         self.is_welcome_opened = True
@@ -492,8 +504,8 @@ class MainWindow(Gtk.ApplicationWindow):
         else:
             self.tarajem_filtered = self.model.get_tarajems()
 
-        self.popover_tarajem.listbox.foreach(lambda x:
-            self.popover_tarajem.listbox.remove(x))
+        self.popover_tarajem.listbox.foreach(
+            lambda x: self.popover_tarajem.listbox.remove(x))
         selected_tarajem = self.model.get_selected_tarajem()
         for tarajem in self.tarajem_filtered:
             tarajem_id, translator = tarajem[:2]
@@ -502,7 +514,9 @@ class MainWindow(Gtk.ApplicationWindow):
             row.id = tarajem_id
             row.is_downloaded = self.model.check_tarajem(tarajem_id)
             hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-            label = Gtk.Label(label=f'{language} - {translator}', xalign=0)
+            label = Gtk.Label()
+            label.set_markup(f'<b>{language}</b> - {translator}')
+            label.set_halign(Gtk.Align.START)
             label.set_ellipsize(Pango.EllipsizeMode.END)
             icon_name = ('object-select-symbolic' if row.is_downloaded else
                          'folder-download-symbolic')
@@ -546,7 +560,7 @@ class MainWindow(Gtk.ApplicationWindow):
             spinner.start()
 
             # TODO: enable a tarajem after downloading automatically
-            def add_tarajem():
+            def add_tarajem() -> None:
                 progressbar = self.popover_tarajem.progressbar
                 progressbar.show()
                 if ResourceManager.add_tarajem(row.id, progressbar):
@@ -565,6 +579,75 @@ class MainWindow(Gtk.ApplicationWindow):
             self.model.update_selected_tarajem(row.id)
             self.update_tarajem()
 
+    def populate_telaawa(self, query: str = '') -> None:
+        if query:
+            telaawa_filtered = [meta for meta in self.model.get_telaawas()
+                                if query.lower() in meta[1].lower() or
+                                query.lower() in meta[3] or
+                                query.lower() in meta[5]]
+            if self.telaawa_filtered == telaawa_filtered:
+                return
+            self.telaawa_filtered = telaawa_filtered
+        else:
+            self.telaawa_filtered = self.model.get_telaawas()
+
+        self.popover_telaawa.list_qaree.foreach(
+            lambda x: self.popover_telaawa.list_qaree.remove(x))
+        for telaawa in self.telaawa_filtered:
+            telaawa_id, qaree = telaawa[:2]
+            qiraat, bitrate, style = telaawa[3:]
+            qiraat = qiraat.title()
+            style = style.title()
+            row = Gtk.ListBoxRow()
+            row.id = telaawa_id
+            hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+            label = Gtk.Label()
+            label.set_markup(f'<span weight="bold">{qaree}</span>\n'
+                             '<span size="small" foreground="#cccccc">'
+                             f"Qira'at: {qiraat} - Style: {style} - Bitrate: "
+                             f'{bitrate}Kbps</span>')
+            label.set_halign(Gtk.Align.START)
+            label.set_ellipsize(Pango.EllipsizeMode.END)
+            button = Gtk.Button.new_from_icon_name('go-next-symbolic',
+                                                   Gtk.IconSize.BUTTON)
+            button.set_relief(Gtk.ReliefStyle.NONE)
+            button.set_margin_start(5)
+            image = Gtk.Image.new_from_icon_name('object-select-symbolic',
+                                                 Gtk.IconSize.BUTTON)
+            image.set_margin_end(5)
+            image.set_valign(Gtk.Align.START)
+            if telaawa_id != self.model.get_selected_telaawa():
+                image.set_opacity(0)
+            else:
+                image.set_opacity(1)
+            hbox.pack_start(image, False, True, 0)
+            hbox.pack_start(label, True, True, 1)
+            hbox.pack_end(button, False, False, 0)
+            row.add(hbox)
+            self.popover_telaawa.list_qaree.add(row)
+        self.popover_telaawa.list_qaree.show_all()
+
+    def filter_telaawa(self, entry: Gtk.SearchEntry) -> None:
+        query = entry.get_text()
+        self.populate_telaawa(query)
+
+    def select_telaawa(self, box: Gtk.ListBox, row: Gtk.ListBoxRow) -> None:
+        if self.model.get_selected_telaawa() == row.id:
+            return
+
+        def uncheck_all(row) -> None:
+            # if row.is_downloaded:
+            container = row.get_child()
+            icon = container.get_children()[0]
+            icon.set_opacity(0)
+
+        box.foreach(uncheck_all)
+
+        container = row.get_child()
+        ic_selected = container.get_children()[0]
+        ic_selected.set_opacity(1)
+        self.model.update_selected_telaawa(row.id)
+
     def select_musshaf(self, box: Gtk.ListBox, row: Gtk.ListBoxRow) -> None:
         if self.is_downloading:
             return
@@ -576,8 +659,8 @@ class MainWindow(Gtk.ApplicationWindow):
             self.is_downloading = True
 
             spinner = Gtk.Spinner()
-            spinner.set_margin_end(5)
             spinner.set_valign(Gtk.Align.START)
+            spinner.set_margin_end(5)
             container.remove(ic_selected)
             container.pack_start(spinner, False, True, 0)
             container.show_all()
@@ -599,12 +682,12 @@ class MainWindow(Gtk.ApplicationWindow):
 
             Thread(target=add_musshaf).start()
         else:
-            if self.model.get_selected_musshaf == row.id:
+            if self.model.get_selected_musshaf() == row.id:
                 return
 
             def uncheck_all(row) -> None:
                 if row.is_downloaded:
-                    container = row.get_children()[0]
+                    container = row.get_child()
                     icon = container.get_children()[0]
                     icon.set_opacity(0)
 
@@ -800,7 +883,9 @@ class MainWindow(Gtk.ApplicationWindow):
         self.box_navbar.show()
 
         self.btn_open_tarajem.set_sensitive(True)
+        self.btn_play_telaawa.set_sensitive(True)
         self.btn_tarajem_option.set_sensitive(True)
+        self.btn_telaawa_option.set_sensitive(True)
         self.btn_open_nav.set_sensitive(True)
 
         musshaf_dir = os.path.join(
@@ -816,6 +901,9 @@ class MainWindow(Gtk.ApplicationWindow):
                                                   self.PAGE_NO_SHIFT + 1)
         self.popover_nav.adjust_page_no.set_lower(self.PAGE_NO_MIN -
                                                   self.PAGE_NO_SHIFT + 1)
+
+        self.SURA_LENGTH = self.model.get_sura_length(self.sura_no)
+        self.popover_nav.adjust_aya_no.set_upper(self.SURA_LENGTH)
 
         page = GdkPixbuf.Pixbuf.new_from_file(os.path.join(
             musshaf_dir, '1.png'))

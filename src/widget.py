@@ -61,6 +61,17 @@ class TarajemPopover(Gtk.PopoverMenu):
     progressbar = Gtk.Template.Child('progressbar')
 
 
+@Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/telaawa.ui')
+class TelaawaPopover(Gtk.PopoverMenu):
+    __gtype_name__ = 'popover_telaawa'
+
+    entry = Gtk.Template.Child('entry')
+    list_qaree = Gtk.Template.Child('list_qaree')
+    list_downloaded = Gtk.Template.Child('list_downloaded')
+    progress_qaree = Gtk.Template.Child('progress_qaree')
+    progress_downloaded = Gtk.Template.Child('progress_downloaded')
+
+
 @Gtk.Template(resource_path='/org/naruaika/Quran/res/ui/main-menu.ui')
 class MenuPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'popover_menu'

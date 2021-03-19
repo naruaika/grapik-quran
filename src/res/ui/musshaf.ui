@@ -99,7 +99,7 @@
                     <property name="can-focus">False</property>
                     <property name="selection-mode">none</property>
                     <style>
-                      <class name="box-quran-option"/>
+                      <class name="box-musshaf-option"/>
                     </style>
                   </object>
                 </child>
