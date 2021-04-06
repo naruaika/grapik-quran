@@ -1,6 +1,6 @@
 desktop_file = i18n.merge_file(
-  input: 'org.naruaika.Quran.desktop.in',
-  output: 'org.naruaika.Quran.desktop',
+  input: 'org.grapik.Quran.desktop.in',
+  output: 'org.grapik.Quran.desktop',
   type: 'desktop',
   po_dir: '../po',
   install: true,
@@ -15,8 +15,8 @@ if desktop_utils.found()
 endif
 
 appstream_file = i18n.merge_file(
-  input: 'org.naruaika.Quran.appdata.xml.in',
-  output: 'org.naruaika.Quran.appdata.xml',
+  input: 'org.grapik.Quran.appdata.xml.in',
+  output: 'org.grapik.Quran.appdata.xml',
   po_dir: '../po',
   install: true,
   install_dir: join_paths(get_option('datadir'), 'appdata')
@@ -29,7 +29,7 @@ if appstream_util.found()
   )
 endif
 
-install_data('org.naruaika.Quran.gschema.xml',
+install_data('org.grapik.Quran.gschema.xml',
   install_dir: join_paths(get_option('datadir'), 'glib-2.0/schemas')
 )
 
@@ -39,3 +39,8 @@ if compile_schemas.found()
     args: ['--strict', '--dry-run', meson.current_source_dir()]
   )
 endif
+
+install_data(
+  ['org.grapik.Quran.svg', 'org.grapik.Quran-symbolic.svg'],
+  install_dir: join_paths(get_option('datadir'), 'icons/hicolor/scalable/apps')
+)

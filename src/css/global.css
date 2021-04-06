@@ -1,0 +1,175 @@
+@define-color overlay rgba(0, 0, 0, 0.8);
+
+button {
+    transition-duration: 0s;
+}
+
+progress, trough {
+    min-height: 4px;
+    border-radius: 0px;
+    border-top: none;
+}
+
+.osd {
+    background: transparent;
+}
+
+.button-option {
+    padding: 0px 4px;
+}
+
+.popover-no-padding {
+    padding: 0px;
+}
+
+.background-white {
+    background-color: #ffffff;
+}
+
+row {
+    padding: 10px;
+}
+.row-qaree {
+    padding: 0px 0px 0px 10px;
+}
+.row-qaree label:first-child {
+    margin-top: 10px;
+}
+.row-qaree label:last-child {
+    margin-bottom: 10px;
+}
+.row-qaree image,
+.row-qaree spinner {
+    margin: 10px 0px;
+}
+.row-qaree button {
+    border-radius: 0px;
+    padding: 4px 12px;
+}
+.row-qaree button:hover {
+    transition: none;
+    box-shadow: none;
+}
+.row-qaree:selected button:hover {
+    background: #3271bf;
+    border-color: #3271bf;
+}
+
+.box-tarajem row {
+    padding: 0px;
+    margin: 15px;
+    margin-top: 0px;
+    font-size: 13pt;
+    font-weight: 500;
+    border-radius: 10px;
+}
+.box-tarajem row:first-child {
+    margin-top: 15px;
+}
+.box-tarajem row:nth-child(2n+1) {
+    color: #111111;
+    background-color: #e8e8e8;
+    border: 1px solid #cccccc;
+}
+.box-tarajem row:nth-child(2n) {
+    color: #222222;
+    background-color: #f2f2f2;
+    border: 1px solid #dddddd;
+}
+
+.box-tarajem box > label {
+    padding: 10px 20px 0px 20px;
+}
+/* For the surah-ayah numbering */
+.box-tarajem box > label {
+    padding: 5px 20px;
+    font-size: 10pt;
+    color: #333333;
+}
+.box-tarajem row:nth-child(2n+1) box > label {
+    border-bottom: 1px solid #cccccc;
+}
+.box-tarajem row:nth-child(2n) box > label {
+    border-bottom: 1px solid #dddddd;
+}
+/* For the translation contents */
+.box-tarajem box > textview,
+.box-tarajem box > textview text {
+    color: inherit;
+    border: inherit;
+    padding: 5px 20px;
+    padding-top: 5px;
+    background-color: transparent;
+}
+.box-tarajem box:last-child {
+    padding-bottom: 10px
+}
+
+/* For the translation contents being hovered/focused */
+#row-focused {
+    color: black;
+    background-color: #d0ddec;
+    border: 1px solid @accent;
+}
+#row-hovered {
+    color: black;
+    background-color: #cfcfcf;
+    border: 1px solid #a8a8a8;
+}
+/* For the surah-ayah numbering being hovered/focused */
+#row-focused box > label,
+#row-hovered box > label {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+#row-focused box > label {
+    color: @accent;
+    background-color: #d0ddec;
+    border-bottom: 1px solid @accent;
+}
+#row-hovered box > label {
+    border-bottom: 1px solid #a8a8a8;
+}
+
+/* .button-overlay {
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 1);
+} */
+.button-overlay {
+    background-color: @overlay;
+    border-color: @overlay;
+}
+.button-overlay:nth-child(1) {
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.button-overlay:nth-child(2) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+}
+
+.box-overlay {
+    background-color: @overlay;
+    padding: 8px 10px;
+    border-radius: 5px;
+}
+
+.media-player {
+    padding-bottom: 15px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+.media-player > box {
+   padding: 0px 15px;
+}
+.media-player trough {
+    border: none;
+}
+
+.debug {
+    background-color: red;
+}

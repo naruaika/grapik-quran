@@ -1,6 +1,4 @@
-#!@PYTHON@
-
-# grapik-quran.in
+# constants.py
 #
 # Copyright 2021 Naufan Rusyda Faikar
 #
@@ -17,26 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import sys
-import signal
-import gettext
+from gi.repository import GLib
+from os import path
 
-NAME = '@NAME@'
-VERSION = '@VERSION@'
-pkgdatadir = '@pkgdatadir@'
-localedir = '@localedir@'
 
-sys.path.insert(1, pkgdatadir)
-signal.signal(signal.SIGINT, signal.SIG_DFL)
-gettext.install('grapik-quran', localedir)
-
-if __name__ == '__main__':
-    import gi
-
-    from gi.repository import Gio
-    resource = Gio.Resource.load(os.path.join(pkgdatadir, 'grapik-quran.gresource'))
-    resource._register()
-
-    from src import main
-    sys.exit(main.main(NAME, VERSION))
+APPLICATION_ID = 'org.grapik.Quran'
+RESOURCE_PATH = '/org/grapik/Quran'
+USER_DATA_PATH = path.join(
+    GLib.get_user_data_dir(),
+    'grapik-quran')
+PAGE_MARGIN = 20

@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/naruaika/Quran">
-    <!-- UI components -->
-    <file compressed="true">res/ui/about.ui</file>
-    <file compressed="true">res/ui/main-menu.ui</file>
-    <file compressed="true">res/ui/message.ui</file>
-    <file compressed="true">res/ui/musshaf.ui</file>
-    <file compressed="true">res/ui/navigation.ui</file>
-    <file compressed="true">res/ui/tarajem.ui</file>
-    <file compressed="true">res/ui/telaawa.ui</file>
-    <file compressed="true">res/ui/window.ui</file>
+  <gresource prefix="/org/grapik/Quran">
+    <file compressed="true">ui/about_dialog.ui</file>
+    <file compressed="true">ui/headerbar_hdy.ui</file>
+    <file compressed="true">ui/menu.ui</file>
+    <file compressed="true">ui/musshaf_dialog.ui</file>
+    <file compressed="true">ui/musshaf_listboxrow.ui</file>
+    <file compressed="true">ui/musshaf_viewer.ui</file>
+    <file compressed="true">ui/navigation.ui</file>
+    <file compressed="true">ui/tarajem_listboxrow.ui</file>
+    <file compressed="true">ui/tarajem_popover.ui</file>
+    <file compressed="true">ui/tarajem_viewer.ui</file>
+    <file compressed="true">ui/telaawa_listboxrow.ui</file>
+    <file compressed="true">ui/telaawa_popover.ui</file>
+    <file compressed="true">ui/window_hdy.ui</file>
 
-    <!-- Styling -->
-    <file compressed="true">res/css/main.css</file>
+    <file compressed="true">css/colour.css</file>
+    <file compressed="true">css/global.css</file>
+    <file compressed="true">css/main.css</file>
+    <file compressed="true">css/main-dark.css</file>
 
-    <!-- Images -->
-    <file compressed="true">res/img/page_null.png</file>
+    <file compressed="true">img/page_blank.png</file>
   </gresource>
 </gresources>

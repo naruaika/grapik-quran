@@ -20,28 +20,152 @@ import gi
 
 gi.require_version('Gdk', '3.0')
 gi.require_version('GdkPixbuf', '2.0')
-gi.require_version('Gtk', '3.0')
 gi.require_version('Gio', '2.0')
+gi.require_version('GLib', '2.0')
+gi.require_version('GObject', '2.0')
+gi.require_version('Gst', '1.0')
+gi.require_version('Gtk', '3.0')
+gi.require_version('Handy', '1')
 gi.require_version('Pango', '1.0')
 
-from gi.repository import Gdk, Gio, Gtk
+from gi.repository import Gdk
+from gi.repository import Gio
+from gi.repository import GObject
+from gi.repository import Gtk
+from os import path
 
+from . import globals as glo
+from .constants import APPLICATION_ID
+from .constants import USER_DATA_PATH
+from .model import Musshaf
+from .musshaf import MusshafDialog
 from .window import MainWindow
 
-
 class Application(Gtk.Application):
-    def __init__(self) -> None:
-        super().__init__(application_id='org.naruaika.Quran',
+
+    def __init__(
+            self,
+            app_name: str,
+            app_version: str) -> None:
+        super().__init__(application_id=APPLICATION_ID,
                          flags=Gio.ApplicationFlags.FLAGS_NONE)
 
-    def do_activate(self):
-        win = self.props.active_window
-        if not win:
-            win = MainWindow(application=self)
-        win.present()
+        self.settings = Gio.Settings.new(APPLICATION_ID)
+        glo.musshaf_name = self.settings.get_string('musshaf-name')
+        glo.tarajem_names = self.settings.get_strv('tarajem-names')
+        glo.telaawa_name = self.settings.get_string('telaawa-name')
+
+        glo.page_scale = self.settings.get_double('page-scale')
+        glo.dual_page = self.settings.get_boolean('dual-page')
+        glo.show_tarajem = self.settings.get_boolean('show-tarajem')
+
+        glo.page_number = self.settings.get_int('page-number')
+        glo.surah_number = self.settings.get_int('surah-number')
+        glo.ayah_number = self.settings.get_int('ayah-number')
+        glo.juz_number = self.settings.get_int('juz-number')
+        glo.hizb_number = self.settings.get_int('hizb-number')
+        glo.quarter_number = self.settings.get_int('quarter-number')
+
+        # Keep the application name and version, so it could be accessed by any
+        # application window and all their children
+        self.app_name = app_name
+        self.app_version = app_version
+
+        # Watch the system-wide settings when global Gtk application theme has
+        # been changed
+        Gtk.Settings.get_default().connect('notify::gtk-theme-name',
+                                           self.on_theme_changed)
+
+        # Initialise the application theme based on the activated global Gtk
+        # application theme
+        self.reload_css()
+
+    def do_activate(self) -> None:
+        window = self.props.active_window
+
+        if not window:
+            # If the application has ever been opened,
+            # open the main window and load the saved user settings.
+            # Otherwise, open the musshaf manager dialog.
+            musshaf_filepath = path.join(
+                USER_DATA_PATH,
+                f'musshaf/{glo.musshaf_name}/1.jpg')
+            with Musshaf() as musshaf:
+                if musshaf.is_musshaf_exist(glo.musshaf_name) \
+                        and path.isfile(musshaf_filepath):
+                    window = MainWindow(application=self)
+                else:
+                    window = MusshafDialog(application=self)
+
+        window.present()
+
+    def switch_to(
+            self,
+            window_name: str,
+            replaced: bool = False) -> None:
+        if replaced:
+            self.props.active_window.destroy()
+
+        if window_name == 'musshaf_dialog':
+            window = MusshafDialog(application=self)
+        else:
+            window = MainWindow(application=self)
+
+        window.present()
+
+    def reload_css(self) -> None:
+        """Reload styles based on the global Gtk application theme variants
+
+        Any Gtk application theme that has 'dark' or 'inverse' in its name
+        should be a dark theme variant.
+        """
+        default_settings = Gtk.Settings.get_default()
+        gtk_theme_name = default_settings.get_property('gtk-theme-name')
+        gtk_theme_name = gtk_theme_name.lower()
+
+        if 'dark' in gtk_theme_name \
+                or 'inverse' in gtk_theme_name:
+            variant = '-dark'
+        else:
+            variant = ''
+
+        provider = Gtk.CssProvider()
+        css_resource_path = f'/org/grapik/Quran/css/main{variant}.css'
+        provider.load_from_resource(css_resource_path)
+
+        screen = Gdk.Screen.get_default()
+        Gtk.StyleContext.add_provider_for_screen(
+            screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+    def save_user_settings(self) -> None:
+        """Save the last page read settings."""
+        self.settings.set_string('musshaf-name', glo.musshaf_name)
+        self.settings.set_strv('tarajem-names', glo.tarajem_names)
+        self.settings.set_string('telaawa-name', glo.telaawa_name)
+
+        self.settings.set_double('page-scale', glo.page_scale)
+        self.settings.set_boolean('dual-page', glo.dual_page)
+        self.settings.set_boolean('show-tarajem', glo.show_tarajem)
+
+        self.settings.set_int('page-number', glo.page_number)
+        self.settings.set_int('surah-number', glo.surah_number)
+        self.settings.set_int('ayah-number', glo.ayah_number)
+        self.settings.set_int('juz-number', glo.juz_number)
+        self.settings.set_int('hizb-number', glo.hizb_number)
+        self.settings.set_int('quarter-number', glo.quarter_number)
+
+    def on_theme_changed(
+            self,
+            settings: Gtk.Settings,
+            gparamstring: str) -> None:
+        self.reload_css()
 
 
-def main(version) -> int:
-    Gdk.threads_init()
-    app = Application()
-    return app.run(sys.argv)
+def main(
+        app_name: str,
+        app_version: str) -> int:
+    GObject.threads_init()
+    application = Application(app_name, app_version)
+    exit_status = application.run(sys.argv)
+    application.save_user_settings()
+    return exit_status

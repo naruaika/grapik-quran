@@ -2,12 +2,12 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkAdjustment" id="adjust_media">
+  <object class="GtkAdjustment" id="adjust_playback">
     <property name="upper">100</property>
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
-  <template class="popover_telaawa" parent="GtkPopoverMenu">
+  <template class="TelaawaPopover" parent="GtkPopoverMenu">
     <property name="can-focus">False</property>
     <child>
       <object class="GtkBox">
@@ -37,6 +37,7 @@
                     <property name="primary-icon-activatable">False</property>
                     <property name="primary-icon-sensitive">False</property>
                     <property name="placeholder-text" translatable="yes">Search Qaree</property>
+                    <signal name="search-changed" handler="search" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -54,7 +55,6 @@
                         <property name="receives-default">False</property>
                         <property name="active">True</property>
                         <property name="draw-indicator">False</property>
-                        <property name="group">radio_stream</property>
                         <child>
                           <object class="GtkImage">
                             <property name="visible">True</property>
@@ -108,7 +108,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkScrolledWindow" id="scrolledwindow">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="min-content-width">350</property>
@@ -122,7 +122,22 @@
                       <object class="GtkListBox" id="list_qaree">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="selection-mode">none</property>
+                        <signal name="row-activated" handler="on_qaree_selected" swapped="no"/>
+                        <signal name="row-selected" handler="on_qaree_selected" swapped="no"/>
+                        <child type="placeholder">
+                          <object class="GtkLabel" id="page_blank">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-start">15</property>
+                            <property name="margin-end">15</property>
+                            <property name="label" translatable="yes">We are having trouble finding any telaawa. Please contact the developers to get a help.</property>
+                            <property name="justify">center</property>
+                            <property name="wrap">True</property>
+                            <attributes>
+                              <attribute name="foreground" value="#808080808080"/>
+                            </attributes>
+                          </object>
+                        </child>
                         <style>
                           <class name="box-qaree-option"/>
                         </style>
@@ -174,7 +189,7 @@
                     <property name="can-focus">False</property>
                     <property name="margin-end">5</property>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="button_seek_backward">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="receives-default">True</property>
@@ -193,15 +208,18 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToggleButton">
+                      <object class="GtkToggleButton" id="button_toggle_play">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="can-default">True</property>
                         <property name="receives-default">True</property>
+                        <signal name="toggled" handler="on_played" swapped="no"/>
                         <child>
-                          <object class="GtkImage">
+                          <object class="GtkImage" id="icon_toggle_play">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="icon-name">media-playback-start-symbolic</property>
+                            <signal name="destroy" handler="on_quit" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -212,7 +230,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="button_seek_forward">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="receives-default">True</property>
@@ -241,10 +259,10 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkScale">
+                  <object class="GtkScale" id="seek_audio_playback">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="adjustment">adjust_media</property>
+                    <property name="adjustment">adjust_playback</property>
                     <property name="show-fill-level">True</property>
                     <property name="round-digits">1</property>
                     <property name="draw-value">False</property>
@@ -257,7 +275,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToggleButton">
+                  <object class="GtkToggleButton" id="button_toggle_loopback">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="receives-default">True</property>
@@ -342,10 +360,24 @@
                     <property name="can-focus">False</property>
                     <property name="shadow-type">none</property>
                     <child>
-                      <object class="GtkListBox" id="list_downloaded">
+                      <object class="GtkListBox" id="list_surah">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="selection-mode">none</property>
+                        <child type="placeholder">
+                          <object class="GtkLabel" id="page_blank1">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-start">15</property>
+                            <property name="margin-end">15</property>
+                            <property name="label" translatable="yes">We are having trouble finding a list of available audio for the selected telaawa. Please contact the developers to get a help.</property>
+                            <property name="justify">center</property>
+                            <property name="wrap">True</property>
+                            <attributes>
+                              <attribute name="foreground" value="#808080808080"/>
+                            </attributes>
+                          </object>
+                        </child>
                         <style>
                           <class name="box-downloaded-option"/>
                         </style>
@@ -364,7 +396,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkProgressBar" id="progress_downloaded">
+              <object class="GtkProgressBar" id="progress_surah">
                 <property name="can-focus">False</property>
               </object>
               <packing>
@@ -390,9 +422,4 @@
       <class name="popover-no-padding"/>
     </style>
   </template>
-  <object class="GtkAdjustment" id="volume_adjust">
-    <property name="upper">100</property>
-    <property name="step-increment">1</property>
-    <property name="page-increment">10</property>
-  </object>
 </interface>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="grapik-quran">
+	<schema id="org.grapik.Quran" path="/org/grapik/Quran/">
+		<key name="musshaf-name" type="s">
+			<default>'standard39'</default>
+			<summary>Last read Musshaf ID</summary>
+			<description>
+				The value is updated whenever the user changes the Musshaf.
+			</description>
+		</key>
+		<key name="tarajem-names" type="as">
+			<default>[]</default>
+			<summary>List of enabled tarajem IDs</summary>
+			<description>
+				The value is updated whenever the user add/remove a tarajem to/from being displayed.
+			</description>
+		</key>
+		<key name="telaawa-name" type="s">
+			<default>''</default>
+			<summary>Last played telaawa ID</summary>
+			<description>
+				The value is updated whenever the user changes the telaawa to be played.
+			</description>
+		</key>
+
+		<key name="page-scale" type="d">
+			<default>0.6</default>
+			<summary>Page scale</summary>
+			<description>
+				The value is updated whenever the user changes the page scale.
+			</description>
+		</key>
+		<key name="dual-page" type="b">
+			<default>true</default>
+			<summary>Dual page mode</summary>
+			<description>
+				The value is updated whenever the user changes the dual page mode state.
+			</description>
+		</key>
+		<key name="show-tarajem" type="b">
+			<default>false</default>
+			<summary>Tarajem viewer visibility</summary>
+			<description>
+				The value is updated whenever the user changes the visibility of the tarajem viewer.
+			</description>
+		</key>
+
+		<key name="page-number" type="i">
+			<default>0</default>
+			<summary>Last page read number</summary>
+			<description>
+				The value is updated whenever the user changes the page read.
+			</description>
+		</key>
+		<key name="surah-number" type="i">
+			<default>1</default>
+			<summary>Last surah read number</summary>
+			<description>
+				The value is updated whenever the user changes the surah name/number.
+			</description>
+		</key>
+		<key name="ayah-number" type="i">
+			<default>1</default>
+			<summary>Last ayah read number</summary>
+			<description>
+				The value is updated whenever the user changes the ayah name/number.
+			</description>
+		</key>
+		<key name="juz-number" type="i">
+			<default>1</default>
+			<summary>Last juz read number</summary>
+			<description>
+				The value is updated whenever the user changes the juz number.
+			</description>
+		</key>
+		<key name="hizb-number" type="i">
+			<default>0</default>
+			<summary>Last hizb read number</summary>
+			<description>
+				The value is updated whenever the user changes the hizb number.
+			</description>
+		</key>
+		<key name="quarter-number" type="i">
+			<default>0</default>
+			<summary>Last quarter read number</summary>
+			<description>
+				The value is updated whenever the user changes the quarter number.
+			</description>
+		</key>
+	</schema>
+</schemalist>

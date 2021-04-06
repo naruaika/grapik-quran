@@ -1,0 +1,39 @@
+@import url('resource://org/grapik/Quran/css/colour.css');
+@import url('resource://org/grapik/Quran/css/global.css');
+
+row {
+    border-bottom: 1px solid @border;
+}
+row button {
+    border-left-color: @border;
+}
+
+.row-qaree {
+    border-bottom: 1px solid @border;
+}
+.row-qaree button {
+    border-left-color: @border;
+}
+.row-qaree button:hover {
+    background: #d9d9d9;
+    border-color: #d9d9d9;
+    border-left-color: @border;
+}
+.row-qaree:selected button:hover {
+    border-left-color: @border;
+}
+
+.media-player {
+    background: #dddddd;
+    border-top: 1px solid @border;
+}
+.media-player trough {
+    border-bottom: 1px solid @border;
+}
+
+.second-text {
+    color: #333333;
+}
+row:selected .second-text {
+    color: #cccccc;
+}

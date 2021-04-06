@@ -1,9 +1,11 @@
-project('grapik-quran',
-          version: '0.1.0-alpha.3',
+project('Grapik Quran',
+          version: '0.1.0-alpha.4',
     meson_version: '>= 0.54.0',
   default_options: [ 'warning_level=2',
                    ],
 )
+
+dependency('libhandy-1', version: '>= 1.0.0')
 
 i18n = import('i18n')
 

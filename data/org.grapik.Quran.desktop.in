@@ -1,6 +1,7 @@
 [Desktop Entry]
-Name=Quran
+Name=Grapik Quran
 Exec=grapik-quran
+Icon=org.grapik.Quran
 Terminal=false
 Type=Application
 Categories=GTK;

@@ -1,7 +1,3 @@
-data/org.naruaika.Quran.desktop.in
-data/org.naruaika.Quran.appdata.xml.in
-data/org.naruaika.Quran.gschema.xml
-src/window.ui
-src/main.py
-src/window.py
-
+data/org.grapik.Quran.desktop.in
+data/org.grapik.Quran.appdata.xml.in
+data/org.grapik.Quran.gschema.xml

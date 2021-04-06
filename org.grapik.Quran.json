@@ -1,14 +1,16 @@
 {
-    "app-id" : "org.naruaika.Quran",
+    "app-id" : "org.grapik.Quran",
     "runtime" : "org.gnome.Platform",
-    "runtime-version" : "master",
+    "runtime-version" : "40",
     "sdk" : "org.gnome.Sdk",
     "command" : "grapik-quran",
     "finish-args" : [
         "--share=network",
         "--share=ipc",
+        "--device=dri",
         "--socket=fallback-x11",
         "--socket=wayland",
+        "--socket=pulseaudio",
         "--filesystem=xdg-data/grapik-quran:create"
     ],
     "cleanup" : [
@@ -23,6 +25,26 @@
         "*.a"
     ],
     "modules" : [
+        {
+            "name": "libhandy",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dprofiling=false",
+                "-Dintrospection=enabled",
+                "-Dgtk_doc=false",
+                "-Dtests=false",
+                "-Dexamples=false",
+                "-Dvapi=false",
+                "-Dglade_catalog=disabled"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GNOME/libhandy",
+                    "tag": "1.2.0"
+                }
+            ]
+        },
         {
             "name" : "grapik-quran",
             "builddir" : true,

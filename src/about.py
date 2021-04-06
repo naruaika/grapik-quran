@@ -1,6 +1,4 @@
-#!@PYTHON@
-
-# grapik-quran.in
+# about.py
 #
 # Copyright 2021 Naufan Rusyda Faikar
 #
@@ -17,26 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import sys
-import signal
-import gettext
+from gi.repository import Gtk
 
-NAME = '@NAME@'
-VERSION = '@VERSION@'
-pkgdatadir = '@pkgdatadir@'
-localedir = '@localedir@'
+from .constants import RESOURCE_PATH
 
-sys.path.insert(1, pkgdatadir)
-signal.signal(signal.SIGINT, signal.SIG_DFL)
-gettext.install('grapik-quran', localedir)
 
-if __name__ == '__main__':
-    import gi
-
-    from gi.repository import Gio
-    resource = Gio.Resource.load(os.path.join(pkgdatadir, 'grapik-quran.gresource'))
-    resource._register()
-
-    from src import main
-    sys.exit(main.main(NAME, VERSION))
+@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/about_dialog.ui')
+class AboutDialog(Gtk.AboutDialog):
+    __gtype_name__ = 'AboutDialog'

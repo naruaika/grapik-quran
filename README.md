@@ -1,6 +1,8 @@
+<img src="data/org.grapik.Quran.svg" width="128px" align="left">
+
 # Grapik Quran
 
-**Announcement**: After I've played around with over 90 commits making a proof-of-concept, it's time to get serious. So, this time I'm going to put this main branch idle while redesigning and rewriting the entire code from scratch. I'll make sure to adopt a software design pattern and put documentation everywhere. Also to migrate to GTK4! :)
+A simple and modern digital Quran app for GNOME desktop.
 
 In the name of Allah, the Entirely Merciful, the Especially Merciful. This proof-of-concept application is specially made for the GNOME desktop. We use Quran images from [Quran Complex](https://qurancomplex.gov.sa/) to provide the same experience of reading a non-digital Quran; Quran indexes and translations are from [Tanzil](http://tanzil.net); recitations are from [EveryAyah](https://everyayah.com). Here're some prototypes of the app:
 
@@ -23,8 +25,7 @@ Using this app, you'll be able to:
 - Download and read any variants of the complete Quran (8 variants in 5 qira'at)
 - Navigate to any specific page/surah/ayah/juz
 - Download and read translation in 39 languages
-- Download/stream and listen recitation by 41 reciters
-- Select and copy the selected ayah(s) and translations as text
+- Download and listen recitation by 41 reciters
 
 ## Background
 

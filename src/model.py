@@ -15,374 +15,240 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import GLib, Gtk
+from __future__ import annotations
+from abc import ABC
+from gi.repository import GLib
+from os import path
 from typing import List
-from urllib.request import urlopen
-import io
-import os
-import shutil
 import sqlite3
-import tempfile
-import zipfile
-import faulthandler
+
+from . import globals as glo
+from .constants import USER_DATA_PATH
 
 
-class Reader:
-    _main_db = sqlite3.connect(os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), '../main.db'))
-    _musshaf_db = sqlite3.connect(os.path.join(
-        GLib.get_user_data_dir(), 'grapik-quran/musshaf.db'))
-    _tarajem_db = sqlite3.connect(os.path.join(
-        GLib.get_user_data_dir(), 'grapik-quran/tarajem.db'))
+class Model(ABC):
 
-    _main_cursor = _main_db.cursor()
-    _musshaf_cursor = _musshaf_db.cursor()
-    _tarajem_cursor = _tarajem_db.cursor()
+    _database_filepath = None
 
-    _selected_musshaf = ''
-    _selected_tarajem = []
-    _selected_telaawa = ''
+    @property
+    def database_filepath(self) -> str:
+        return self._database_filepath
 
-    def get_page_no(self, sura_no: int, aya_no: int) -> int:
-        query = f'SELECT page FROM {self._selected_musshaf} WHERE sura=? AND' \
-            ' aya=? ORDER BY id DESC'
-        self._musshaf_cursor.execute(query, (sura_no, aya_no))
-        result = self._musshaf_cursor.fetchone()
-        if result:
-            return result[0]
-        return -1
+    @database_filepath.setter
+    def database_filepath(
+            self,
+            filepath: str) -> None:
+        self._database_filepath = filepath
 
-    def get_suras(self) -> List:
-        self._main_cursor.execute('SELECT * FROM suras')
-        return self._main_cursor.fetchall()
+    def __enter__(self) -> Model:
+        self.connection = sqlite3.connect(self._database_filepath)
+        self.cursor = self.connection.cursor()
+        return self
 
-    def get_sura_no(self, page_no: int = None, juz_no: int = None) -> int:
-        if page_no:
-            query = f'SELECT sura FROM {self._selected_musshaf} WHERE page=?'
-            self._musshaf_cursor.execute(query, (page_no,))
-            result = self._musshaf_cursor.fetchone()
-            if result:
-                return result[0]
-        elif juz_no:
-            self._main_cursor.execute('SELECT sura FROM juzs WHERE id=?',
-                                      (juz_no,))
-            result = self._main_cursor.fetchone()
-            if result:
-                return result[0]
-        return -1
+    def __exit__(
+            self,
+            type,
+            value,
+            traceback) -> None:
+        self.connection.close()
 
-    def get_sura_name(self, sura_no: int) -> int:
-        query = f'SELECT tname FROM suras WHERE id=?'
-        self._main_cursor.execute(query, (sura_no,))
-        result = self._main_cursor.fetchone()
-        if result:
-            return result[0]
-        return -1
 
-    def get_sura_length(self, sura_no: int) -> int:
-        self._main_cursor.execute('SELECT ayas FROM suras WHERE id=?',
-                                  (sura_no,))
-        result = self._main_cursor.fetchone()
-        if result:
-            return result[0]
-        return -1
+class Metadata(Model):
 
-    def get_aya_no(self, page_no: int = None, juz_no: int = None) -> int:
-        if page_no:
-            query = f'SELECT aya FROM {self._selected_musshaf} WHERE page=?'
-            self._musshaf_cursor.execute(query, (page_no,))
-            result = self._musshaf_cursor.fetchone()
-            if result:
-                return result[0]
-        elif juz_no:
-            self._main_cursor.execute('SELECT aya FROM juzs WHERE id=?',
-                                      (juz_no,))
-            result = self._main_cursor.fetchone()
-            if result:
-                return result[0]
-        return -1
-
-    def get_aya_text(self, sura_no: int, aya_no: int) -> str:
-        self._main_cursor.execute('SELECT text FROM texts WHERE sura=? AND '
-                                  'aya=?', (sura_no, aya_no))
-        result = self._main_cursor.fetchone()
-        if result:
-            return result[0]
-        return -1
-
-    def get_suraya_seq(self, sura_no: int, aya_no: int) -> int:
-        query = \
-            f'''SELECT seq from (SELECT ROW_NUMBER() OVER (ORDER BY id) seq,
-            sura, aya FROM {self._selected_musshaf} WHERE page=(SELECT page
-            FROM {self._selected_musshaf} WHERE sura=? AND aya=? LIMIT 1)
-            GROUP BY sura, aya) WHERE sura=? AND aya=?'''
-        self._musshaf_cursor.execute(query, (sura_no, aya_no, sura_no, aya_no))
-        result = self._musshaf_cursor.fetchone()
-        if result:
-            return result[0]
-        return -1
-
-    def get_juz_no(self, sura_no: int, aya_no: int) -> int:
-        self._main_cursor.execute('SELECT id FROM juzs WHERE (sura=? AND '
-                                  'aya<=?) OR sura<? ORDER BY id DESC LIMIT 1',
-                                  (sura_no, aya_no, sura_no))
-        result = self._main_cursor.fetchone()
-        if result:
-            return result[0]
-        return -1
-
-    def get_hizb_no(self, sura_no: int, aya_no: int) -> int:
-        return 1
-
-    def get_tarajems(self) -> List:
-        self._main_cursor.execute('SELECT * FROM tarajem ORDER BY language, ' \
-                                  'translator ASC')
-        return self._main_cursor.fetchall()
-
-    def get_tarajem(self, tarajem_id: str) -> List:
-        self._main_cursor.execute('SELECT * FROM tarajem WHERE id=?',
-                                  (tarajem_id,))
-        return self._main_cursor.fetchone()
-
-    def get_tarajem_text(self, tarajem_id: str, sura_no: int,
-                         aya_no: int) -> List:
-        self._main_cursor.execute('SELECT * FROM tarajem WHERE id=?',
-                                  (tarajem_id,))
-        if self._main_cursor.fetchone():
-            query = f'SELECT sura, aya, text FROM {tarajem_id} WHERE sura=? ' \
-                'AND aya=?'
-            self._tarajem_cursor.execute(query, (sura_no, aya_no))
-            return self._tarajem_cursor.fetchone()
-        return []
-
-    def get_selected_tarajem(self) -> List:
-        return self._selected_tarajem
-
-    def update_selected_tarajem(self, tarajem_id: str) -> List:
-        if tarajem_id in self._selected_tarajem:
-            self._selected_tarajem.remove(tarajem_id)
-        else:
-            self._main_cursor.execute('SELECT * FROM tarajem WHERE id=?',
-                                      (tarajem_id,))
-            if self._main_cursor.fetchone():
-                self._selected_tarajem.append(tarajem_id)
-        return self._selected_tarajem
-
-    def check_tarajem(self, tarajem_id: str) -> bool:
-        self._tarajem_cursor.execute('SELECT name FROM sqlite_master WHERE '
-                                     'name=?', (tarajem_id,))
-        if self._tarajem_cursor.fetchone():
-            return True
-        return False
-
-    def get_telaawas(self) -> List:
-        self._main_cursor.execute('SELECT * FROM telaawa ORDER BY qiraat, '
-                                  'qaree, bitrate, style ASC')
-        return self._main_cursor.fetchall()
-
-    def get_selected_telaawa(self) -> str:
-        return self._selected_telaawa
-
-    def update_selected_telaawa(self, telaawa_id: str) -> str:
-        self._main_cursor.execute('SELECT * FROM telaawa WHERE id=?',
-                                  (telaawa_id,))
-        if self._main_cursor.fetchone():
-            self._selected_telaawa = telaawa_id
-        return self._selected_telaawa
-
-    def check_telaawa(self, telaawa_id: str) -> bool:
-        telaawa_dir = os.path.join(
-            GLib.get_user_data_dir(), f'grapik-quran/telaawa/{telaawa_id}')
-        return os.path.isdir(telaawa_dir)
+    def __init__(self) -> None:
+        self.database_filepath = path.join(
+            path.dirname(path.abspath(__file__)), 'main.db')
 
     def get_musshafs(self) -> List:
-        self._main_cursor.execute('SELECT * FROM musshaf ORDER BY name')
-        return self._main_cursor.fetchall()
+        self.cursor.execute('SELECT * FROM musshaf ORDER BY name')
+        return self.cursor.fetchall()
 
-    def get_selected_musshaf(self) -> str:
-        return self._selected_musshaf
+    def get_musshaf(
+            self) -> List:
+        self.cursor.execute('SELECT * FROM musshaf WHERE id=?',
+                            (glo.musshaf_name,))
+        return self.cursor.fetchone()
 
-    def update_selected_musshaf(self, musshaf_id: str) -> str:
-        self._main_cursor.execute('SELECT * FROM musshaf WHERE id=?',
-                                  (musshaf_id,))
-        if self._main_cursor.fetchone():
-            self._selected_musshaf = musshaf_id
-        return self._selected_musshaf
+    def get_surahs(self) -> List:
+        self.cursor.execute('SELECT * FROM suras')
+        return self.cursor.fetchall()
 
-    def check_musshaf(self, musshaf_id: str) -> bool:
-        self._musshaf_cursor.execute('SELECT name FROM sqlite_master WHERE '
-                                     'name=?', (musshaf_id,))
-        if self._musshaf_cursor.fetchone():
+    def get_surah_length(
+            self,
+            surah_no: int) -> int:
+        # TODO: obtain the aya numbering after shifting
+        self.cursor.execute('SELECT ayas FROM suras WHERE id=?', (surah_no,))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
+
+    def get_surah_no(
+            self,
+            juz_no: int = None,
+            hizb_no: int = None) -> int:
+        if juz_no:
+            self.cursor.execute('SELECT sura FROM juzs WHERE id=?', (juz_no,))
+            result = self.cursor.fetchone()
+        else:
+            self.cursor.execute('SELECT sura FROM hizbs WHERE id=?',
+                                (hizb_no,))
+            result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
+
+    def get_surah_name(
+            self,
+            surah_no: int) -> int:
+        query = f'SELECT tname FROM suras WHERE id=?'
+        self.cursor.execute(query, (surah_no,))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
+
+    def get_ayah_no(
+            self,
+            juz_no: int = None,
+            hizb_no: int = None) -> int:
+        if juz_no:
+            self.cursor.execute('SELECT aya FROM juzs WHERE id=?', (juz_no,))
+            result = self.cursor.fetchone()
+        else:
+            self.cursor.execute('SELECT aya FROM hizbs WHERE id=?', (hizb_no,))
+            result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
+
+    def get_juz_no(
+            self,
+            surah_no: int,
+            ayah_no: int) -> int:
+        self.cursor.execute('SELECT id FROM juzs WHERE (sura=? AND aya<=?) OR '
+                            'sura<? ORDER BY id DESC',
+                            (surah_no, ayah_no, surah_no))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
+
+    def get_hizb_no(
+            self,
+            surah_no: int,
+            ayah_no: int) -> int:
+        self.cursor.execute('SELECT id FROM hizbs WHERE (sura=? AND aya<=?) OR'
+                            ' sura<? ORDER BY id DESC',
+                            (surah_no, ayah_no, surah_no))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
+
+    def get_tarajems(self) -> List:
+        self.cursor.execute('SELECT * FROM tarajem ORDER BY language')
+        return self.cursor.fetchall()
+
+    def get_tarajem(
+            self,
+            tarajem_id: str) -> List:
+        self.cursor.execute('SELECT * FROM tarajem WHERE id=?', (tarajem_id,))
+        return self.cursor.fetchone()
+
+    def get_telaawas(self) -> List:
+        self.cursor.execute('SELECT * FROM telaawa ORDER BY qiraat, qaree, '
+                            'bitrate, style ASC')
+        return self.cursor.fetchall()
+
+    def get_telaawa(
+            self,
+            telaawa_id: str) -> List:
+        self.cursor.execute('SELECT * FROM telaawa WHERE id=?', (telaawa_id,))
+        return self.cursor.fetchone()
+
+
+class Musshaf(Model):
+
+    def __init__(self) -> None:
+        self.database_filepath = path.join(USER_DATA_PATH, 'musshaf.db')
+
+    def is_musshaf_exist(
+            self,
+            musshaf_name: str) -> bool:
+        self.cursor.execute('SELECT name FROM sqlite_master WHERE name=?',
+                            (musshaf_name,))
+        if self.cursor.fetchone():
             return True
         return False
 
-    def get_bboxes(self, page_no: int) -> List:
+    def get_page_no(
+            self,
+            surah_no: int,
+            ayah_no: int) -> int:
+        if not self.is_musshaf_exist(glo.musshaf_name):
+            return -1
+        query = f'SELECT page FROM {glo.musshaf_name} WHERE sura=? AND aya=?' \
+            ' ORDER BY id DESC'
+        self.cursor.execute(query, (surah_no, ayah_no))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
+
+    def get_surah_no(
+            self,
+            page_no: int) -> int:
+        query = f'SELECT sura FROM {glo.musshaf_name} WHERE page=?'
+        self.cursor.execute(query, (page_no,))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
+
+    def get_ayah_no(
+            self,
+            page_no: int) -> int:
+        query = f'SELECT aya FROM {glo.musshaf_name} WHERE page=?'
+        self.cursor.execute(query, (page_no,))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
+
+    def get_bboxes(
+            self,
+            page_no: int) -> List:
+        if not self.is_musshaf_exist(glo.musshaf_name):
+            return -1
         query = 'SELECT sura, aya, x1, y1, x2-x1, y2-y1 FROM ' \
-            f'{self._selected_musshaf} WHERE page=?'
-        self._musshaf_cursor.execute(query, (page_no,))
-        return self._musshaf_cursor.fetchall()
+            f'{glo.musshaf_name} WHERE page=?'
+        self.cursor.execute(query, (page_no,))
+        return self.cursor.fetchall()
 
 
-class ResourceManager:
+class Tarajem(Model):
 
-    @staticmethod
-    def add_musshaf(musshaf_id: str,
-                    progressbar: Gtk.ProgressBar = None) -> bool:
-        con = sqlite3.connect(os.path.join(
-            GLib.get_user_data_dir(), 'grapik-quran/musshaf.db'))
-        cur = con.cursor()
+    def __init__(self) -> None:
+        self.database_filepath = path.join(USER_DATA_PATH, 'tarajem.db')
 
-        # Check if the id is valid
-        con_ = sqlite3.connect(os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), '../main.db'))
-        cur_ = con_.cursor()
-        cur_.execute('SELECT * FROM musshaf WHERE id=?', (musshaf_id,))
-        meta = cur_.fetchone()
-        con_.close()
-        if not meta:
-            con.close()
-            return False
+    def is_tarajem_exist(
+            self,
+            tarajem_name: str) -> bool:
+        self.cursor.execute('SELECT name FROM sqlite_master WHERE name=?',
+                            (tarajem_name,))
+        if self.cursor.fetchone():
+            return True
+        return False
 
-        response_images = urlopen(url=meta[2])
-        response_bboxes = urlopen(url=meta[3])
-
-        image_size = int(response_images.getheader('Content-Length'))
-        bbox_size = int(response_bboxes.getheader('Content-Length'))
-        content_length = image_size + bbox_size
-        dl = 0
-
-        faulthandler.enable()
-        # Download archive file for the musshaf images
-        # FIXME: segmentation fault caused by unstable internet connection(?)
-        chunk_size = 4096
-        musshaf_dir = os.path.join(
-            GLib.get_user_data_dir(), f'grapik-quran/musshaf/{musshaf_id}')
-        if not os.path.isdir(musshaf_dir):
-            with tempfile.TemporaryFile() as f:
-                while True:
-                    chunk = response_images.read(chunk_size)
-                    if not chunk:
-                        break
-                    dl += len(chunk)
-                    if progressbar:
-                        progressbar.set_fraction(dl / content_length)
-                    f.write(chunk)
-
-                f.seek(0)
-                with zipfile.ZipFile(io.BytesIO(f.read()), 'r') as fz:
-                    os.makedirs(musshaf_dir, exist_ok=True)
-                    for filename in fz.namelist():
-                        image = fz.open(filename)
-                        filepath = os.path.join(
-                            musshaf_dir, os.path.basename(filename))
-                        with open(filepath, 'wb') as fi:
-                            shutil.copyfileobj(image, fi)
-        else:
-            dl += image_size
-
-        cur.execute('SELECT name FROM sqlite_master WHERE name=?',
-                    (musshaf_id,))
-        if not cur.fetchone():
-            # Download SQL query file for the musshaf bounding boxes
-            response_bboxes = urlopen(url=meta[3])  # reopen in case of
-                                                    # connection reset by peer
-            with tempfile.TemporaryFile() as f:
-                while True:
-                    chunk = response_bboxes.read(chunk_size)
-                    if not chunk:
-                        break
-                    dl += len(chunk)
-                    if progressbar:
-                        progressbar.set_fraction(dl / content_length)
-                    f.write(chunk)
-
-                f.seek(0)
-                cur.execute('PRAGMA encoding="UTF-8";')
-                cur.executescript(f.read().decode('utf-8'))
-
-            # Add ID column to the new created table
-            query = f'''CREATE TABLE {musshaf_id}_copy (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                page INT (3) NOT NULL,
-                sura INT (3) NOT NULL,
-                aya INT (3) NOT NULL,
-                x1 INT (5) NOT NULL,
-                y1 INT (5) NOT NULL,
-                x2 INT (5) NOT NULL,
-                y2 INT (5) NOT NULL
-            );'''
-            cur.execute(query)
-            query = f'''INSERT INTO {musshaf_id}_copy
-                (page, sura, aya, x1, y1, x2, y2)
-                SELECT page, sura, aya, x1, y1, x2, y2 FROM {musshaf_id}
-            '''
-            cur.execute(query)
-            query = f'''DROP TABLE {musshaf_id};'''
-            cur.execute(query)
-            query = f'''ALTER TABLE {musshaf_id}_copy RENAME TO {musshaf_id}'''
-            cur.execute(query)
-            con.commit()
-        else:
-            dl += bbox_size
-
-        con.close()
-
-        return True
-
-    @staticmethod
-    def add_tarajem(tarajem_id: str,
-                    progressbar: Gtk.ProgressBar = None) -> bool:
-        con = sqlite3.connect(os.path.join(
-            GLib.get_user_data_dir(), 'grapik-quran/tarajem.db'))
-        cur = con.cursor()
-
-        # Check if the id is valid
-        con_ = sqlite3.connect(os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), '../main.db'))
-        cur_ = con_.cursor()
-        cur_.execute('SELECT * FROM tarajem WHERE id=?', (tarajem_id,))
-        meta = cur_.fetchone()
-        con_.close()
-        if not meta:
-            con.close()
-            return False
-
-        response = urlopen(url=meta[-1])
-
-        content_length = response.getheader('Content-Length')
-        content_length = (0 if not content_length else int(content_length))
-        dl = 0
-
-        chunk_size = 1024
-        with tempfile.TemporaryFile() as f:
-            while True:
-                chunk = response.read(chunk_size)
-                if not chunk:
-                    break
-                if content_length > 0:
-                    dl += len(chunk)
-                    if progressbar:
-                        progressbar.set_fraction(dl / content_length)
-                f.write(chunk)
-
-            if progressbar:  # for when has no content length in its header
-                progressbar.set_fraction(1)
-
-            f.seek(0)
-            query = f'''CREATE TABLE {tarajem_id} (
-                id   INT(4) PRIMARY KEY
-                            NOT NULL,
-                sura INT(3) NOT NULL,
-                aya  INT(3) NOT NULL,
-                text TEXT   NOT NULL
-            );'''
-            cur.execute(query)
-            cur.execute('PRAGMA encoding="UTF-8";')
-            cur.executescript(
-                '\n'.join(f.read().decode('utf-8').replace('index', 'id')
-                          .replace(r"\'),", "'),").replace(r"\'", "''")
-                          .split('\n')[46:]))
-
-        con.commit()
-        con.close()
-        return True
+    def get_tarajem_text(
+            self,
+            tarajem_name: str,
+            surah_no: int,
+            ayah_no: int) -> List:
+        if self.is_tarajem_exist(tarajem_name):
+            query = f'SELECT sura, aya, text FROM {tarajem_name} WHERE ' \
+                'sura=? AND aya=?'
+            self.cursor.execute(query, (surah_no, ayah_no))
+            return self.cursor.fetchone()
+        return []
