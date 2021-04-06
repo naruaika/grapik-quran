@@ -175,7 +175,6 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
         if is_playing:
             suraya_no = f'{glo.surah_number:03d}001'
-            # TODO: store the user data directory path as a constant
             if not path.isfile(path.join(
                     USER_DATA_PATH,
                     f'telaawa/{glo.telaawa_name}/{suraya_no}.mp3')):
@@ -350,7 +349,11 @@ class TelaawaListBoxRow(Gtk.ListBoxRow):
     label_description = Gtk.Template.Child('label_description')
     button_open_settings = Gtk.Template.Child('button_open_settings')
 
-    def __init__(self, name: str, description: str, **kwargs) -> None:
+    def __init__(
+            self,
+            name: str,
+            description: str,
+            **kwargs) -> None:
         super().__init__(**kwargs)
 
         self.label_name.set_markup(name)

@@ -103,7 +103,7 @@ class MainWindow(Handy.ApplicationWindow):
 
         self.headerbar.button_open_tarajem.set_active(glo.show_tarajem)
 
-        # Setup timer for showing/hiding overlay widgets
+        # Setup a timer for show/hiding overlay widgets
         self.timer_buttonnav = Timer(2.0, self.hide_buttonnav)
         self.timer_buttonnav.start()
 
@@ -196,8 +196,7 @@ class MainWindow(Handy.ApplicationWindow):
         self.tarajem_viewer.scrolledwindow.set_size_request(
             page_width, page_height)
 
-        # FIXME: set the minimum size after resizing
-        # self.set_size_request(window_width + 52, window_height + 52)
+        self.set_size_request(window_width + 82, self.get_size_request()[1])
 
     @Gtk.Template.Callback()
     def on_key_press(

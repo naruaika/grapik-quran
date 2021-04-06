@@ -76,7 +76,7 @@ class Metadata(Model):
     def get_surah_length(
             self,
             surah_no: int) -> int:
-        # TODO: obtain the aya numbering after shifting
+        # TODO: obtain the ayah numbering after shifting
         self.cursor.execute('SELECT ayas FROM suras WHERE id=?', (surah_no,))
         result = self.cursor.fetchone()
         if result:

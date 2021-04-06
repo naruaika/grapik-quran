@@ -39,7 +39,7 @@ There are many alternatives to Ayat, such as [Zekr](https://sourceforge.net/proj
 
 I used to be a user of Sabily OS and I've been amazed how wonderful it is. May Allah forgive me all along the way by doing this project and I ask Allah for His _taufiq_ and _hidayah_ to the straight path.
 
-## Contribution
+## Contributing
 
 The easiest way for beginners is clone this repository to your local computer, then build and run it using [GNOME Builder](https://wiki.gnome.org/Apps/Builder). To enable GTK Inspector, run `gsettings set org.gtk.Settings.Debug enable-inspector-keybinding true` in the runtime terminal. If you are not a developer, you can still contribute by praying for me so that my age will be lengthened and my intentions will be straightened out in working on this project. La Hawla Wala Quwwata illa Billah.
 
