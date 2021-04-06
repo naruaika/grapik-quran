@@ -48,7 +48,9 @@ class TarajemViewer(Gtk.Overlay):
         bboxes = [bbox for bbox in bboxes
                   if not (bbox in uniques or uniques.add(bbox))]
 
-        bboxes_focused = bboxes_focused[0][:2]  # get surah-ayah numbers only
+        if bboxes_focused:
+            bboxes_focused = bboxes_focused[0][:2]  # get surah-ayah numbers
+                                                    # only
         if bboxes_hovered:
             bboxes_hovered = bboxes_hovered[0][:2]
 
@@ -115,8 +117,9 @@ class TarajemViewer(Gtk.Overlay):
         # Add a delay to make sure all the listboxrow has been rendered
         # and then animate the scroll
         # FIXME: find better solution to make sure all its children are ready
-        GLib.timeout_add(50, Animation.scroll_to, self.scrolledwindow,
-                         row_hovered if row_hovered else row_focused)
+        if bboxes_focused:
+            GLib.timeout_add(50, Animation.scroll_to, self.scrolledwindow,
+                             row_hovered if row_hovered else row_focused)
 
         if self.listbox.get_children():
             return True

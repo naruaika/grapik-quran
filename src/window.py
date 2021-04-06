@@ -278,7 +278,8 @@ class MainWindow(Handy.ApplicationWindow):
             self.main_paned.remove(self.musshaf_viewer_left)
             self.main_paned.remove(self.tarajem_viewer)
 
-            if glo.show_tarajem:
+            if glo.show_tarajem \
+                    and glo.page_focused >= 0:
                 # If the right Musshaf viewer is on focus, replace the left
                 # Musshaf viewer with tarajem viewer and vice versa.
                 if glo.page_focused == self.musshaf_viewer_right.id:

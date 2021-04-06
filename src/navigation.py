@@ -21,6 +21,7 @@ from os import listdir
 from os import path
 
 from . import globals as glo
+from .constants import APPLICATION_NAME
 from .constants import RESOURCE_PATH
 from .constants import USER_DATA_PATH
 from .model import Metadata
@@ -268,13 +269,18 @@ class NavigationPopover(Gtk.PopoverMenu):
 
         self.is_updating = False
 
+        # Request updates to the headerbar
+        if glo.surah_number > 0:
+            surah_name = self.entry_surah_name.get_text()
+            self.emit('change-win-title', f'{surah_name.split()[1]} '
+                                          f'({glo.surah_number}) : '
+                                          f'{glo.ayah_number:.0f}')
+        else:
+            glo.page_focused = -1  # to hide tarajem viewer if it is being
+                                   # displayed
+            self.emit('change-win-title', APPLICATION_NAME)
+
         # Request updates to the Musshaf, tarajem, and telawa
         self.emit('reload-musshaf-viewer')
         self.emit('reload-tarajem-viewer')
         self.emit('reload-telaawa-player')
-
-        # Request updates to the headerbar
-        surah_name = self.entry_surah_name.get_text()
-        self.emit('change-win-title', f'{surah_name.split()[1]} '
-                                  f'({glo.surah_number}) : '
-                                  f'{glo.ayah_number:.0f}')
