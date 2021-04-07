@@ -20,6 +20,7 @@ from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import GdkPixbuf
 from gi.repository import GObject
+from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import Handy
 from os import path
@@ -234,8 +235,12 @@ class MainWindow(Handy.ApplicationWindow):
     def on_quit(
             self,
             widget: Gtk.Widget) -> None:
+        telaawa_pipeline = self.headerbar.popover_telaawa.pipeline
+        if telaawa_pipeline:
+            telaawa_pipeline.set_state(Gst.State.NULL)
+            del telaawa_pipeline
         self.timer_buttonnav.cancel()
-        self.destroy()
+        del self.timer_buttonnav
 
     @Gtk.Template.Callback()
     def on_buttonnav_focused(

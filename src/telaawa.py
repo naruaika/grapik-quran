@@ -184,15 +184,6 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
         self.play(is_playing)
 
-    @Gtk.Template.Callback()
-    def on_quit(
-            self,
-            widget: Gtk.Widget) -> None:
-        if not self.pipeline:
-            return
-        self.pipeline.set_state(Gst.State.NULL)
-        self.pipeline = None
-
     def play(
             self,
             state: bool,
@@ -224,6 +215,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
                     # FIXME: changing to a tarajem that has not been downloaded
                     # while playing stops playback and makes a jump to the
                     # selected ayah
+                    # TODO: make playback gapless
                     self.pipeline = Gst.parse_launch(
                         f'playbin uri=file://{telaawa_filepath}/'
                         f'{suraya_no}.mp3')
@@ -325,7 +317,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
             if is_downloaded():
                 if self.play_after_download:
                     self.play_after_download = False
-                    self.play(True)
+                    GLib.idle_add(self.play, True)
 
             row.spinner.hide()
             row.spinner.stop()
