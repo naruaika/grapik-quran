@@ -46,6 +46,7 @@ class Application(Gtk.Application):
         super().__init__(application_id=const.APPLICATION_ID,
                          flags=Gio.ApplicationFlags.FLAGS_NONE)
 
+        # Load the saved user settings
         self.settings = Gio.Settings.new(const.APPLICATION_ID)
         glob.musshaf_name = self.settings.get_string('musshaf-name')
         glob.tarajem_names = self.settings.get_strv('tarajem-names')
@@ -75,8 +76,7 @@ class Application(Gtk.Application):
         window = self.props.active_window
 
         if not window:
-            # If the application has ever been opened,
-            # open the main window and load the saved user settings.
+            # If the application has ever been opened, open the main window.
             # Otherwise, open the musshaf manager dialog.
             musshaf_filepath = path.join(
                 const.USER_DATA_PATH,
