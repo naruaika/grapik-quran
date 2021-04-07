@@ -20,12 +20,12 @@ from os import path
 
 
 # Must be defined by main.py
-APPLICATION_NAME = ''
-APPLICATION_VERSION = ''
+APPLICATION_NAME: str = ''
+APPLICATION_VERSION: str = ''
 
 APPLICATION_ID = 'org.grapik.Quran'
 RESOURCE_PATH = '/org/grapik/Quran'
-USER_DATA_PATH = path.join(
-    GLib.get_user_data_dir(),
-    'grapik-quran')
-PAGE_MARGIN = 20
+USER_DATA_PATH = path.join(GLib.get_user_data_dir(), 'grapik-quran')
+
+PAGE_MARGIN = 20  # in pixel
+PAGE_ZOOM_STEP = 10  # in percent

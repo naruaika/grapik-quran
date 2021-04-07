@@ -20,10 +20,11 @@
             <property name="margin-bottom">5</property>
             <property name="layout-style">expand</property>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="button_zoom_out">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <signal name="clicked" handler="page_zoom_out" swapped="no"/>
                 <child>
                   <object class="GtkImage">
                     <property name="visible">True</property>
@@ -39,7 +40,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkModelButton">
+              <object class="GtkModelButton" id="button_open_zoom">
                 <property name="width-request">70</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -55,10 +56,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="button_zoom_in">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <signal name="clicked" handler="page_zoom_in" swapped="no"/>
                 <child>
                   <object class="GtkImage">
                     <property name="visible">True</property>
@@ -251,4 +253,8 @@
       </packing>
     </child>
   </template>
+  <object class="GtkAdjustment" id="adjust_zoom">
+    <property name="lower">50</property>
+    <property name="upper">150</property>
+  </object>
 </interface>

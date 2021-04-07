@@ -128,6 +128,8 @@ class MainWindow(Handy.ApplicationWindow):
         # self.button_previous_page.connect(
         #     'clicked', self.headerbar.popover_nav_alt.go_to_previous_page)
 
+        self.headerbar.popover_menu.connect('page-scaled', self.resize_musshaf)
+
     def setup_musshaf_viewer(self) -> None:
         self.musshaf_viewer_right = MusshafViewer(0)
         self.main_paned.pack_end(self.musshaf_viewer_right, True, True, 0)
@@ -344,6 +346,14 @@ class MainWindow(Handy.ApplicationWindow):
         self.ayah_number = glo.ayah_number
 
         self.headerbar.popover_telaawa.play(state, True)
+
+    def resize_musshaf(
+            self,
+            widget: Gtk.Widget) -> None:
+        # FIXME: widget allocations are not updated immediately
+        self.musshaf_viewer_right.update(True)
+        self.musshaf_viewer_left.update(True)
+        self.setup_window_size()
 
     # def on_notified(
     #         self,

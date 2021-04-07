@@ -149,7 +149,9 @@ class MusshafViewer(Gtk.Overlay):
         # Draw bounding boxes over hovered ayah(s) in Musshaf viewer
         self.eventbox.queue_draw()
 
-    def update(self) -> None:
+    def update(
+            self,
+            regenerate: bool = False) -> None:
         # Normalise the page numbering
         if glo.dual_page \
                 and glo.page_number % 2 == 1:
@@ -160,7 +162,8 @@ class MusshafViewer(Gtk.Overlay):
 
         # Obtain all ayah bounding boxes of the corresponding page and then
         # scale them all by the page zoom value
-        if self.page_no != page_no:
+        if self.page_no != page_no \
+                or regenerate:
             with Musshaf() as musshaf:
                 bboxes = musshaf.get_bboxes(page_no)
                 for idx_bbox in range(len(bboxes)):
@@ -184,7 +187,8 @@ class MusshafViewer(Gtk.Overlay):
             self.emit('focused-page-changed')
 
         # No need to reload the page image if the page number does not change
-        if self.page_no == page_no:
+        if self.page_no == page_no \
+                and not regenerate:
             self.eventbox.queue_draw()
             return
         self.page_no = page_no
@@ -204,7 +208,6 @@ class MusshafViewer(Gtk.Overlay):
         page_height = round(self.page_height * glo.page_scale)
         page_image = self.page_image.scale_simple(
             page_width, page_height, GdkPixbuf.InterpType.BILINEAR)
-        page_image.saturate_and_pixelate(page_image, 1.0, False)
         self.image.set_from_pixbuf(page_image)
         self.eventbox.set_size_request(page_width, page_height)
 

@@ -28,6 +28,7 @@ class MainMenu(Gtk.PopoverMenu):
     __gtype_name__ = 'Menu'
 
     __gsignals__ = {
+        'page-scaled': (GObject.SIGNAL_RUN_FIRST, None, ()),
         'nightmode-toggled': (GObject.SIGNAL_RUN_FIRST, None, ()),
         'dualpage-toggled': (GObject.SIGNAL_RUN_FIRST, None, ())}
 
@@ -40,6 +41,11 @@ class MainMenu(Gtk.PopoverMenu):
     button_about = Gtk.Template.Child('button_about')
     button_quit = Gtk.Template.Child('button_quit')
 
+    button_zoom_out = Gtk.Template.Child('button_zoom_out')
+    button_open_zoom = Gtk.Template.Child('button_open_zoom')
+    button_zoom_in = Gtk.Template.Child('button_zoom_in')
+    adjust_zoom = Gtk.Template.Child('adjust_zoom')
+
     def __init__(
             self,
             **kwargs) -> None:
@@ -49,6 +55,24 @@ class MainMenu(Gtk.PopoverMenu):
         self.button_check_nightmode.props.role = Gtk.ButtonRole.CHECK
 
         self.button_check_dual.props.active = glo.dual_page
+        self.adjust_zoom.set_value(glo.page_scale*100)
+        self.button_open_zoom.props.text = f'{int(glo.page_scale*100)}%'
+
+    @Gtk.Template.Callback()
+    def page_zoom_out(
+            self,
+            button: Gtk.Button) -> None:
+        self.adjust_zoom.set_value(glo.page_scale*100 - const.PAGE_ZOOM_STEP)
+        glo.page_scale = self.adjust_zoom.get_value() / 100
+        self.emit('page-scaled')
+
+    @Gtk.Template.Callback()
+    def page_zoom_in(
+            self,
+            button: Gtk.Button) -> None:
+        self.adjust_zoom.set_value(glo.page_scale*100 + const.PAGE_ZOOM_STEP)
+        glo.page_scale = self.adjust_zoom.get_value() / 100
+        self.emit('page-scaled')
 
     @Gtk.Template.Callback()
     def toggle_dualpage(
@@ -87,3 +111,6 @@ class MainMenu(Gtk.PopoverMenu):
             self,
             button: Gtk.Button) -> None:
         self.get_toplevel().destroy()
+
+    def do_page_scaled(self) -> None:
+        self.button_open_zoom.props.text = f'{int(glo.page_scale*100)}%'
