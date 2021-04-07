@@ -38,15 +38,12 @@ class NavigationPopover(Gtk.PopoverMenu):
         'reload-telaawa-player': (GObject.SIGNAL_NO_RECURSE, None, ()),
         'change-win-title': (GObject.SIGNAL_NO_RECURSE, None, (str,))}
 
-    # TODO: select all text on focus
     spin_page_no = Gtk.Template.Child('spin_page_no')
     spin_ayah_no = Gtk.Template.Child('spin_ayah_no')
     spin_juz_no = Gtk.Template.Child('spin_juz_no')
     spin_hizb_no = Gtk.Template.Child('spin_hizb_no')
     page_length = Gtk.Template.Child('page_length')
     surah_length = Gtk.Template.Child('surah_length')
-
-    # TODO: list items is too long
     combo_surah_name = Gtk.Template.Child('combo_surah_name')
     entry_surah_name = Gtk.Template.Child('entry_surah_name')
     complete_surah_name = Gtk.Template.Child('complete_surah_name')
