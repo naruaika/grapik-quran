@@ -32,19 +32,19 @@ class MainMenu(Gtk.PopoverMenu):
         'nightmode-toggled': (GObject.SIGNAL_RUN_FIRST, None, ()),
         'dualpage-toggled': (GObject.SIGNAL_RUN_FIRST, None, ())}
 
-    button_check_dual = Gtk.Template.Child('button_check_dual')
-    button_check_nightmode = Gtk.Template.Child('button_check_nightmode')
-    button_open_musshaf = Gtk.Template.Child('button_open_musshaf')
-    button_open_preferences = Gtk.Template.Child('button_open_preferences')
-    button_open_shortcut = Gtk.Template.Child('button_open_shortcut')
-    button_open_help = Gtk.Template.Child('button_open_help')
-    button_about = Gtk.Template.Child('button_about')
-    button_quit = Gtk.Template.Child('button_quit')
+    button_check_dual = Gtk.Template.Child()
+    button_check_nightmode = Gtk.Template.Child()
+    button_open_musshaf = Gtk.Template.Child()
+    button_open_preferences = Gtk.Template.Child()
+    button_open_shortcut = Gtk.Template.Child()
+    button_open_help = Gtk.Template.Child()
+    button_about = Gtk.Template.Child()
+    button_quit = Gtk.Template.Child()
 
-    button_zoom_out = Gtk.Template.Child('button_zoom_out')
-    button_open_zoom = Gtk.Template.Child('button_open_zoom')
-    button_zoom_in = Gtk.Template.Child('button_zoom_in')
-    adjust_zoom = Gtk.Template.Child('adjust_zoom')
+    button_zoom_out = Gtk.Template.Child()
+    button_open_zoom = Gtk.Template.Child()
+    button_zoom_in = Gtk.Template.Child()
+    adjust_zoom = Gtk.Template.Child()
 
     def __init__(
             self,

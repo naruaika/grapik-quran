@@ -44,20 +44,20 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
     Gst.init()
 
-    entry = Gtk.Template.Child('entry')
-    list_qaree = Gtk.Template.Child('list_qaree')
-    list_surah = Gtk.Template.Child('list_surah')
-    progress_qaree = Gtk.Template.Child('progress_qaree')
-    progress_surah = Gtk.Template.Child('progress_surah')
-    scrolledwindow_qaree = Gtk.Template.Child('scrolledwindow_qaree')
-    scrolledwindow_surah = Gtk.Template.Child('scrolledwindow_surah')
+    entry = Gtk.Template.Child()
+    list_qaree = Gtk.Template.Child()
+    list_surah = Gtk.Template.Child()
+    progress_qaree = Gtk.Template.Child()
+    progress_surah = Gtk.Template.Child()
+    scrolledwindow_qaree = Gtk.Template.Child()
+    scrolledwindow_surah = Gtk.Template.Child()
 
-    button_seek_backward = Gtk.Template.Child('button_seek_backward')
-    button_toggle_play = Gtk.Template.Child('button_toggle_play')
-    icon_toggle_play = Gtk.Template.Child('icon_toggle_play')
-    button_seek_forward = Gtk.Template.Child('button_seek_forward')
-    seek_audio_playback = Gtk.Template.Child('seek_audio_playback')
-    button_toggle_loopback = Gtk.Template.Child('button_toggle_loopback')
+    button_seek_backward = Gtk.Template.Child()
+    button_toggle_play = Gtk.Template.Child()
+    icon_toggle_play = Gtk.Template.Child()
+    button_seek_forward = Gtk.Template.Child()
+    seek_audio_playback = Gtk.Template.Child()
+    button_toggle_loopback = Gtk.Template.Child()
 
     pipeline: Gst.Element = None
 
@@ -341,11 +341,11 @@ class TelaawaPopover(Gtk.PopoverMenu):
 class TelaawaListBoxRow(Gtk.ListBoxRow):
     __gtype_name__ = 'TelaawaListBoxRow'
 
-    icon_status = Gtk.Template.Child('icon_status')
-    spinner = Gtk.Template.Child('spinner')
-    label_name = Gtk.Template.Child('label_name')
-    label_description = Gtk.Template.Child('label_description')
-    button_open_settings = Gtk.Template.Child('button_open_settings')
+    icon_status = Gtk.Template.Child()
+    spinner = Gtk.Template.Child()
+    label_name = Gtk.Template.Child()
+    label_description = Gtk.Template.Child()
+    button_open_settings = Gtk.Template.Child()
 
     def __init__(
             self,

@@ -48,10 +48,10 @@ class MusshafViewer(Gtk.Overlay):
         'hovered-ayah-changed': (GObject.SIGNAL_RUN_FIRST, None, ()),
         'focused-page-changed': (GObject.SIGNAL_RUN_FIRST, None, ())}
 
-    viewport = Gtk.Template.Child('viewport')
-    overlay = Gtk.Template.Child('overlay')
-    image = Gtk.Template.Child('image')
-    eventbox = Gtk.Template.Child('eventbox')
+    viewport = Gtk.Template.Child()
+    overlay = Gtk.Template.Child()
+    image = Gtk.Template.Child()
+    eventbox = Gtk.Template.Child()
 
     page_image: GdkPixbuf.Pixbuf = None
 
@@ -216,11 +216,11 @@ class MusshafViewer(Gtk.Overlay):
 class MusshafDialog(Gtk.Window):
     __gtype_name__ = 'MusshafDialog'
 
-    listbox = Gtk.Template.Child('listbox')
-    progressbar = Gtk.Template.Child('progressbar')
-    button_ok = Gtk.Template.Child('button_ok')
-    button_quit = Gtk.Template.Child('button_quit')
-    scrolledwindow = Gtk.Template.Child('scrolledwindow')
+    listbox = Gtk.Template.Child()
+    progressbar = Gtk.Template.Child()
+    button_ok = Gtk.Template.Child()
+    button_quit = Gtk.Template.Child()
+    scrolledwindow = Gtk.Template.Child()
 
     musshaf_name: str = ''  # to avoid downloading another musshaf while
                             # downloading a musshaf
@@ -513,10 +513,10 @@ class MusshafDialog(Gtk.Window):
 class MusshafListBoxRow(Gtk.ListBoxRow):
     __gtype_name__ = 'MusshafListBoxRow'
 
-    icon_status = Gtk.Template.Child('icon_status')
-    spinner = Gtk.Template.Child('spinner')
-    label_name = Gtk.Template.Child('label_name')
-    label_description = Gtk.Template.Child('label_description')
+    icon_status = Gtk.Template.Child()
+    spinner = Gtk.Template.Child()
+    label_name = Gtk.Template.Child()
+    label_description = Gtk.Template.Child()
 
     def __init__(
             self,

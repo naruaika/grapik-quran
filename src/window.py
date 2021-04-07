@@ -44,19 +44,19 @@ class MainWindow(Handy.ApplicationWindow):
 
     Handy.init()
 
-    main_container = Gtk.Template.Child('main_container')
-    main_paned = Gtk.Template.Child('main_paned')
-    main_overlay = Gtk.Template.Child('main_overlay')
-    buttonbox_navigation = Gtk.Template.Child('buttonbox_navigation')
-    button_next_page = Gtk.Template.Child('button_next_page')
-    button_previous_page = Gtk.Template.Child('button_previous_page')
+    main_container = Gtk.Template.Child()
+    main_paned = Gtk.Template.Child()
+    main_overlay = Gtk.Template.Child()
+    buttonbox_navigation = Gtk.Template.Child()
+    button_next_page = Gtk.Template.Child()
+    button_previous_page = Gtk.Template.Child()
 
-    status_loading = Gtk.Template.Child('status_loading')
-    loading_spinner = Gtk.Template.Child('loading_spinner')
-    loading_message = Gtk.Template.Child('loading_message')
-    revealer_notification = Gtk.Template.Child('revealer_notification')
-    notification_icon = Gtk.Template.Child('notification_icon')
-    notification_message = Gtk.Template.Child('notification_message')
+    status_loading = Gtk.Template.Child()
+    loading_spinner = Gtk.Template.Child()
+    loading_message = Gtk.Template.Child()
+    revealer_notification = Gtk.Template.Child()
+    notification_icon = Gtk.Template.Child()
+    notification_message = Gtk.Template.Child()
 
     # To remember the previous value of application variables for deciding
     # which child widget to reload

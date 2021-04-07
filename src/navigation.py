@@ -36,20 +36,20 @@ class NavigationPopover(Gtk.PopoverMenu):
         'reload-telaawa-player': (GObject.SIGNAL_NO_RECURSE, None, ()),
         'change-win-title': (GObject.SIGNAL_NO_RECURSE, None, (str,))}
 
-    spin_page_no = Gtk.Template.Child('spin_page_no')
-    spin_ayah_no = Gtk.Template.Child('spin_ayah_no')
-    spin_juz_no = Gtk.Template.Child('spin_juz_no')
-    spin_hizb_no = Gtk.Template.Child('spin_hizb_no')
-    page_length = Gtk.Template.Child('page_length')
-    surah_length = Gtk.Template.Child('surah_length')
-    combo_surah_name = Gtk.Template.Child('combo_surah_name')
-    entry_surah_name = Gtk.Template.Child('entry_surah_name')
-    complete_surah_name = Gtk.Template.Child('complete_surah_name')
-    adjust_ayah_no = Gtk.Template.Child('adjust_ayah_no')
-    adjust_page_no = Gtk.Template.Child('adjust_page_no')
-    container_quarter = Gtk.Template.Child('container_quarter')
+    spin_page_no = Gtk.Template.Child()
+    spin_ayah_no = Gtk.Template.Child()
+    spin_juz_no = Gtk.Template.Child()
+    spin_hizb_no = Gtk.Template.Child()
+    page_length = Gtk.Template.Child()
+    surah_length = Gtk.Template.Child()
+    combo_surah_name = Gtk.Template.Child()
+    entry_surah_name = Gtk.Template.Child()
+    complete_surah_name = Gtk.Template.Child()
+    adjust_ayah_no = Gtk.Template.Child()
+    adjust_page_no = Gtk.Template.Child()
+    container_quarter = Gtk.Template.Child()
 
-    container = Gtk.Template.Child('container')
+    container = Gtk.Template.Child()
 
     # To adjust the page numbering in the page navigation system based on the
     # page image index

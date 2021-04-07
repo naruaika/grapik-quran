@@ -34,8 +34,8 @@ from .model import Tarajem
 class TarajemViewer(Gtk.Overlay):
     __gtype_name__ = 'TarajemViewer'
 
-    scrolledwindow = Gtk.Template.Child('scrolledwindow')
-    listbox = Gtk.Template.Child('listbox')
+    scrolledwindow = Gtk.Template.Child()
+    listbox = Gtk.Template.Child()
 
     def populate(
             self,
@@ -133,10 +133,10 @@ class TarajemPopover(Gtk.PopoverMenu):
     __gsignals__ = {
         'tarajem-names-updated': (GObject.SIGNAL_RUN_FIRST, None, ())}
 
-    entry = Gtk.Template.Child('entry')
-    listbox = Gtk.Template.Child('listbox')
-    progressbar = Gtk.Template.Child('progressbar')
-    scrolledwindow = Gtk.Template.Child('scrolledwindow')
+    entry = Gtk.Template.Child()
+    listbox = Gtk.Template.Child()
+    progressbar = Gtk.Template.Child()
+    scrolledwindow = Gtk.Template.Child()
 
     # Optimizers
     tarajem_name: str = ''  # to avoid downloading another tarajem while
@@ -327,9 +327,9 @@ class TarajemPopover(Gtk.PopoverMenu):
 class TarajemListBoxRow(Gtk.ListBoxRow):
     __gtype_name__ = 'TarajemListBoxRow'
 
-    icon_status = Gtk.Template.Child('icon_status')
-    spinner = Gtk.Template.Child('spinner')
-    label = Gtk.Template.Child('label')
+    icon_status = Gtk.Template.Child()
+    spinner = Gtk.Template.Child()
+    label = Gtk.Template.Child()
 
     def __init__(
             self,

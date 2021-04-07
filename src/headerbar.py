@@ -38,20 +38,20 @@ class HeaderBar(Handy.HeaderBar):
 
     Handy.init()
 
-    squeezer = Gtk.Template.Child('squeezer')
-    headerbar_switcher = Gtk.Template.Child('headerbar_switcher')
-    button_open_search = Gtk.Template.Child('button_open_search')
-    button_open_tarajem = Gtk.Template.Child('button_open_tarajem')
-    button_tarajem_option = Gtk.Template.Child('button_tarajem_option')
-    button_play_telaawa = Gtk.Template.Child('button_play_telaawa')
-    button_telaawa_option = Gtk.Template.Child('button_telaawa_option')
-    button_open_mainmenu = Gtk.Template.Child('button_open_mainmenu')
+    squeezer = Gtk.Template.Child()
+    headerbar_switcher = Gtk.Template.Child()
+    button_open_search = Gtk.Template.Child()
+    button_open_tarajem = Gtk.Template.Child()
+    button_tarajem_option = Gtk.Template.Child()
+    button_play_telaawa = Gtk.Template.Child()
+    button_telaawa_option = Gtk.Template.Child()
+    button_open_mainmenu = Gtk.Template.Child()
 
-    window_title = Gtk.Template.Child('window_title')
-    window_title_alt = Gtk.Template.Child('window_title_alt')
+    window_title = Gtk.Template.Child()
+    window_title_alt = Gtk.Template.Child()
 
-    button_open_nav = Gtk.Template.Child('button_open_navigation')
-    button_open_nav_alt = Gtk.Template.Child('button_open_navigation_alt')
+    button_open_navigation = Gtk.Template.Child()
+    button_open_navigation_alt = Gtk.Template.Child()
 
     def __init__(
             self,
@@ -72,13 +72,13 @@ class HeaderBar(Handy.HeaderBar):
 
     def setup_navigation_popover(self) -> None:
         self.popover_nav = NavigationPopover()
-        self.button_open_nav.set_popover(self.popover_nav)
+        self.button_open_navigation.set_popover(self.popover_nav)
 
         self.popover_nav_alt = NavigationPopover()
         self.popover_nav_alt.container.set_orientation(
             Gtk.Orientation.VERTICAL)
         self.popover_nav_alt.container.set_spacing(8)
-        self.button_open_nav_alt.set_popover(self.popover_nav_alt)
+        self.button_open_navigation_alt.set_popover(self.popover_nav_alt)
 
         # Whenever focused ayah changed, change the window title to the newly
         # selected ayah
