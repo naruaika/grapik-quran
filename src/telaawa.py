@@ -332,7 +332,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
             self.progress_qaree.set_fraction(0)
             self.telaawa_name = ''
 
-            Animation.scroll_to(self.scrolledwindow, row, 200)
+            Animation.scroll_to(self.scrolledwindow_qaree, row, 200)
 
         Thread(target=execute).start()
 
