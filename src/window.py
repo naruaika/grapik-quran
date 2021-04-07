@@ -27,18 +27,15 @@ from os import path
 from threading import Timer
 from typing import List
 
+from . import constants as const
 from . import globals as glo
 from .animation import Animation
-from .constants import APPLICATION_ID
-from .constants import PAGE_MARGIN
-from .constants import RESOURCE_PATH
-from .constants import USER_DATA_PATH
 from .headerbar import HeaderBar
 from .musshaf import MusshafViewer
 from .tarajem import TarajemViewer
 
 
-@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/window_hdy.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/window_hdy.ui')
 class MainWindow(Handy.ApplicationWindow):
     __gtype_name__ = 'MainWindow'
 
@@ -79,12 +76,11 @@ class MainWindow(Handy.ApplicationWindow):
 
         # Set the window application name identifier, so it can be recognized
         # by the user in the desktop application switcher
-        app_name = self.get_application().app_name
-        self.set_title(app_name)
-        self.set_wmclass(app_name, app_name)
+        self.set_title(const.APPLICATION_NAME)
+        self.set_wmclass(const.APPLICATION_NAME, const.APPLICATION_NAME)
 
         # FIXME: the application icon appears too small
-        self.set_default_icon_name(APPLICATION_ID)
+        self.set_default_icon_name(const.APPLICATION_ID)
 
         self.setup_headerbar()
         self.setup_musshaf_viewer()
@@ -178,7 +174,7 @@ class MainWindow(Handy.ApplicationWindow):
         The size is calculated from scaled two-side image pages (or a page).
         For its height, the headerbar height is added.
         """
-        musshaf_dir = path.join(USER_DATA_PATH,
+        musshaf_dir = path.join(const.USER_DATA_PATH,
                                 f'musshaf/{glo.musshaf_name}')
 
         # Load a sample image page of the opened Musshaf ID by assuming that
@@ -193,7 +189,8 @@ class MainWindow(Handy.ApplicationWindow):
         window_height = page_height + headerbar_size.height
         window_width = page_width * 2
 
-        self.resize(window_width + PAGE_MARGIN/2*3, window_height+PAGE_MARGIN)
+        self.resize(window_width + const.PAGE_MARGIN/2*3,
+                    window_height + const.PAGE_MARGIN)
         self.tarajem_viewer.scrolledwindow.set_size_request(
             page_width, page_height)
 

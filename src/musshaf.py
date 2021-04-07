@@ -30,17 +30,16 @@ from typing import List
 from urllib.request import urlopen
 from zipfile import ZipFile
 
+from . import constants as const
 from . import globals as glo
 from .animation import Animation
-from .constants import RESOURCE_PATH
-from .constants import USER_DATA_PATH
 from .model import Metadata
 from .model import Musshaf
 
 import faulthandler
 
 
-@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/musshaf_viewer.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/musshaf_viewer.ui')
 class MusshafViewer(Gtk.Overlay):
     __gtype_name__ = 'MusshafViewer'
 
@@ -78,7 +77,7 @@ class MusshafViewer(Gtk.Overlay):
 
     def setup_viewer(self) -> None:
         self.musshaf_dir = \
-            path.join(USER_DATA_PATH, f'musshaf/{glo.musshaf_name}')
+            path.join(const.USER_DATA_PATH, f'musshaf/{glo.musshaf_name}')
 
         # Load a sample image page of the opened Musshaf ID by assuming that
         # all image pages have the same size
@@ -196,7 +195,7 @@ class MusshafViewer(Gtk.Overlay):
             page_filepath = path.join(self.musshaf_dir, f'{page_no}.jpg')
             self.page_image = GdkPixbuf.Pixbuf.new_from_file(page_filepath)
         except:
-            page_filepath = f'{RESOURCE_PATH}/img/page_blank.png'
+            page_filepath = f'{const.RESOURCE_PATH}/img/page_blank.png'
             self.page_image = GdkPixbuf.Pixbuf.new_from_resource(page_filepath)
 
         # Scale the newly loaded image page by the page zoom value and then
@@ -210,7 +209,7 @@ class MusshafViewer(Gtk.Overlay):
         self.eventbox.set_size_request(page_width, page_height)
 
 
-@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/musshaf_dialog.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/musshaf_dialog.ui')
 class MusshafDialog(Gtk.Window):
     __gtype_name__ = 'MusshafDialog'
 
@@ -233,9 +232,8 @@ class MusshafDialog(Gtk.Window):
 
         # Set the window application name identifier, so it can be recognized
         # by the user in the desktop application switcher
-        app_name = self.get_application().app_name
-        self.set_title(app_name)
-        self.set_wmclass(app_name, app_name)
+        self.set_title(const.APPLICATION_NAME)
+        self.set_wmclass(const.APPLICATION_NAME, const.APPLICATION_NAME)
 
         self.populate()
 
@@ -250,7 +248,7 @@ class MusshafDialog(Gtk.Window):
         """
         with Metadata() as metadata, \
              Musshaf() as model:
-            musshaf_dir = path.join(USER_DATA_PATH, 'musshaf')
+            musshaf_dir = path.join(const.USER_DATA_PATH, 'musshaf')
 
             for musshaf in metadata.get_musshafs():
                 name = f'<span weight="bold">{musshaf[1]}</span>'
@@ -443,7 +441,7 @@ class MusshafDialog(Gtk.Window):
                 # Check if the images has been downloaded on previous
                 # interrupted downloads
                 # musshaf_dir = \
-                #     path.join(USER_DATA_PATH, f'musshaf/{glo.musshaf_name}')
+                #     path.join(const.USER_DATA_PATH, f'musshaf/{glo.musshaf_name}')
                 # if not path.isdir(musshaf_dir):
                 #     # Download archive file for the Musshaf images
                 #     with TemporaryFile() as f:
@@ -508,7 +506,7 @@ class MusshafDialog(Gtk.Window):
         Thread(target=execute).start()
 
 
-@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/musshaf_listboxrow.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/musshaf_listboxrow.ui')
 class MusshafListBoxRow(Gtk.ListBoxRow):
     __gtype_name__ = 'MusshafListBoxRow'
 

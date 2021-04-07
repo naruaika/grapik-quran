@@ -20,15 +20,15 @@ from gi.repository import Gtk
 from gi.repository import GObject
 from gi.repository import Handy
 
+from . import constants as const
 from . import globals as glo
-from .constants import RESOURCE_PATH
 from .menu import MainMenu
 from .navigation import NavigationPopover
 from .tarajem import TarajemPopover
 from .telaawa import TelaawaPopover
 
 
-@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/headerbar_hdy.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/headerbar_hdy.ui')
 class HeaderBar(Handy.HeaderBar):
     __gtype_name__ = 'HeaderBar'
 

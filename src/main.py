@@ -34,23 +34,19 @@ from gi.repository import GObject
 from gi.repository import Gtk
 from os import path
 
+from . import constants as const
 from . import globals as glo
-from .constants import APPLICATION_ID
-from .constants import USER_DATA_PATH
 from .model import Musshaf
 from .musshaf import MusshafDialog
 from .window import MainWindow
 
 class Application(Gtk.Application):
 
-    def __init__(
-            self,
-            app_name: str,
-            app_version: str) -> None:
-        super().__init__(application_id=APPLICATION_ID,
+    def __init__(self) -> None:
+        super().__init__(application_id=const.APPLICATION_ID,
                          flags=Gio.ApplicationFlags.FLAGS_NONE)
 
-        self.settings = Gio.Settings.new(APPLICATION_ID)
+        self.settings = Gio.Settings.new(const.APPLICATION_ID)
         glo.musshaf_name = self.settings.get_string('musshaf-name')
         glo.tarajem_names = self.settings.get_strv('tarajem-names')
         glo.telaawa_name = self.settings.get_string('telaawa-name')
@@ -65,11 +61,6 @@ class Application(Gtk.Application):
         glo.juz_number = self.settings.get_int('juz-number')
         glo.hizb_number = self.settings.get_int('hizb-number')
         glo.quarter_number = self.settings.get_int('quarter-number')
-
-        # Keep the application name and version, so it could be accessed by any
-        # application window and all their children
-        self.app_name = app_name
-        self.app_version = app_version
 
         # Watch the system-wide settings when global Gtk application theme has
         # been changed
@@ -88,7 +79,7 @@ class Application(Gtk.Application):
             # open the main window and load the saved user settings.
             # Otherwise, open the musshaf manager dialog.
             musshaf_filepath = path.join(
-                USER_DATA_PATH,
+                const.USER_DATA_PATH,
                 f'musshaf/{glo.musshaf_name}/1.jpg')
             with Musshaf() as musshaf:
                 if musshaf.is_musshaf_exist(glo.musshaf_name) \
@@ -176,8 +167,11 @@ class Application(Gtk.Application):
 def main(
         app_name: str,
         app_version: str) -> int:
+    const.APPLICATION_NAME = app_name
+    const.APPLICATION_VERSION = app_version
+
     GObject.threads_init()
-    application = Application(app_name, app_version)
+    application = Application()
     exit_status = application.run(sys.argv)
     application.save_user_settings()
     return exit_status

@@ -17,9 +17,9 @@
 
 from gi.repository import Gtk
 
-from .constants import RESOURCE_PATH
+from . import constants as const
 
 
-@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/about_dialog.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/about_dialog.ui')
 class AboutDialog(Gtk.AboutDialog):
     __gtype_name__ = 'AboutDialog'

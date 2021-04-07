@@ -23,14 +23,14 @@ from threading import Thread
 from typing import List
 from urllib.request import urlopen
 
+from . import constants as const
 from . import globals as glo
 from .animation import Animation
-from .constants import RESOURCE_PATH
 from .model import Metadata
 from .model import Tarajem
 
 
-@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/tarajem_viewer.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/tarajem_viewer.ui')
 class TarajemViewer(Gtk.Overlay):
     __gtype_name__ = 'TarajemViewer'
 
@@ -126,7 +126,7 @@ class TarajemViewer(Gtk.Overlay):
         return False
 
 
-@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/tarajem_popover.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/tarajem_popover.ui')
 class TarajemPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'TarajemPopover'
 
@@ -323,7 +323,7 @@ class TarajemPopover(Gtk.PopoverMenu):
         Thread(target=execute).start()
 
 
-@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/tarajem_listboxrow.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/tarajem_listboxrow.ui')
 class TarajemListBoxRow(Gtk.ListBoxRow):
     __gtype_name__ = 'TarajemListBoxRow'
 

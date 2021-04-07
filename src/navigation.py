@@ -20,15 +20,13 @@ from gi.repository import Gtk
 from os import listdir
 from os import path
 
+from . import constants as const
 from . import globals as glo
-from .constants import APPLICATION_NAME
-from .constants import RESOURCE_PATH
-from .constants import USER_DATA_PATH
 from .model import Metadata
 from .model import Musshaf
 
 
-@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/navigation.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/navigation.ui')
 class NavigationPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'NavigationPopover'
 
@@ -74,7 +72,7 @@ class NavigationPopover(Gtk.PopoverMenu):
             self.page_no_start = musshaf.get_page_no(1, 1)
             self.page_no_end = musshaf.get_page_no(114, 6)
             musshaf_dir = \
-                path.join(USER_DATA_PATH, f'musshaf/{glo.musshaf_name}')
+                path.join(const.USER_DATA_PATH, f'musshaf/{glo.musshaf_name}')
             self.page_length.set_text(
                 f'(1–{self.page_no_end - self.page_no_start + 1})')
             page_count = len(listdir(musshaf_dir))
@@ -275,7 +273,7 @@ class NavigationPopover(Gtk.PopoverMenu):
         else:
             glo.page_focused = -1  # to hide tarajem viewer if it is being
                                    # displayed
-            self.emit('change-win-title', APPLICATION_NAME)
+            self.emit('change-win-title', const.APPLICATION_NAME)
 
         # Request updates to the Musshaf, tarajem, and telawa
         self.emit('reload-musshaf-viewer')

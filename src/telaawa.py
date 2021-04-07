@@ -29,14 +29,13 @@ from typing import List
 from urllib.request import urlopen
 from zipfile import ZipFile
 
+from . import constants as const
 from . import globals as glo
 from .animation import Animation
-from .constants import RESOURCE_PATH
-from .constants import USER_DATA_PATH
 from .model import Metadata
 
 
-@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/telaawa_popover.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/telaawa_popover.ui')
 class TelaawaPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'TelaawaPopover'
 
@@ -53,7 +52,6 @@ class TelaawaPopover(Gtk.PopoverMenu):
     scrolledwindow_qaree = Gtk.Template.Child('scrolledwindow_qaree')
     scrolledwindow_surah = Gtk.Template.Child('scrolledwindow_surah')
 
-    # TODO: operating system media playback
     button_seek_backward = Gtk.Template.Child('button_seek_backward')
     button_toggle_play = Gtk.Template.Child('button_toggle_play')
     icon_toggle_play = Gtk.Template.Child('icon_toggle_play')
@@ -176,7 +174,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
         if is_playing:
             suraya_no = f'{glo.surah_number:03d}001'
             if not path.isfile(path.join(
-                    USER_DATA_PATH,
+                    const.USER_DATA_PATH,
                     f'telaawa/{glo.telaawa_name}/{suraya_no}.mp3')):
                 self.play_after_download = True
                 self.download()
@@ -216,7 +214,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
             if not self.pipeline:  # play audio
                 telaawa_filepath = path.join(
-                    USER_DATA_PATH, f'telaawa/{glo.telaawa_name}')
+                    const.USER_DATA_PATH, f'telaawa/{glo.telaawa_name}')
 
                 def execute() -> None:
                     suraya_no = \
@@ -224,7 +222,6 @@ class TelaawaPopover(Gtk.PopoverMenu):
                     # FIXME: changing to a tarajem that has not been downloaded
                     # while playing stops playback and makes a jump to the
                     # selected ayah
-                    # TODO: make playback gapless
                     self.pipeline = Gst.parse_launch(
                         f'playbin uri=file://{telaawa_filepath}/'
                         f'{suraya_no}.mp3')
@@ -275,7 +272,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
         row.spinner.start()
         row.spinner.show()
 
-        telaawa_dir = path.join(USER_DATA_PATH, f'telaawa/{glo.telaawa_name}')
+        telaawa_dir = path.join(const.USER_DATA_PATH, f'telaawa/{glo.telaawa_name}')
 
         def is_downloaded() -> bool:
             with Metadata() as metadata:
@@ -340,7 +337,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
         Thread(target=execute).start()
 
 
-@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/telaawa_listboxrow.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/telaawa_listboxrow.ui')
 class TelaawaListBoxRow(Gtk.ListBoxRow):
     __gtype_name__ = 'TelaawaListBoxRow'
 

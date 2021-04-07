@@ -18,13 +18,12 @@
 from gi.repository import GObject
 from gi.repository import Gtk
 
+from . import constants as const
 from . import globals as glo
-from .constants import APPLICATION_ID
-from .constants import RESOURCE_PATH
 from .about import AboutDialog
 
 
-@Gtk.Template(resource_path=f'{RESOURCE_PATH}/ui/menu.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/menu.ui')
 class MainMenu(Gtk.PopoverMenu):
     __gtype_name__ = 'Menu'
 
@@ -78,10 +77,10 @@ class MainMenu(Gtk.PopoverMenu):
             self,
             button: Gtk.Button) -> None:
         dialog = AboutDialog()
-        dialog.set_logo_icon_name(APPLICATION_ID)
-        dialog.set_version(self.get_toplevel().get_application().app_version)
+        dialog.set_logo_icon_name(const.APPLICATION_ID)
+        dialog.set_version(const.APPLICATION_VERSION)
         dialog.set_transient_for(self.get_toplevel())
-        dialog.show_all()
+        dialog.present()
 
     @Gtk.Template.Callback()
     def on_quit(

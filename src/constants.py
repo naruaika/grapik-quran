@@ -19,7 +19,10 @@ from gi.repository import GLib
 from os import path
 
 
-APPLICATION_NAME = 'Grapik Quran'
+# Must be defined by main.py
+APPLICATION_NAME = ''
+APPLICATION_VERSION = ''
+
 APPLICATION_ID = 'org.grapik.Quran'
 RESOURCE_PATH = '/org/grapik/Quran'
 USER_DATA_PATH = path.join(

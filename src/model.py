@@ -17,13 +17,12 @@
 
 from __future__ import annotations
 from abc import ABC
-from gi.repository import GLib
 from os import path
 from typing import List
 import sqlite3
 
+from . import constants as const
 from . import globals as glo
-from .constants import USER_DATA_PATH
 
 
 class Model(ABC):
@@ -76,7 +75,6 @@ class Metadata(Model):
     def get_surah_length(
             self,
             surah_no: int) -> int:
-        # TODO: obtain the ayah numbering after shifting
         self.cursor.execute('SELECT ayas FROM suras WHERE id=?', (surah_no,))
         result = self.cursor.fetchone()
         if result:
@@ -171,7 +169,7 @@ class Metadata(Model):
 class Musshaf(Model):
 
     def __init__(self) -> None:
-        self.database_filepath = path.join(USER_DATA_PATH, 'musshaf.db')
+        self.database_filepath = path.join(const.USER_DATA_PATH, 'musshaf.db')
 
     def is_musshaf_exist(
             self,
@@ -230,7 +228,7 @@ class Musshaf(Model):
 class Tarajem(Model):
 
     def __init__(self) -> None:
-        self.database_filepath = path.join(USER_DATA_PATH, 'tarajem.db')
+        self.database_filepath = path.join(const.USER_DATA_PATH, 'tarajem.db')
 
     def is_tarajem_exist(
             self,
