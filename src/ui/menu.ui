@@ -184,7 +184,7 @@
         <child>
           <object class="GtkModelButton" id="button_open_shortcut">
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can-focus">True</property>
             <property name="receives-default">False</property>
             <property name="text" translatable="yes">Keyboard Shortcuts</property>
           </object>
@@ -197,7 +197,7 @@
         <child>
           <object class="GtkModelButton" id="button_open_help">
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can-focus">True</property>
             <property name="receives-default">False</property>
             <property name="text" translatable="yes">Help</property>
           </object>
@@ -210,7 +210,7 @@
         <child>
           <object class="GtkModelButton" id="button_about">
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
+            <property name="can-focus">True</property>
             <property name="receives-default">False</property>
             <property name="text" translatable="yes">About Grapik Quran</property>
             <signal name="clicked" handler="show_about" swapped="no"/>
