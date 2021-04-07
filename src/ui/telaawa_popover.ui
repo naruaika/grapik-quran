@@ -9,6 +9,7 @@
   </object>
   <template class="TelaawaPopover" parent="GtkPopoverMenu">
     <property name="can-focus">False</property>
+    <signal name="show" handler="scroll_to_selected_row" swapped="no"/>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
@@ -108,7 +109,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkScrolledWindow" id="scrolledwindow">
+              <object class="GtkScrolledWindow" id="scrolledwindow_qaree">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="min-content-width">350</property>
@@ -349,7 +350,7 @@
             <property name="can-focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkScrolledWindow" id="scrolledwindow_surah">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="min-content-width">350</property>

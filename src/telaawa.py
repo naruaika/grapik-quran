@@ -50,7 +50,8 @@ class TelaawaPopover(Gtk.PopoverMenu):
     list_surah = Gtk.Template.Child('list_surah')
     progress_qaree = Gtk.Template.Child('progress_qaree')
     progress_surah = Gtk.Template.Child('progress_surah')
-    scrolledwindow = Gtk.Template.Child('scrolledwindow')
+    scrolledwindow_qaree = Gtk.Template.Child('scrolledwindow_qaree')
+    scrolledwindow_surah = Gtk.Template.Child('scrolledwindow_surah')
 
     # TODO: operating system media playback
     button_seek_backward = Gtk.Template.Child('button_seek_backward')
@@ -124,7 +125,6 @@ class TelaawaPopover(Gtk.PopoverMenu):
                 row.id = telaawa[0]
 
                 if row.id == glo.telaawa_name:
-                    # TODO: scroll to selection
                     self.list_qaree.select_row(row)
                 else:
                     row.icon_status.set_opacity(0)
@@ -183,6 +183,15 @@ class TelaawaPopover(Gtk.PopoverMenu):
                 return
 
         self.play(is_playing)
+
+    @Gtk.Template.Callback()
+    def scroll_to_selected_row(
+            self,
+            widget: Gtk.Widget) -> None:
+        # Scroll to the selected row, since Gtk has no idea how to set the
+        # scrolling before the widget is rendered
+        GLib.timeout_add(50, Animation.scroll_to, self.scrolledwindow_qaree,
+                         self.list_qaree.get_selected_row())
 
     def play(
             self,
