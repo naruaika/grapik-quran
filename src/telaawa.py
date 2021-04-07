@@ -280,9 +280,9 @@ class TelaawaPopover(Gtk.PopoverMenu):
                     return False
 
                 # Open connection and look for content length in its header
-                filepath = telaawa[2].replace('http', 'https') \
+                fileurl = telaawa[2].replace('http', 'https') \
                     + f'{glob.surah_number:03d}.zip'
-                response = urlopen(filepath)
+                response = urlopen(fileurl)
                 total_length = response.getheader('Content-Length')
                 total_length = (0 if not total_length else int(total_length))
 
