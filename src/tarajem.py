@@ -42,7 +42,7 @@ class TarajemViewer(Gtk.Overlay):
             bboxes: List,
             bboxes_hovered: List,
             bboxes_focused: List,
-            regenerate: bool) -> bool:
+            regenerate: bool = False) -> bool:
         uniques = set()  # for removing duplicate surah-ayah pairs
         bboxes = [bbox[:2] for bbox in bboxes]
         bboxes = [bbox for bbox in bboxes

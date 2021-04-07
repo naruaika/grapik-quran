@@ -169,7 +169,6 @@ def main(
         app_version: str) -> int:
     const.APPLICATION_NAME = app_name
     const.APPLICATION_VERSION = app_version
-
     GObject.threads_init()
     application = Application()
     exit_status = application.run(sys.argv)
