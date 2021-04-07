@@ -90,13 +90,17 @@ class MainWindow(Handy.ApplicationWindow):
 
         self.setup_window_size()
 
-        # Initialisation
+        # Init self variables
+        self.surah_number = glob.surah_number
+        self.ayah_number = glob.ayah_number
+
+        # Init children states
         self.musshaf_viewer_right.update()
         self.musshaf_viewer_left.update()
-        self.headerbar.popover_nav.update()
-        self.headerbar.popover_nav_alt.update()
         self.headerbar.popover_tarajem.populate()
         self.headerbar.popover_telaawa.populate()
+        self.headerbar.popover_nav.update()
+        self.headerbar.popover_nav_alt.update()
 
         self.headerbar.button_open_tarajem.set_active(glob.show_tarajem)
 

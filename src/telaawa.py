@@ -161,6 +161,10 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
         listboxrow.icon_status.set_opacity(1)
 
+        # Interrupt the telaawa playback if it is playing
+        if self.is_playing:
+            self.play(True, True)
+
     @Gtk.Template.Callback()
     def on_played(
             self,
@@ -168,19 +172,8 @@ class TelaawaPopover(Gtk.PopoverMenu):
         if self.is_updating:
             return
 
-        is_playing = button.get_active()
-        self.is_playing = is_playing
-
-        if is_playing:
-            suraya_no = f'{glob.surah_number:03d}001'
-            if not path.isfile(path.join(
-                    const.USER_DATA_PATH,
-                    f'telaawa/{glob.telaawa_name}/{suraya_no}.mp3')):
-                self.play_after_download = True
-                self.download()
-                return
-
-        self.play(is_playing)
+        self.is_playing = button.get_active()
+        self.play(self.is_playing)
 
     @Gtk.Template.Callback()
     def scroll_to_selected_row(
@@ -205,19 +198,27 @@ class TelaawaPopover(Gtk.PopoverMenu):
             self.pipeline = None
 
         if reset \
-                or not self.is_playing:  # stop audio
+                or not self.is_playing:  # stop playback
             free()
 
         if state \
                 and self.is_playing:
             icon_name = 'media-playback-pause-symbolic'
 
-            if not self.pipeline:  # play audio
-                telaawa_filepath = path.join(
-                    const.USER_DATA_PATH, f'telaawa/{glob.telaawa_name}')
+            if not self.pipeline:  # start playback
+                # Check if the telaawa is already downloaded. If not, request
+                # to download and then play it.
+                suraya_no = f'{glob.surah_number:03d}001'
+                if not path.isfile(path.join(
+                        const.USER_DATA_PATH,
+                        f'telaawa/{glob.telaawa_name}/{suraya_no}.mp3')):
+                    self.play_after_download = True
+                    self.download()
+                    return
 
                 def execute() -> None:
-                    telaawa_name = glob.telaawa_name
+                    telaawa_filepath = path.join(
+                        const.USER_DATA_PATH, f'telaawa/{glob.telaawa_name}')
                     suraya_no = \
                         f'{glob.surah_number:03d}{glob.ayah_number:03d}'
                     self.pipeline = Gst.parse_launch(
@@ -233,25 +234,12 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
                     free()
 
-                    # If the telaawa ID has not been changed or the newly
-                    # selected telaawa ID is already downloaded, request to
-                    # play next ayah. If it has been changed, download the new
-                    # selected telaawa ID if it is not already downloaded and
-                    # then resume the playback after replaying the current ayah
-                    if glob.telaawa_name == telaawa_name \
-                            or path.isfile(path.join(
-                                const.USER_DATA_PATH,
-                                f'telaawa/{glob.telaawa_name}/{suraya_no}'
-                                '.mp3')):
-                        GLib.idle_add(self.emit, 'go-to-next-ayah')
-                    else:
-                        self.play_after_download = True
-                        GLib.idle_add(self.download)
+                    GLib.idle_add(self.emit, 'go-to-next-ayah')
 
                 Thread(target=execute).start()
-            else:  # resume audio
+            else:  # resume playback
                 self.pipeline.set_state(Gst.State.PLAYING)
-        else:  # pause audio
+        else:  # pause playback
             icon_name = 'media-playback-start-symbolic'
 
             self.is_updating = True
@@ -282,7 +270,8 @@ class TelaawaPopover(Gtk.PopoverMenu):
         row.spinner.start()
         row.spinner.show()
 
-        telaawa_dir = path.join(const.USER_DATA_PATH, f'telaawa/{glob.telaawa_name}')
+        telaawa_dir = \
+            path.join(const.USER_DATA_PATH, f'telaawa/{glob.telaawa_name}')
 
         def is_downloaded() -> bool:
             with Metadata() as metadata:
