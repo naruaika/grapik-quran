@@ -139,6 +139,7 @@ class Application(Gtk.Application):
 
     def save_user_settings(self) -> None:
         """Save the last page read settings."""
+        print('Saving user settings...')
         self.settings.set_string('musshaf-name', glo.musshaf_name)
         self.settings.set_strv('tarajem-names', glo.tarajem_names)
         self.settings.set_string('telaawa-name', glo.telaawa_name)
@@ -147,12 +148,23 @@ class Application(Gtk.Application):
         self.settings.set_boolean('dual-page', glo.dual_page)
         self.settings.set_boolean('show-tarajem', glo.show_tarajem)
 
-        self.settings.set_int('page-number', glo.page_number)
-        self.settings.set_int('surah-number', glo.surah_number)
-        self.settings.set_int('ayah-number', glo.ayah_number)
-        self.settings.set_int('juz-number', glo.juz_number)
-        self.settings.set_int('hizb-number', glo.hizb_number)
-        self.settings.set_int('quarter-number', glo.quarter_number)
+        if glo.surah_number < 0:
+            # If the last page read has no ayah(s), go to the page where Surah
+            # Al-Fathihah is located
+            self.settings.reset('page-number')
+            self.settings.reset('surah-number')
+            self.settings.reset('ayah-number')
+            self.settings.reset('juz-number')
+            self.settings.reset('hizb-number')
+            self.settings.reset('quarter-number')
+        else:
+            self.settings.set_int('page-number', glo.page_number)
+            self.settings.set_int('surah-number', glo.surah_number)
+            self.settings.set_int('ayah-number', glo.ayah_number)
+            self.settings.set_int('juz-number', glo.juz_number)
+            self.settings.set_int('hizb-number', glo.hizb_number)
+            self.settings.set_int('quarter-number', glo.quarter_number)
+        print('See you, in sha Allah!')
 
     def on_theme_changed(
             self,
