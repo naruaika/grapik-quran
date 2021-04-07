@@ -31,7 +31,7 @@ class Animation(Gtk.Application):
     def scroll_to(
             scroll: Gtk.ScrolledWindow,
             target: Gtk.Widget,
-            duration: int = 600) -> None:
+            duration: int = 600) -> bool:
         """Animate the scroll for duration in milliseconds."""
         target = target.get_allocation()
         adjustment = scroll.get_vadjustment()
@@ -42,7 +42,7 @@ class Animation(Gtk.Application):
                 and (target.y+target.height) <= (start_point+page_size):
             # If all parts of the target widget content are visible,
             # no need to animate the scroll.
-            return
+            return False
         else:
             if target.y > start_point:
                 # If the height of the target widget is greater than the
@@ -81,10 +81,12 @@ class Animation(Gtk.Application):
 
         scroll.add_tick_callback(animate)
 
+        return False
+
     @staticmethod
     def to_invisible(
             widget: Gtk.Widget,
-            duration: int = 600) -> None:
+            duration: int = 600) -> bool:
         """Animate the opacity from 1 to 0 for duration in milliseconds."""
         frame_clock = widget.get_frame_clock()
         start_time = frame_clock.get_frame_time()
@@ -111,3 +113,5 @@ class Animation(Gtk.Application):
                 return GLib.SOURCE_REMOVE
 
         widget.add_tick_callback(animate)
+
+        return False
