@@ -217,11 +217,9 @@ class TelaawaPopover(Gtk.PopoverMenu):
                     const.USER_DATA_PATH, f'telaawa/{glob.telaawa_name}')
 
                 def execute() -> None:
+                    telaawa_name = glob.telaawa_name
                     suraya_no = \
                         f'{glob.surah_number:03d}{glob.ayah_number:03d}'
-                    # FIXME: changing to a tarajem that has not been downloaded
-                    # while playing stops playback and makes a jump to the
-                    # selected ayah
                     self.pipeline = Gst.parse_launch(
                         f'playbin uri=file://{telaawa_filepath}/'
                         f'{suraya_no}.mp3')
@@ -235,8 +233,20 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
                     free()
 
-                    # Request to play next ayah
-                    GLib.idle_add(self.emit, 'go-to-next-ayah')
+                    # If the telaawa ID has not been changed or the newly
+                    # selected telaawa ID is already downloaded, request to
+                    # play next ayah. If it has been changed, download the new
+                    # selected telaawa ID if it is not already downloaded and
+                    # then resume the playback after replaying the current ayah
+                    if glob.telaawa_name == telaawa_name \
+                            or path.isfile(path.join(
+                                const.USER_DATA_PATH,
+                                f'telaawa/{glob.telaawa_name}/{suraya_no}'
+                                '.mp3')):
+                        GLib.idle_add(self.emit, 'go-to-next-ayah')
+                    else:
+                        self.play_after_download = True
+                        GLib.idle_add(self.download)
 
                 Thread(target=execute).start()
             else:  # resume audio
