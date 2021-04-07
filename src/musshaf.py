@@ -31,7 +31,7 @@ from urllib.request import urlopen
 from zipfile import ZipFile
 
 from . import constants as const
-from . import globals as glo
+from . import globals as glob
 from .animation import Animation
 from .model import Metadata
 from .model import Musshaf
@@ -77,7 +77,7 @@ class MusshafViewer(Gtk.Overlay):
 
     def setup_viewer(self) -> None:
         self.musshaf_dir = \
-            path.join(const.USER_DATA_PATH, f'musshaf/{glo.musshaf_name}')
+            path.join(const.USER_DATA_PATH, f'musshaf/{glob.musshaf_name}')
 
         # Load a sample image page of the opened Musshaf ID by assuming that
         # all image pages have the same size
@@ -98,8 +98,8 @@ class MusshafViewer(Gtk.Overlay):
             return
 
         bbox = self.bboxes_hovered[0]
-        glo.surah_number = bbox[0]
-        glo.ayah_number = bbox[1]
+        glob.surah_number = bbox[0]
+        glob.ayah_number = bbox[1]
         self.emit('selected-ayah-changed')
 
     @Gtk.Template.Callback()
@@ -153,11 +153,11 @@ class MusshafViewer(Gtk.Overlay):
             self,
             regenerate: bool = False) -> None:
         # Normalise the page numbering
-        if glo.dual_page \
-                and glo.page_number % 2 == 1:
-            page_no = glo.page_number - 1
+        if glob.dual_page \
+                and glob.page_number % 2 == 1:
+            page_no = glob.page_number - 1
         else:
-            page_no = glo.page_number
+            page_no = glob.page_number
         page_no = page_no + self.id
 
         # Obtain all ayah bounding boxes of the corresponding page and then
@@ -169,21 +169,21 @@ class MusshafViewer(Gtk.Overlay):
                 for idx_bbox in range(len(bboxes)):
                     surah_no_, ayah_no_, x, y, w, h = bboxes[idx_bbox]
                     bboxes[idx_bbox] = (surah_no_, ayah_no_,
-                                        x * glo.page_scale,
-                                        y * glo.page_scale,
-                                        w * glo.page_scale,
-                                        h * glo.page_scale)
+                                        x * glob.page_scale,
+                                        y * glob.page_scale,
+                                        w * glob.page_scale,
+                                        h * glob.page_scale)
                 self.bboxes = bboxes
 
         # Set focus on the first ayah on the page
         self.bboxes_focused = \
             [bbox for bbox in self.bboxes
-             if bbox[:2] == (glo.surah_number, glo.ayah_number)]
+             if bbox[:2] == (glob.surah_number, glob.ayah_number)]
 
         # Request updates to main window
         if self.bboxes_focused \
-                and glo.page_focused != self.id:
-            glo.page_focused = self.id
+                and glob.page_focused != self.id:
+            glob.page_focused = self.id
             self.emit('focused-page-changed')
 
         # No need to reload the page image if the page number does not change
@@ -204,8 +204,8 @@ class MusshafViewer(Gtk.Overlay):
 
         # Scale the newly loaded image page by the page zoom value and then
         # display it
-        page_width = round(self.page_width * glo.page_scale)
-        page_height = round(self.page_height * glo.page_scale)
+        page_width = round(self.page_width * glob.page_scale)
+        page_height = round(self.page_height * glob.page_scale)
         page_image = self.page_image.scale_simple(
             page_width, page_height, GdkPixbuf.InterpType.BILINEAR)
         self.image.set_from_pixbuf(page_image)
@@ -273,7 +273,7 @@ class MusshafDialog(Gtk.Window):
                 row.icon_status.set_from_icon_name(icon_name,
                                                    Gtk.IconSize.BUTTON)
 
-                if row.id == glo.musshaf_name:
+                if row.id == glob.musshaf_name:
                     self.listbox.select_row(row)
                 else:
                     row.icon_status.set_opacity(int(not row.is_downloaded))
@@ -302,9 +302,9 @@ class MusshafDialog(Gtk.Window):
             self.button_ok.set_sensitive(True)
             self.button_ok.set_label('Open')
 
-        if glo.musshaf_name == listboxrow.id:
+        if glob.musshaf_name == listboxrow.id:
             return
-        glo.musshaf_name = listboxrow.id
+        glob.musshaf_name = listboxrow.id
 
         def reset(listboxrow: Gtk.ListBoxRow) -> None:
             if listboxrow.is_downloaded:
@@ -348,7 +348,7 @@ class MusshafDialog(Gtk.Window):
         """
         if self.musshaf_name:
             return
-        self.musshaf_name = glo.musshaf_name
+        self.musshaf_name = glob.musshaf_name
         self.button_ok.set_sensitive(False)
         self.button_ok.set_label('Downloading...')
 
@@ -360,7 +360,7 @@ class MusshafDialog(Gtk.Window):
         def is_downloaded() -> bool:
             with Metadata() as metadata, \
                  Musshaf() as model:
-                musshaf = metadata.get_musshaf(glo.musshaf_name)
+                musshaf = metadata.get_musshaf(glob.musshaf_name)
                 if not musshaf:
                     return False
 
@@ -387,7 +387,7 @@ class MusshafDialog(Gtk.Window):
                 # Check if the bounding boxes has been downloaded on previous
                 # interrupted downloads
                 model.cursor.execute('SELECT name FROM sqlite_master WHERE '
-                                     'name=?', (glo.musshaf_name,))
+                                     'name=?', (glob.musshaf_name,))
                 if not model.cursor.fetchone():
                     response_bboxes = urlopen(musshaf[3])  # reopen; in case of
                                                            # connection reset
@@ -411,7 +411,7 @@ class MusshafDialog(Gtk.Window):
 
                     # Add ID column to the new created table
                     query = \
-                        f'''CREATE TABLE {glo.musshaf_name}_copy (
+                        f'''CREATE TABLE {glob.musshaf_name}_copy (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                             page INT (3) NOT NULL,
                             sura INT (3) NOT NULL,
@@ -424,17 +424,17 @@ class MusshafDialog(Gtk.Window):
                     model.cursor.execute(query)
 
                     query = \
-                        f'''INSERT INTO {glo.musshaf_name}_copy
+                        f'''INSERT INTO {glob.musshaf_name}_copy
                             (page, sura, aya, x1, y1, x2, y2)
                             SELECT page, sura, aya, x1, y1, x2, y2 FROM
-                            {glo.musshaf_name}
+                            {glob.musshaf_name}
                         '''
                     model.cursor.execute(query)
 
-                    query = f'DROP TABLE {glo.musshaf_name};'
+                    query = f'DROP TABLE {glob.musshaf_name};'
                     model.cursor.execute(query)
-                    query = f'ALTER TABLE {glo.musshaf_name}_copy ' \
-                        f'RENAME TO {glo.musshaf_name}'
+                    query = f'ALTER TABLE {glob.musshaf_name}_copy ' \
+                        f'RENAME TO {glob.musshaf_name}'
                     model.cursor.execute(query)
 
                     model.connection.commit()
@@ -444,7 +444,7 @@ class MusshafDialog(Gtk.Window):
                 # Check if the images has been downloaded on previous
                 # interrupted downloads
                 # musshaf_dir = \
-                #     path.join(const.USER_DATA_PATH, f'musshaf/{glo.musshaf_name}')
+                #     path.join(const.USER_DATA_PATH, f'musshaf/{glob.musshaf_name}')
                 # if not path.isdir(musshaf_dir):
                 #     # Download archive file for the Musshaf images
                 #     with TemporaryFile() as f:
@@ -493,7 +493,7 @@ class MusshafDialog(Gtk.Window):
                 row.icon_status.set_from_icon_name(
                     'object-select-symbolic', Gtk.IconSize.BUTTON)
                 row.icon_status.set_opacity(1)
-                glo.musshaf_name = row.id
+                glob.musshaf_name = row.id
                 Animation.scroll_to(self.scrolledwindow, row, 200)
 
             row.spinner.hide()

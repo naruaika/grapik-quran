@@ -22,7 +22,7 @@ from typing import List
 import sqlite3
 
 from . import constants as const
-from . import globals as glo
+from . import globals as glob
 
 
 class Model(ABC):
@@ -65,7 +65,7 @@ class Metadata(Model):
     def get_musshaf(
             self) -> List:
         self.cursor.execute('SELECT * FROM musshaf WHERE id=?',
-                            (glo.musshaf_name,))
+                            (glob.musshaf_name,))
         return self.cursor.fetchone()
 
     def get_surahs(self) -> List:
@@ -184,9 +184,9 @@ class Musshaf(Model):
             self,
             surah_no: int,
             ayah_no: int) -> int:
-        if not self.is_musshaf_exist(glo.musshaf_name):
+        if not self.is_musshaf_exist(glob.musshaf_name):
             return -1
-        query = f'SELECT page FROM {glo.musshaf_name} WHERE sura=? AND aya=?' \
+        query = f'SELECT page FROM {glob.musshaf_name} WHERE sura=? AND aya=?' \
             ' ORDER BY id DESC'
         self.cursor.execute(query, (surah_no, ayah_no))
         result = self.cursor.fetchone()
@@ -197,7 +197,7 @@ class Musshaf(Model):
     def get_surah_no(
             self,
             page_no: int) -> int:
-        query = f'SELECT sura FROM {glo.musshaf_name} WHERE page=?'
+        query = f'SELECT sura FROM {glob.musshaf_name} WHERE page=?'
         self.cursor.execute(query, (page_no,))
         result = self.cursor.fetchone()
         if result:
@@ -207,7 +207,7 @@ class Musshaf(Model):
     def get_ayah_no(
             self,
             page_no: int) -> int:
-        query = f'SELECT aya FROM {glo.musshaf_name} WHERE page=?'
+        query = f'SELECT aya FROM {glob.musshaf_name} WHERE page=?'
         self.cursor.execute(query, (page_no,))
         result = self.cursor.fetchone()
         if result:
@@ -217,10 +217,10 @@ class Musshaf(Model):
     def get_bboxes(
             self,
             page_no: int) -> List:
-        if not self.is_musshaf_exist(glo.musshaf_name):
+        if not self.is_musshaf_exist(glob.musshaf_name):
             return -1
         query = 'SELECT sura, aya, x1, y1, x2-x1, y2-y1 FROM ' \
-            f'{glo.musshaf_name} WHERE page=?'
+            f'{glob.musshaf_name} WHERE page=?'
         self.cursor.execute(query, (page_no,))
         return self.cursor.fetchall()
 

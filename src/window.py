@@ -28,7 +28,7 @@ from threading import Timer
 from typing import List
 
 from . import constants as const
-from . import globals as glo
+from . import globals as glob
 from .animation import Animation
 from .headerbar import HeaderBar
 from .musshaf import MusshafViewer
@@ -98,7 +98,7 @@ class MainWindow(Handy.ApplicationWindow):
         self.headerbar.popover_tarajem.populate()
         self.headerbar.popover_telaawa.populate()
 
-        self.headerbar.button_open_tarajem.set_active(glo.show_tarajem)
+        self.headerbar.button_open_tarajem.set_active(glob.show_tarajem)
 
         # Setup a timer for show/hiding overlay widgets
         self.timer_buttonnav = Timer(2.0, self.hide_buttonnav)
@@ -177,15 +177,15 @@ class MainWindow(Handy.ApplicationWindow):
         For its height, the headerbar height is added.
         """
         musshaf_dir = path.join(const.USER_DATA_PATH,
-                                f'musshaf/{glo.musshaf_name}')
+                                f'musshaf/{glob.musshaf_name}')
 
         # Load a sample image page of the opened Musshaf ID by assuming that
         # all image pages have the same size
         image_filepath = path.join(musshaf_dir, '1.jpg')
         page_image = GdkPixbuf.Pixbuf.new_from_file(image_filepath)
 
-        page_width = round(page_image.get_width() * glo.page_scale)
-        page_height = round(page_image.get_height() * glo.page_scale)
+        page_width = round(page_image.get_width() * glob.page_scale)
+        page_height = round(page_image.get_height() * glob.page_scale)
 
         headerbar_size = self.headerbar.get_allocation()
         window_height = page_height + headerbar_size.height
@@ -274,19 +274,19 @@ class MainWindow(Handy.ApplicationWindow):
     def reload_tarajem_viewer(
             self,
             widget: Gtk.Widget) -> None:
-        if self.page_focused != glo.page_focused \
-                or self.show_tarajem != glo.show_tarajem:
-            self.show_tarajem = glo.show_tarajem
+        if self.page_focused != glob.page_focused \
+                or self.show_tarajem != glob.show_tarajem:
+            self.show_tarajem = glob.show_tarajem
 
             self.main_paned.remove(self.musshaf_viewer_right)
             self.main_paned.remove(self.musshaf_viewer_left)
             self.main_paned.remove(self.tarajem_viewer)
 
-            if glo.show_tarajem \
-                    and glo.page_focused >= 0:
+            if glob.show_tarajem \
+                    and glob.page_focused >= 0:
                 # If the right Musshaf viewer is on focus, replace the left
                 # Musshaf viewer with tarajem viewer and vice versa.
-                if glo.page_focused == self.musshaf_viewer_right.id:
+                if glob.page_focused == self.musshaf_viewer_right.id:
                     self.main_paned.remove(self.musshaf_viewer_left)
                     self.tarajem_viewer.set_halign(Gtk.Align.END)
                     self.main_paned.pack_start(
@@ -308,23 +308,23 @@ class MainWindow(Handy.ApplicationWindow):
                 self.main_paned.pack_end(
                     self.musshaf_viewer_right, True, True, 0)
 
-        if not glo.show_tarajem:
+        if not glob.show_tarajem:
             return
 
-        is_page_no_updated = self.page_number != glo.page_number
+        is_page_no_updated = self.page_number != glob.page_number
         if is_page_no_updated:
-            self.page_number = glo.page_number
+            self.page_number = glob.page_number
 
-        is_tarajem_names_updated = self.tarajem_names != glo.tarajem_names
+        is_tarajem_names_updated = self.tarajem_names != glob.tarajem_names
         if is_tarajem_names_updated:
-            self.tarajem_names = deepcopy(glo.tarajem_names)
+            self.tarajem_names = deepcopy(glob.tarajem_names)
 
         is_content_updated = is_page_no_updated \
             or is_tarajem_names_updated
 
         # Populate tarajem based on the page where the focused ayah is
         # located
-        if glo.page_focused == self.musshaf_viewer_right.id:
+        if glob.page_focused == self.musshaf_viewer_right.id:
             self.tarajem_viewer.populate(
                 self.musshaf_viewer_right.bboxes,
                 self.musshaf_viewer_right.bboxes_hovered,
@@ -340,10 +340,10 @@ class MainWindow(Handy.ApplicationWindow):
     def reload_telaawa_player(
             self,
             widget: Gtk.Widget) -> None:
-        state = self.surah_number != glo.surah_number \
-            or self.ayah_number != glo.ayah_number
-        self.surah_number = glo.surah_number
-        self.ayah_number = glo.ayah_number
+        state = self.surah_number != glob.surah_number \
+            or self.ayah_number != glob.ayah_number
+        self.surah_number = glob.surah_number
+        self.ayah_number = glob.ayah_number
 
         self.headerbar.popover_telaawa.play(state, True)
 

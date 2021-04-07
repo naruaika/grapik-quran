@@ -21,7 +21,7 @@ from gi.repository import GObject
 from gi.repository import Handy
 
 from . import constants as const
-from . import globals as glo
+from . import globals as glob
 from .menu import MainMenu
 from .navigation import NavigationPopover
 from .tarajem import TarajemPopover
@@ -97,7 +97,7 @@ class HeaderBar(Handy.HeaderBar):
     def toggle_tarajem(
             self,
             button: Gtk.ToggleButton) -> None:
-        glo.show_tarajem = button.get_active()
+        glob.show_tarajem = button.get_active()
         self.emit('tarajem-toggled')
 
     def on_squeezed(

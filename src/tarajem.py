@@ -24,7 +24,7 @@ from typing import List
 from urllib.request import urlopen
 
 from . import constants as const
-from . import globals as glo
+from . import globals as glob
 from .animation import Animation
 from .model import Metadata
 from .model import Tarajem
@@ -75,7 +75,7 @@ class TarajemViewer(Gtk.Overlay):
                     hbox.set_can_focus(False)
                     hbox.pack_start(label, True, True, 0)
 
-                    for tid in glo.tarajem_names:
+                    for tid in glob.tarajem_names:
                         textview = Gtk.TextView()
                         textview.set_editable(False)
                         textview.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
@@ -193,7 +193,7 @@ class TarajemPopover(Gtk.PopoverMenu):
                                                    Gtk.IconSize.BUTTON)
 
                 if not row.is_downloaded \
-                        or row.id in glo.tarajem_names:
+                        or row.id in glob.tarajem_names:
                     row.icon_status.set_opacity(1)
                 else:
                     row.icon_status.set_opacity(0)
@@ -226,12 +226,12 @@ class TarajemPopover(Gtk.PopoverMenu):
             return
 
         listboxrow.icon_status.set_opacity(
-            not listboxrow.id in glo.tarajem_names)
+            not listboxrow.id in glob.tarajem_names)
 
-        if listboxrow.id in glo.tarajem_names:
-            glo.tarajem_names.remove(listboxrow.id)
+        if listboxrow.id in glob.tarajem_names:
+            glob.tarajem_names.remove(listboxrow.id)
         else:
-            glo.tarajem_names.append(listboxrow.id)
+            glob.tarajem_names.append(listboxrow.id)
         self.emit('tarajem-names-updated')
 
     def download(

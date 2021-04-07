@@ -35,7 +35,7 @@ from gi.repository import Gtk
 from os import path
 
 from . import constants as const
-from . import globals as glo
+from . import globals as glob
 from .model import Musshaf
 from .musshaf import MusshafDialog
 from .window import MainWindow
@@ -47,20 +47,20 @@ class Application(Gtk.Application):
                          flags=Gio.ApplicationFlags.FLAGS_NONE)
 
         self.settings = Gio.Settings.new(const.APPLICATION_ID)
-        glo.musshaf_name = self.settings.get_string('musshaf-name')
-        glo.tarajem_names = self.settings.get_strv('tarajem-names')
-        glo.telaawa_name = self.settings.get_string('telaawa-name')
+        glob.musshaf_name = self.settings.get_string('musshaf-name')
+        glob.tarajem_names = self.settings.get_strv('tarajem-names')
+        glob.telaawa_name = self.settings.get_string('telaawa-name')
 
-        glo.page_scale = self.settings.get_double('page-scale')
-        glo.dual_page = self.settings.get_boolean('dual-page')
-        glo.show_tarajem = self.settings.get_boolean('show-tarajem')
+        glob.page_scale = self.settings.get_double('page-scale')
+        glob.dual_page = self.settings.get_boolean('dual-page')
+        glob.show_tarajem = self.settings.get_boolean('show-tarajem')
 
-        glo.page_number = self.settings.get_int('page-number')
-        glo.surah_number = self.settings.get_int('surah-number')
-        glo.ayah_number = self.settings.get_int('ayah-number')
-        glo.juz_number = self.settings.get_int('juz-number')
-        glo.hizb_number = self.settings.get_int('hizb-number')
-        glo.quarter_number = self.settings.get_int('quarter-number')
+        glob.page_number = self.settings.get_int('page-number')
+        glob.surah_number = self.settings.get_int('surah-number')
+        glob.ayah_number = self.settings.get_int('ayah-number')
+        glob.juz_number = self.settings.get_int('juz-number')
+        glob.hizb_number = self.settings.get_int('hizb-number')
+        glob.quarter_number = self.settings.get_int('quarter-number')
 
         # Watch the system-wide settings when global Gtk application theme has
         # been changed
@@ -80,9 +80,9 @@ class Application(Gtk.Application):
             # Otherwise, open the musshaf manager dialog.
             musshaf_filepath = path.join(
                 const.USER_DATA_PATH,
-                f'musshaf/{glo.musshaf_name}/1.jpg')
+                f'musshaf/{glob.musshaf_name}/1.jpg')
             with Musshaf() as musshaf:
-                if musshaf.is_musshaf_exist(glo.musshaf_name) \
+                if musshaf.is_musshaf_exist(glob.musshaf_name) \
                         and path.isfile(musshaf_filepath):
                     window = MainWindow(application=self)
                 else:
@@ -131,15 +131,15 @@ class Application(Gtk.Application):
     def save_user_settings(self) -> None:
         """Save the last page read settings."""
         print('Saving user settings...')
-        self.settings.set_string('musshaf-name', glo.musshaf_name)
-        self.settings.set_strv('tarajem-names', glo.tarajem_names)
-        self.settings.set_string('telaawa-name', glo.telaawa_name)
+        self.settings.set_string('musshaf-name', glob.musshaf_name)
+        self.settings.set_strv('tarajem-names', glob.tarajem_names)
+        self.settings.set_string('telaawa-name', glob.telaawa_name)
 
-        self.settings.set_double('page-scale', glo.page_scale)
-        self.settings.set_boolean('dual-page', glo.dual_page)
-        self.settings.set_boolean('show-tarajem', glo.show_tarajem)
+        self.settings.set_double('page-scale', glob.page_scale)
+        self.settings.set_boolean('dual-page', glob.dual_page)
+        self.settings.set_boolean('show-tarajem', glob.show_tarajem)
 
-        if glo.surah_number < 0:
+        if glob.surah_number < 0:
             # If the last page read has no ayah(s), go to the page where Surah
             # Al-Fathihah is located
             self.settings.reset('page-number')
@@ -149,12 +149,12 @@ class Application(Gtk.Application):
             self.settings.reset('hizb-number')
             self.settings.reset('quarter-number')
         else:
-            self.settings.set_int('page-number', glo.page_number)
-            self.settings.set_int('surah-number', glo.surah_number)
-            self.settings.set_int('ayah-number', glo.ayah_number)
-            self.settings.set_int('juz-number', glo.juz_number)
-            self.settings.set_int('hizb-number', glo.hizb_number)
-            self.settings.set_int('quarter-number', glo.quarter_number)
+            self.settings.set_int('page-number', glob.page_number)
+            self.settings.set_int('surah-number', glob.surah_number)
+            self.settings.set_int('ayah-number', glob.ayah_number)
+            self.settings.set_int('juz-number', glob.juz_number)
+            self.settings.set_int('hizb-number', glob.hizb_number)
+            self.settings.set_int('quarter-number', glob.quarter_number)
         print('See you, in sha Allah!')
 
     def on_theme_changed(

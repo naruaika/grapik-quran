@@ -30,7 +30,7 @@ from urllib.request import urlopen
 from zipfile import ZipFile
 
 from . import constants as const
-from . import globals as glo
+from . import globals as glob
 from .animation import Animation
 from .model import Metadata
 
@@ -122,7 +122,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
                 row.id = telaawa[0]
 
-                if row.id == glo.telaawa_name:
+                if row.id == glob.telaawa_name:
                     self.list_qaree.select_row(row)
                 else:
                     row.icon_status.set_opacity(0)
@@ -150,9 +150,9 @@ class TelaawaPopover(Gtk.PopoverMenu):
         if not listboxrow:
             return
 
-        if glo.telaawa_name == listboxrow.id:
+        if glob.telaawa_name == listboxrow.id:
             return
-        glo.telaawa_name = listboxrow.id
+        glob.telaawa_name = listboxrow.id
 
         # Reset the display
         def reset(listboxrow: Gtk.ListBoxRow) -> None:
@@ -172,10 +172,10 @@ class TelaawaPopover(Gtk.PopoverMenu):
         self.is_playing = is_playing
 
         if is_playing:
-            suraya_no = f'{glo.surah_number:03d}001'
+            suraya_no = f'{glob.surah_number:03d}001'
             if not path.isfile(path.join(
                     const.USER_DATA_PATH,
-                    f'telaawa/{glo.telaawa_name}/{suraya_no}.mp3')):
+                    f'telaawa/{glob.telaawa_name}/{suraya_no}.mp3')):
                 self.play_after_download = True
                 self.download()
                 return
@@ -214,11 +214,11 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
             if not self.pipeline:  # play audio
                 telaawa_filepath = path.join(
-                    const.USER_DATA_PATH, f'telaawa/{glo.telaawa_name}')
+                    const.USER_DATA_PATH, f'telaawa/{glob.telaawa_name}')
 
                 def execute() -> None:
                     suraya_no = \
-                        f'{glo.surah_number:03d}{glo.ayah_number:03d}'
+                        f'{glob.surah_number:03d}{glob.ayah_number:03d}'
                     # FIXME: changing to a tarajem that has not been downloaded
                     # while playing stops playback and makes a jump to the
                     # selected ayah
@@ -266,13 +266,13 @@ class TelaawaPopover(Gtk.PopoverMenu):
         if self.telaawa_name:
             return
         row = self.list_qaree.get_selected_row()
-        self.telaawa_name = glo.telaawa_name
+        self.telaawa_name = glob.telaawa_name
 
         row.icon_status.hide()
         row.spinner.start()
         row.spinner.show()
 
-        telaawa_dir = path.join(const.USER_DATA_PATH, f'telaawa/{glo.telaawa_name}')
+        telaawa_dir = path.join(const.USER_DATA_PATH, f'telaawa/{glob.telaawa_name}')
 
         def is_downloaded() -> bool:
             with Metadata() as metadata:
@@ -282,7 +282,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
                 # Open connection and look for content length in its header
                 filepath = telaawa[2].replace('http', 'https') \
-                    + f'{glo.surah_number:03d}.zip'
+                    + f'{glob.surah_number:03d}.zip'
                 response = urlopen(filepath)
                 total_length = response.getheader('Content-Length')
                 total_length = (0 if not total_length else int(total_length))

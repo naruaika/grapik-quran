@@ -19,7 +19,7 @@ from gi.repository import GObject
 from gi.repository import Gtk
 
 from . import constants as const
-from . import globals as glo
+from . import globals as glob
 from .about import AboutDialog
 
 
@@ -54,24 +54,24 @@ class MainMenu(Gtk.PopoverMenu):
         self.button_check_dual.props.role = Gtk.ButtonRole.CHECK
         self.button_check_nightmode.props.role = Gtk.ButtonRole.CHECK
 
-        self.button_check_dual.props.active = glo.dual_page
-        self.adjust_zoom.set_value(glo.page_scale*100)
-        self.button_open_zoom.props.text = f'{int(glo.page_scale*100)}%'
+        self.button_check_dual.props.active = glob.dual_page
+        self.adjust_zoom.set_value(glob.page_scale*100)
+        self.button_open_zoom.props.text = f'{int(glob.page_scale*100)}%'
 
     @Gtk.Template.Callback()
     def page_zoom_out(
             self,
             button: Gtk.Button) -> None:
-        self.adjust_zoom.set_value(glo.page_scale*100 - const.PAGE_ZOOM_STEP)
-        glo.page_scale = self.adjust_zoom.get_value() / 100
+        self.adjust_zoom.set_value(glob.page_scale*100 - const.PAGE_ZOOM_STEP)
+        glob.page_scale = self.adjust_zoom.get_value() / 100
         self.emit('page-scaled')
 
     @Gtk.Template.Callback()
     def page_zoom_in(
             self,
             button: Gtk.Button) -> None:
-        self.adjust_zoom.set_value(glo.page_scale*100 + const.PAGE_ZOOM_STEP)
-        glo.page_scale = self.adjust_zoom.get_value() / 100
+        self.adjust_zoom.set_value(glob.page_scale*100 + const.PAGE_ZOOM_STEP)
+        glob.page_scale = self.adjust_zoom.get_value() / 100
         self.emit('page-scaled')
 
     @Gtk.Template.Callback()
@@ -113,4 +113,4 @@ class MainMenu(Gtk.PopoverMenu):
         self.get_toplevel().destroy()
 
     def do_page_scaled(self) -> None:
-        self.button_open_zoom.props.text = f'{int(glo.page_scale*100)}%'
+        self.button_open_zoom.props.text = f'{int(glob.page_scale*100)}%'
