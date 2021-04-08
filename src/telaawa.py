@@ -48,6 +48,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'TelaawaPopover'
 
     __gsignals__ = {
+        'telaawa-playback': (GObject.SIGNAL_RUN_LAST, None, (bool,)),
         'go-to-next-ayah': (GObject.SIGNAL_RUN_LAST, None, ())}
 
     Gst.init()
@@ -61,8 +62,8 @@ class TelaawaPopover(Gtk.PopoverMenu):
     scrolledwindow_surah = Gtk.Template.Child()
 
     button_seek_backward = Gtk.Template.Child()
-    button_toggle_play = Gtk.Template.Child()
-    icon_toggle_play = Gtk.Template.Child()
+    button_toggle_playback = Gtk.Template.Child()
+    icon_toggle_playback = Gtk.Template.Child()
     button_seek_forward = Gtk.Template.Child()
     slider_playback = Gtk.Template.Child()
     button_toggle_loopback = Gtk.Template.Child()
@@ -185,10 +186,19 @@ class TelaawaPopover(Gtk.PopoverMenu):
     def on_played(
             self,
             button: Gtk.ToggleButton) -> None:
+        self.ready_to_play = button.get_active()
+        self.emit('telaawa-playback', self.ready_to_play)
+
+        if self.ready_to_play:
+            self.icon_toggle_playback.set_from_icon_name(
+                'media-playback-pause-symbolic', Gtk.IconSize.BUTTON)
+        else:
+            self.icon_toggle_playback.set_from_icon_name(
+                'media-playback-start-symbolic', Gtk.IconSize.BUTTON)
+
         if self.is_updating:
             return
 
-        self.ready_to_play = button.get_active()
         if self.ready_to_play:
             if self.playbin_state == TelaawaPlayer.STOP:
                 self.playback(TelaawaPlayer.PLAY)
@@ -225,30 +235,18 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
         if state == TelaawaPlayer.PAUSE:
             self.playbin.set_state(Gst.State.PAUSED)
-            self.icon_toggle_play.set_from_icon_name(
-                'media-playback-start-symbolic', Gtk.IconSize.BUTTON)
-
-            self.is_updating = True
-            self.button_toggle_play.set_active(False)
-            self.is_updating = False
+            self.button_toggle_playback.set_active(False)
 
         elif state == TelaawaPlayer.RESUME:
             self.playbin.set_state(Gst.State.PLAYING)
 
         elif state == TelaawaPlayer.STOP:
-            self.playbin.set_state(Gst.State.READY)
-            self.icon_toggle_play.set_from_icon_name(
-                'media-playback-start-symbolic', Gtk.IconSize.BUTTON)
             self.ready_to_play = False
-
-            self.is_updating = True
-            self.button_toggle_play.set_active(False)
-            self.is_updating = False
+            self.playbin.set_state(Gst.State.READY)
+            self.button_toggle_playback.set_active(False)
 
         else:
             self.playbin.set_state(Gst.State.NULL)  # reset the playback first
-            self.icon_toggle_play.set_from_icon_name(
-                'media-playback-pause-symbolic', Gtk.IconSize.BUTTON)
 
             telaawa_filepath = path.join(
                 const.USER_DATA_PATH, f'telaawa/{glob.telaawa_name}')

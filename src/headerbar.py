@@ -43,7 +43,8 @@ class HeaderBar(Handy.HeaderBar):
     button_open_search = Gtk.Template.Child()
     button_open_tarajem = Gtk.Template.Child()
     button_tarajem_option = Gtk.Template.Child()
-    button_play_telaawa = Gtk.Template.Child()
+    button_telaawa_playback = Gtk.Template.Child()
+    icon_telaawa_playback = Gtk.Template.Child()
     button_telaawa_option = Gtk.Template.Child()
     button_open_mainmenu = Gtk.Template.Child()
 
@@ -52,6 +53,8 @@ class HeaderBar(Handy.HeaderBar):
 
     button_open_navigation = Gtk.Template.Child()
     button_open_navigation_alt = Gtk.Template.Child()
+
+    is_updating: bool = False  # to prevent unwanted widget triggering
 
     def __init__(
             self,
@@ -89,6 +92,8 @@ class HeaderBar(Handy.HeaderBar):
         self.popover_telaawa = TelaawaPopover()
         self.button_telaawa_option.set_popover(self.popover_telaawa)
 
+        self.popover_telaawa.connect('telaawa-playback', self.telaawa_toggled)
+
     def setup_main_menu(self) -> None:
         self.popover_menu = MainMenu()
         self.button_open_mainmenu.set_popover(self.popover_menu)
@@ -99,6 +104,39 @@ class HeaderBar(Handy.HeaderBar):
             button: Gtk.ToggleButton) -> None:
         glob.show_tarajem = button.get_active()
         self.emit('tarajem-toggled')
+
+    @Gtk.Template.Callback()
+    def toggle_telaawa(
+            self,
+            button: Gtk.ToggleButton) -> None:
+        if self.is_updating:
+            return
+
+        is_activated = button.get_active()
+        if is_activated:
+            self.icon_telaawa_playback.set_from_icon_name(
+                'media-playback-pause-symbolic', Gtk.IconSize.BUTTON)
+        else:
+            self.icon_telaawa_playback.set_from_icon_name(
+                'media-playback-start-symbolic', Gtk.IconSize.BUTTON)
+
+        button_playback_telaawa = self.popover_telaawa.button_toggle_playback
+        button_playback_telaawa.set_active(is_activated)
+
+    def telaawa_toggled(
+            self,
+            button: Gtk.ToggleButton,
+            state: bool) -> None:
+        self.is_updating = True
+        self.button_telaawa_playback.set_active(state)
+        self.is_updating = False
+
+        if state:
+            self.icon_telaawa_playback.set_from_icon_name(
+                'media-playback-pause-symbolic', Gtk.IconSize.BUTTON)
+        else:
+            self.icon_telaawa_playback.set_from_icon_name(
+                'media-playback-start-symbolic', Gtk.IconSize.BUTTON)
 
     def on_squeezed(
             self,

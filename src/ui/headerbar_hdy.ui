@@ -100,12 +100,13 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <child>
-                  <object class="GtkToggleButton" id="button_play_telaawa">
+                  <object class="GtkToggleButton" id="button_telaawa_playback">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="receives-default">True</property>
+                    <signal name="toggled" handler="toggle_telaawa" swapped="no"/>
                     <child>
-                      <object class="GtkImage">
+                      <object class="GtkImage" id="icon_telaawa_playback">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="icon-name">media-playback-start-symbolic</property>
