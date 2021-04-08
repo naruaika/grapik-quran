@@ -506,7 +506,7 @@ class MusshafDialog(Gtk.Window):
             if self.open_after_download:
                 self.destroy()
 
-        Thread(target=execute).start()
+        Thread(target=execute, daemon=True).start()
 
 
 @Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/musshaf_listboxrow.ui')

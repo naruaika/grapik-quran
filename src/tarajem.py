@@ -139,9 +139,11 @@ class TarajemPopover(Gtk.PopoverMenu):
     scrolledwindow = Gtk.Template.Child()
 
     # Optimizers
-    tarajem_name: str = ''  # to avoid downloading another tarajem while
-                            # downloading a tarajem
-    tarajems: List = []  # to store the search results
+    tarajem_name: str = ''  # store a being downloaded tarajem ID to prevent
+                            # from downloading another tarajem when the current
+                            # download is not finished
+    tarajems: List = []  # store the search results to avoid unneeded
+                         # refreshment of Qaree list
 
     def populate(
             self,
@@ -320,7 +322,7 @@ class TarajemPopover(Gtk.PopoverMenu):
 
             Animation.scroll_to(self.scrolledwindow, row, 200)
 
-        Thread(target=execute).start()
+        Thread(target=execute, daemon=True).start()
 
 
 @Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/tarajem_listboxrow.ui')
