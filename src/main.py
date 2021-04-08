@@ -130,7 +130,6 @@ class Application(Gtk.Application):
 
     def save_user_settings(self) -> None:
         """Save the last page read settings."""
-        print('Saving user settings...')
         self.settings.set_string('musshaf-name', glob.musshaf_name)
         self.settings.set_strv('tarajem-names', glob.tarajem_names)
         self.settings.set_string('telaawa-name', glob.telaawa_name)
@@ -155,7 +154,6 @@ class Application(Gtk.Application):
             self.settings.set_int('juz-number', glob.juz_number)
             self.settings.set_int('hizb-number', glob.hizb_number)
             self.settings.set_int('quarter-number', glob.quarter_number)
-        print('See you, in sha Allah!')
 
     def on_theme_changed(
             self,
