@@ -19,6 +19,7 @@ from copy import deepcopy
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import GdkPixbuf
+from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -33,6 +34,7 @@ from .animation import Animation
 from .headerbar import HeaderBar
 from .musshaf import MusshafViewer
 from .tarajem import TarajemViewer
+from .telaawa import TelaawaPlayer
 
 
 @Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/window_hdy.ui')
@@ -238,12 +240,13 @@ class MainWindow(Handy.ApplicationWindow):
     def on_quit(
             self,
             widget: Gtk.Widget) -> None:
-        telaawa_pipeline = self.headerbar.popover_telaawa.pipeline
-        if telaawa_pipeline:
-            telaawa_pipeline.set_state(Gst.State.NULL)
-            del telaawa_pipeline
+        # Free resources
         self.timer_buttonnav.cancel()
-        del self.timer_buttonnav
+        player = self.headerbar.popover_telaawa
+        player.playbin.set_state(Gst.State.NULL)
+        Gst.Object.unref(player.playbin)
+        if player.playbin_seeker:
+            GLib.source_remove(player.playbin_seeker)
 
     @Gtk.Template.Callback()
     def on_buttonnav_focused(
@@ -349,7 +352,12 @@ class MainWindow(Handy.ApplicationWindow):
         self.surah_number = glob.surah_number
         self.ayah_number = glob.ayah_number
 
-        self.headerbar.popover_telaawa.play(state, True)
+        player = self.headerbar.popover_telaawa
+        if state \
+                and player.ready_to_play:
+            player.playback(TelaawaPlayer.PLAY)
+        else:
+            player.playback(TelaawaPlayer.STOP)
 
     def resize_musshaf(
             self,

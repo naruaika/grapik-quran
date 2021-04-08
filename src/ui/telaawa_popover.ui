@@ -260,7 +260,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkScale" id="seek_audio_playback">
+                  <object class="GtkScale" id="slider_playback">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="adjustment">adjust_playback</property>
@@ -268,6 +268,7 @@
                     <property name="round-digits">1</property>
                     <property name="draw-value">False</property>
                     <property name="value-pos">left</property>
+                    <signal name="value-changed" handler="on_seek" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>
