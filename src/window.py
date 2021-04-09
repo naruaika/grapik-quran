@@ -62,7 +62,7 @@ class MainWindow(Handy.ApplicationWindow):
 
     # To remember the previous value of application variables for deciding
     # which child widget to reload
-    show_tarajem: bool = False
+    tarajem_visibility: bool = False
     surah_number: int = None
     ayah_number: int = None
     page_number: int = None
@@ -104,7 +104,7 @@ class MainWindow(Handy.ApplicationWindow):
         self.headerbar.popover_nav.update()
         self.headerbar.popover_nav_alt.update()
 
-        self.headerbar.button_open_tarajem.set_active(glob.show_tarajem)
+        self.headerbar.button_open_tarajem.set_active(glob.tarajem_visibility)
 
         # Setup a timer for show/hiding overlay widgets
         self.timer_buttonnav = Timer(2.0, self.hide_buttonnav)
@@ -305,8 +305,8 @@ class MainWindow(Handy.ApplicationWindow):
             self,
             widget: Gtk.Widget) -> None:
         if self.page_focused != glob.page_focused \
-                or self.show_tarajem != glob.show_tarajem:
-            self.show_tarajem = glob.show_tarajem
+                or self.tarajem_visibility != glob.tarajem_visibility:
+            self.tarajem_visibility = glob.tarajem_visibility
 
             self.main_paned.remove(self.musshaf_viewer_right)
             self.main_paned.remove(self.tarajem_viewer)
@@ -316,7 +316,7 @@ class MainWindow(Handy.ApplicationWindow):
                 self.musshaf_viewer_right.image.set_halign(Gtk.Align.START)
                 self.musshaf_viewer_right.eventbox.set_halign(Gtk.Align.START)
 
-                if glob.show_tarajem \
+                if glob.tarajem_visibility \
                         and glob.page_focused >= 0:  # a negative is invalid
                     # If the right Musshaf viewer is on focus, replace the left
                     # Musshaf viewer with tarajem viewer and vice versa.
@@ -347,7 +347,9 @@ class MainWindow(Handy.ApplicationWindow):
                 self.musshaf_viewer_right.image.set_halign(Gtk.Align.CENTER)
                 self.musshaf_viewer_right.eventbox.set_halign(Gtk.Align.CENTER)
 
-        if not glob.show_tarajem or not glob.dual_page:
+        # TODO: support displaying tarajem on mobile view mode
+        if not glob.tarajem_visibility \
+                or not glob.dual_page:
             return
 
         is_page_no_updated = self.page_number != glob.page_number

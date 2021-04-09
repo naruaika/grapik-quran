@@ -105,7 +105,7 @@ class HeaderBar(Handy.HeaderBar):
     def toggle_tarajem(
             self,
             button: Gtk.ToggleButton) -> None:
-        glob.show_tarajem = button.get_active()
+        glob.tarajem_visibility = button.get_active()
         self.emit('tarajem-toggled')
 
     @Gtk.Template.Callback()

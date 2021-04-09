@@ -54,7 +54,7 @@ class Application(Gtk.Application):
 
         glob.page_scale = self.settings.get_double('page-scale')
         glob.dual_page = self.settings.get_boolean('dual-page')
-        glob.show_tarajem = self.settings.get_boolean('show-tarajem')
+        glob.tarajem_visibility = self.settings.get_boolean('tarajem-visibility')
         glob.playback_loop = self.settings.get_boolean('playback-loop')
 
         glob.page_number = self.settings.get_int('page-number')
@@ -137,7 +137,7 @@ class Application(Gtk.Application):
 
         self.settings.set_double('page-scale', glob.page_scale)
         self.settings.set_boolean('dual-page', glob.dual_page)
-        self.settings.set_boolean('show-tarajem', glob.show_tarajem)
+        self.settings.set_boolean('tarajem-visibility', glob.tarajem_visibility)
         self.settings.set_boolean('playback-loop', glob.playback_loop)
 
         if glob.surah_number < 0:

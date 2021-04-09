@@ -37,7 +37,7 @@
 				The value is updated whenever the user changes the dual page mode state.
 			</description>
 		</key>
-		<key name="show-tarajem" type="b">
+		<key name="tarajem-visibility" type="b">
 			<default>false</default>
 			<summary>Tarajem viewer visibility</summary>
 			<description>
