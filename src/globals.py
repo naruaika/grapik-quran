@@ -42,3 +42,4 @@ quarter_number: int = None
 # These are not savable variables, but rather variables used to reduce
 # computational cost
 page_focused: int = None
+mobile_view: bool = False

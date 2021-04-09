@@ -79,6 +79,7 @@ class MainMenu(Gtk.PopoverMenu):
             self,
             button: Gtk.Button) -> None:
         button.props.active = not button.props.active
+        glob.dual_page = button.props.active
         self.emit('dualpage-toggled')
 
     @Gtk.Template.Callback()

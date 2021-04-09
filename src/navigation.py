@@ -59,8 +59,13 @@ class NavigationPopover(Gtk.PopoverMenu):
     # Optimizers
     is_updating: bool = False  # to stop unwanted signal triggering
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(
+            self,
+            navigator_id: int,
+            **kwargs) -> None:
         super().__init__(**kwargs)
+
+        self.id = navigator_id  # 0 for the main navigator panel
 
         self.setup_form()
 
@@ -187,6 +192,11 @@ class NavigationPopover(Gtk.PopoverMenu):
         if self.is_updating:
             return
 
+        print(glob.mobile_view, self.id)
+        if (glob.mobile_view and self.id == 0) \
+                or (not glob.mobile_view and self.id > 0):
+            return
+
         with Musshaf() as musshaf, \
              Metadata() as metadata:
             if keyword == 'page-number':
@@ -272,7 +282,7 @@ class NavigationPopover(Gtk.PopoverMenu):
                                           f'{glob.ayah_number:.0f}')
         else:
             glob.page_focused = -1  # to hide tarajem viewer if it is being
-                                   # displayed
+                                    # displayed
             self.emit('change-win-title', const.APPLICATION_NAME)
 
         # Request updates to the Musshaf, tarajem, and telawa

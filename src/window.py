@@ -115,26 +115,30 @@ class MainWindow(Handy.ApplicationWindow):
         self.main_container.pack_start(self.headerbar, False, True, 0)
 
         self.headerbar.connect('tarajem-toggled', self.reload_tarajem_viewer)
+        self.headerbar.connect(
+            'mobileview-toggled', self.reload_navigation_panel)
 
         self.headerbar.popover_tarajem.connect(
             'tarajem-names-updated', self.reload_tarajem_viewer)
         self.headerbar.popover_telaawa.connect(
             'go-to-next-ayah', self.headerbar.popover_nav.go_to_next_ayah)
 
-        # self.headerbar.popover_telaawa.connect(
-        #     'go-to-next-ayah', self.headerbar.popover_nav_alt.go_to_next_ayah)
+        self.headerbar.popover_telaawa.connect(
+            'go-to-next-ayah', self.headerbar.popover_nav_alt.go_to_next_ayah)
 
         self.button_next_page.connect(
             'clicked', self.headerbar.popover_nav.go_to_next_page)
         self.button_previous_page.connect(
             'clicked', self.headerbar.popover_nav.go_to_previous_page)
 
-        # self.button_next_page.connect(
-        #     'clicked', self.headerbar.popover_nav_alt.go_to_next_page)
-        # self.button_previous_page.connect(
-        #     'clicked', self.headerbar.popover_nav_alt.go_to_previous_page)
+        self.button_next_page.connect(
+            'clicked', self.headerbar.popover_nav_alt.go_to_next_page)
+        self.button_previous_page.connect(
+            'clicked', self.headerbar.popover_nav_alt.go_to_previous_page)
 
         self.headerbar.popover_menu.connect('page-scaled', self.resize_musshaf)
+        self.headerbar.popover_menu.connect(
+            'dualpage-toggled', self.toggle_dualpage)
 
     def setup_musshaf_viewer(self) -> None:
         self.musshaf_viewer_right = MusshafViewer(0)
@@ -143,9 +147,9 @@ class MainWindow(Handy.ApplicationWindow):
         self.musshaf_viewer_right.eventbox.set_halign(Gtk.Align.START)
 
         self.musshaf_viewer_left = MusshafViewer(1)
-        self.main_paned.pack_start(self.musshaf_viewer_left, True, True, 0)
         self.musshaf_viewer_left.image.set_halign(Gtk.Align.END)
         self.musshaf_viewer_left.eventbox.set_halign(Gtk.Align.END)
+        self.main_paned.pack_start(self.musshaf_viewer_left, True, True, 0)
 
         self.headerbar.popover_nav.connect(
             'reload-musshaf-viewer', self.reload_musshaf_viewer)
@@ -195,14 +199,22 @@ class MainWindow(Handy.ApplicationWindow):
 
         headerbar_size = self.headerbar.get_allocation()
         window_height = page_height + headerbar_size.height
-        window_width = page_width * 2
 
-        self.resize(window_width + const.PAGE_MARGIN/2*3,
-                    window_height + const.PAGE_MARGIN)
+        if glob.dual_page:
+            window_width = page_width*2 + const.PAGE_MARGIN/2*3
+        else:
+            window_width = page_width
+
+        self.resize(window_width, window_height + const.PAGE_MARGIN)
         self.tarajem_viewer.scrolledwindow.set_size_request(
             page_width, page_height)
 
-        self.set_size_request(window_width + 82, self.get_size_request()[1])
+        if glob.dual_page:
+            window_width = window_width + 52
+        else:
+            window_width = window_width + 72
+
+        self.set_size_request(window_width, self.get_size_request()[1])
 
     @Gtk.Template.Callback()
     def on_key_press(
@@ -270,13 +282,14 @@ class MainWindow(Handy.ApplicationWindow):
             self,
             widget: Gtk.Widget) -> None:
         self.headerbar.popover_nav.update()
-        # self.headerbar.popover_nav_alt.update()
+        self.headerbar.popover_nav_alt.update()
 
     def reload_musshaf_viewer(
             self,
             widget: Gtk.Widget) -> None:
         self.musshaf_viewer_right.update()
-        self.musshaf_viewer_left.update()
+        if glob.dual_page:
+            self.musshaf_viewer_left.update()
 
     def reload_tarajem_viewer(
             self,
@@ -286,36 +299,45 @@ class MainWindow(Handy.ApplicationWindow):
             self.show_tarajem = glob.show_tarajem
 
             self.main_paned.remove(self.musshaf_viewer_right)
-            self.main_paned.remove(self.musshaf_viewer_left)
             self.main_paned.remove(self.tarajem_viewer)
+            self.main_paned.remove(self.musshaf_viewer_left)
 
-            if glob.show_tarajem \
-                    and glob.page_focused >= 0:
-                # If the right Musshaf viewer is on focus, replace the left
-                # Musshaf viewer with tarajem viewer and vice versa.
-                if glob.page_focused == self.musshaf_viewer_right.id:
-                    self.main_paned.remove(self.musshaf_viewer_left)
-                    self.tarajem_viewer.set_halign(Gtk.Align.END)
-                    self.main_paned.pack_start(
-                        self.tarajem_viewer, True, True, 0)
-                    self.main_paned.pack_end(
-                        self.musshaf_viewer_right, True, True, 0)
+            if glob.dual_page:
+                self.musshaf_viewer_right.image.set_halign(Gtk.Align.START)
+                self.musshaf_viewer_right.eventbox.set_halign(Gtk.Align.START)
+
+                if glob.show_tarajem \
+                        and glob.page_focused >= 0:  # a negative is invalid
+                    # If the right Musshaf viewer is on focus, replace the left
+                    # Musshaf viewer with tarajem viewer and vice versa.
+                    if glob.page_focused == self.musshaf_viewer_right.id:
+                        self.main_paned.remove(self.musshaf_viewer_left)
+                        self.tarajem_viewer.set_halign(Gtk.Align.END)
+                        self.main_paned.pack_start(
+                            self.tarajem_viewer, True, True, 0)
+                        self.main_paned.pack_end(
+                            self.musshaf_viewer_right, True, True, 0)
+                    else:
+                        self.main_paned.remove(self.musshaf_viewer_right)
+                        self.tarajem_viewer.set_halign(Gtk.Align.START)
+                        self.main_paned.pack_end(
+                            self.tarajem_viewer, True, True, 0)
+                        self.main_paned.pack_start(
+                            self.musshaf_viewer_left, True, True, 0)
                 else:
-                    self.main_paned.remove(self.musshaf_viewer_right)
-                    self.tarajem_viewer.set_halign(Gtk.Align.START)
-                    self.main_paned.pack_end(
-                        self.tarajem_viewer, True, True, 0)
+                    # If tarajem opening is not requested, display only Musshaf
+                    # viewer(s)
                     self.main_paned.pack_start(
                         self.musshaf_viewer_left, True, True, 0)
+                    self.main_paned.pack_end(
+                        self.musshaf_viewer_right, True, True, 0)
             else:
-                # If tarajem opening is not requested, display only Musshaf
-                # viewer(s)
-                self.main_paned.pack_start(
-                    self.musshaf_viewer_left, True, True, 0)
                 self.main_paned.pack_end(
                     self.musshaf_viewer_right, True, True, 0)
+                self.musshaf_viewer_right.image.set_halign(Gtk.Align.CENTER)
+                self.musshaf_viewer_right.eventbox.set_halign(Gtk.Align.CENTER)
 
-        if not glob.show_tarajem:
+        if not glob.show_tarajem or not glob.dual_page:
             return
 
         is_page_no_updated = self.page_number != glob.page_number
@@ -364,7 +386,15 @@ class MainWindow(Handy.ApplicationWindow):
             widget: Gtk.Widget) -> None:
         # FIXME: widget allocations are not updated immediately
         self.musshaf_viewer_right.update(True)
-        self.musshaf_viewer_left.update(True)
+        if glob.dual_page:
+            self.musshaf_viewer_left.update(True)
+        self.setup_window_size()
+
+    def toggle_dualpage(
+            self,
+            widget: Gtk.Widget) -> None:
+        self.reload_tarajem_viewer(widget)
+        self.resize_musshaf(widget)
         self.setup_window_size()
 
     # def on_notified(

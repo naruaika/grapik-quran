@@ -34,7 +34,7 @@ class HeaderBar(Handy.HeaderBar):
 
     __gsignals__ = {
         'tarajem-toggled': (GObject.SIGNAL_RUN_CLEANUP, None, ()),
-        'mobileview-toggled': (GObject.SIGNAL_RUN_CLEANUP, None, (bool,))}
+        'mobileview-toggled': (GObject.SIGNAL_RUN_CLEANUP, None, ())}
 
     Handy.init()
 
@@ -61,6 +61,10 @@ class HeaderBar(Handy.HeaderBar):
             **kwargs) -> None:
         super().__init__(**kwargs)
 
+        child = self.squeezer.get_visible_child()
+        glob.mobile_view = child != self.headerbar_switcher
+        print(glob.mobile_view)
+
         self.setup_tarajem_popover()
         self.setup_navigation_popover()
         self.setup_telaawa_popover()
@@ -74,10 +78,10 @@ class HeaderBar(Handy.HeaderBar):
         self.button_tarajem_option.set_popover(self.popover_tarajem)
 
     def setup_navigation_popover(self) -> None:
-        self.popover_nav = NavigationPopover()
+        self.popover_nav = NavigationPopover(0)
         self.button_open_navigation.set_popover(self.popover_nav)
 
-        self.popover_nav_alt = NavigationPopover()
+        self.popover_nav_alt = NavigationPopover(1)
         self.popover_nav_alt.container.set_orientation(
             Gtk.Orientation.VERTICAL)
         self.popover_nav_alt.container.set_spacing(8)
@@ -143,12 +147,14 @@ class HeaderBar(Handy.HeaderBar):
             squeezer: Handy.Squeezer,
             event: Gdk.Event) -> None:
         child = squeezer.get_visible_child()
-        mobileview_activated = child != self.headerbar_switcher
-        self.emit('mobileview-toggled', mobileview_activated)
+        glob.mobile_view = child != self.headerbar_switcher
+        self.emit('mobileview-toggled')
 
     def change_title(
             self,
             widget: Gtk.Widget,
             title: str) -> None:
-        self.window_title.set_text(title)
-        self.window_title_alt.set_text(title)
+        if not glob.mobile_view:
+            self.window_title.set_text(title)
+        else:
+            self.window_title_alt.set_text(title)
