@@ -67,11 +67,11 @@ class MusshafViewer(Gtk.Overlay):
 
     def __init__(
             self,
-            page_id: int,
+            viewer_id: int,
             **kwargs) -> None:
         super().__init__(**kwargs)
 
-        self.id = page_id  # 0 for the main page viewer
+        self.id = viewer_id  # 0 for the main page viewer
 
         self.setup_viewer()
 

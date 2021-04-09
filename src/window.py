@@ -37,7 +37,7 @@ from .tarajem import TarajemViewer
 from .telaawa import TelaawaPlayer
 
 
-@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/window_hdy.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/window.ui')
 class MainWindow(Handy.ApplicationWindow):
     __gtype_name__ = 'MainWindow'
 

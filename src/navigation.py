@@ -192,7 +192,6 @@ class NavigationPopover(Gtk.PopoverMenu):
         if self.is_updating:
             return
 
-        print(glob.mobile_view, self.id)
         if (glob.mobile_view and self.id == 0) \
                 or (not glob.mobile_view and self.id > 0):
             return

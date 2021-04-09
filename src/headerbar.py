@@ -28,7 +28,7 @@ from .tarajem import TarajemPopover
 from .telaawa import TelaawaPopover
 
 
-@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/headerbar_hdy.ui')
+@Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/headerbar.ui')
 class HeaderBar(Handy.HeaderBar):
     __gtype_name__ = 'HeaderBar'
 
@@ -63,7 +63,6 @@ class HeaderBar(Handy.HeaderBar):
 
         child = self.squeezer.get_visible_child()
         glob.mobile_view = child != self.headerbar_switcher
-        print(glob.mobile_view)
 
         self.setup_tarajem_popover()
         self.setup_navigation_popover()
