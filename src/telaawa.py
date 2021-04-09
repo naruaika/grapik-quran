@@ -259,7 +259,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
                     # Check if the download was successful and the user still
                     # wants to play the telaawa
                     if not is_downloaded \
-                            or self.playbin_state == TelaawaPlayer.PLAY:
+                            or self.playbin_state != TelaawaPlayer.PLAY:
                         GLib.idle_add(self.playback, TelaawaPlayer.STOP)
                         return
 
