@@ -329,6 +329,17 @@ class TelaawaPopover(Gtk.PopoverMenu):
         row.spinner.show()
         self.progress_qaree.show()
 
+        def close() -> None:
+            row.spinner.hide()
+            row.spinner.stop()
+            row.icon_status.show()
+            self.progress_qaree.hide()
+            self.progress_qaree.set_fraction(0)
+            self.telaawa_name = ''
+
+            GLib.timeout_add(50, Animation.scroll_to, self.scrolledwindow_qaree,
+                            row, 100)
+
         with Metadata() as metadata:
             telaawa = metadata.get_telaawa(self.telaawa_name)
             if not telaawa:
@@ -336,6 +347,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
                       'valid. Make sure you have downloaded the latest version'
                       f' of {const.APPLICATION_NAME}. Please contact the '
                       'developers to get a help.')
+                close()
                 return False
 
             # Open network connection
@@ -347,6 +359,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
                 print(f'The file for the telaawa ID `{self.telaawa_name}` is '
                       'no longer available to be downloaded. Please contact '
                       'the developers to get a help.')
+                close()
                 return False
 
             # Look for content length in its header
@@ -384,15 +397,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
         self.progress_qaree.set_fraction(1)  # in case there is no content
                                              # length in its header
 
-        row.spinner.hide()
-        row.spinner.stop()
-        row.icon_status.show()
-        self.progress_qaree.hide()
-        self.progress_qaree.set_fraction(0)
-        self.telaawa_name = ''
-
-        GLib.timeout_add(50, Animation.scroll_to, self.scrolledwindow_qaree,
-                         row, 100)
+        close()
 
         return True
 
