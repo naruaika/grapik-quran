@@ -68,6 +68,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
     button_seek_forward = Gtk.Template.Child()
     slider_playback = Gtk.Template.Child()
     button_toggle_loopback = Gtk.Template.Child()
+    icon_toggle_loopback = Gtk.Template.Child()
 
     playbin: Gst.Element = None
     playbin_state: TelaawaPlayer = None
@@ -89,6 +90,8 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
         self.playbin = Gst.ElementFactory.make('playbin', 'playbin')
         self.playbin_state = TelaawaPlayer.STOP
+
+        self.button_toggle_loopback.props.active = glob.playback_loop
 
     def populate(
             self,
@@ -221,6 +224,18 @@ class TelaawaPopover(Gtk.PopoverMenu):
             self.playback(TelaawaPlayer.PAUSE)
 
     @Gtk.Template.Callback()
+    def on_looped(
+            self,
+            button: Gtk.ToggleButton) -> None:
+        glob.playback_loop = button.get_active()
+        if glob.playback_loop:
+            self.icon_toggle_loopback.set_from_icon_name(
+                'media-playlist-repeat-symbolic', Gtk.IconSize.BUTTON)
+        else:
+            self.icon_toggle_loopback.set_from_icon_name(
+                'media-playlist-consecutive-symbolic', Gtk.IconSize.BUTTON)
+
+    @Gtk.Template.Callback()
     def on_seek(
             self,
             range: Gtk.Range) -> None:
@@ -248,7 +263,10 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
         if state == TelaawaPlayer.PAUSE:
             self.playbin.set_state(Gst.State.PAUSED)
+
+            self.is_updating = True
             self.button_toggle_playback.set_active(False)
+            self.is_updating = False
 
         elif state == TelaawaPlayer.RESUME:
             self.playbin.set_state(Gst.State.PLAYING)
@@ -256,7 +274,10 @@ class TelaawaPopover(Gtk.PopoverMenu):
         elif state == TelaawaPlayer.STOP:
             self.ready_to_play = False
             self.playbin.set_state(Gst.State.READY)
+
+            self.is_updating = True
             self.button_toggle_playback.set_active(False)
+            self.is_updating = False
 
         else:
             self.playbin.set_state(Gst.State.NULL)  # reset the playback first

@@ -283,8 +283,9 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="receives-default">True</property>
+                    <signal name="toggled" handler="on_looped" swapped="no"/>
                     <child>
-                      <object class="GtkImage">
+                      <object class="GtkImage" id="icon_toggle_loopback">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="icon-name">media-playlist-consecutive-symbolic</property>

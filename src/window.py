@@ -168,6 +168,8 @@ class MainWindow(Handy.ApplicationWindow):
             'reload-musshaf-viewer', self.reload_musshaf_viewer)
         self.headerbar.popover_nav_alt.connect(
             'reload-tarajem-viewer', self.reload_tarajem_viewer)
+        self.headerbar.popover_nav_alt.connect(
+            'reload-telaawa-player', self.reload_telaawa_player)
 
         self.musshaf_viewer_right.connect(
             'selected-ayah-changed', self.reload_navigation_panel)
@@ -383,8 +385,11 @@ class MainWindow(Handy.ApplicationWindow):
         self.ayah_number = glob.ayah_number
 
         player = self.headerbar.popover_telaawa
-        if state \
-                and player.ready_to_play:
+        if not player.ready_to_play:
+            player.playback(TelaawaPlayer.STOP)
+            return
+
+        if state:
             player.playback(TelaawaPlayer.PLAY)
         else:
             player.playback(TelaawaPlayer.STOP)

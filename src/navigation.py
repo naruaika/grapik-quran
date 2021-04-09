@@ -169,17 +169,24 @@ class NavigationPopover(Gtk.PopoverMenu):
     def go_to_previous_page(
             self,
             button: Gtk.Button) -> None:
+        if not self.in_focus():
+            return
         self.spin_page_no.set_value(self.spin_page_no.get_value() - 1)
 
     def go_to_next_page(
             self,
             button: Gtk.Button) -> None:
+        if not self.in_focus():
+            return
         self.spin_page_no.set_value(self.spin_page_no.get_value() + 1)
 
     def go_to_previous_ayah(
             self,
             button: Gtk.Button) -> None:
-        ayah_no = self.spin_ayah_no.get_value() - 1
+        if not self.in_focus():
+            return
+
+        ayah_no = glob.ayah_number - 1
         if self.adjust_ayah_no.get_lower() > ayah_no:
             self.emit('reload-telaawa-player')
         else:
@@ -188,9 +195,15 @@ class NavigationPopover(Gtk.PopoverMenu):
     def go_to_next_ayah(
             self,
             button: Gtk.Button) -> None:
-        ayah_no = self.spin_ayah_no.get_value() + 1
+        if not self.in_focus():
+            return
+
+        ayah_no = glob.ayah_number + 1
         if self.adjust_ayah_no.get_upper() < ayah_no:
-            self.emit('reload-telaawa-player')
+            if glob.playback_loop:
+                self.spin_ayah_no.set_value(1)
+            else:
+                self.emit('reload-telaawa-player')
         else:
             self.spin_ayah_no.set_value(ayah_no)
 
@@ -201,8 +214,7 @@ class NavigationPopover(Gtk.PopoverMenu):
         if self.is_updating:
             return
 
-        if (glob.mobile_view and self.id == 0) \
-                or (not glob.mobile_view and self.id > 0):
+        if not self.in_focus():
             return
 
         with Musshaf() as musshaf, \
@@ -261,8 +273,8 @@ class NavigationPopover(Gtk.PopoverMenu):
                     metadata.get_juz_no(glob.surah_number, glob.ayah_number)
                 hizb_no = \
                     metadata.get_hizb_no(glob.surah_number, glob.ayah_number)
-                glob.quarter_number = hizb_no%4 - 1
                 glob.hizb_number = hizb_no//4 + (hizb_no%4 > 0)
+                glob.quarter_number = hizb_no%4 - 1
             surah_length = metadata.get_surah_length(glob.surah_number)
 
         self.is_updating = True
@@ -297,3 +309,9 @@ class NavigationPopover(Gtk.PopoverMenu):
         self.emit('reload-musshaf-viewer')
         self.emit('reload-tarajem-viewer')
         self.emit('reload-telaawa-player')
+
+    def in_focus(self) -> bool:
+        if (glob.mobile_view and self.id == 0) \
+                or (not glob.mobile_view and self.id > 0):
+            return False
+        return True

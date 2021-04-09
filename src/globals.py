@@ -31,6 +31,7 @@ telaawa_name: str = None
 page_scale: float = None
 dual_page: bool = None
 show_tarajem: bool = None
+playback_loop: bool = None
 
 page_number: int = None
 surah_number: int = None

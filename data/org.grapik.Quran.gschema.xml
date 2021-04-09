@@ -44,6 +44,13 @@
 				The value is updated whenever the user changes the visibility of the tarajem viewer.
 			</description>
 		</key>
+		<key name="playback-loop" type="b">
+			<default>false</default>
+			<summary>Telaawa playback loop for surah</summary>
+			<description>
+				The value is updated whenever the user changes the telaawa playback loop state.
+			</description>
+		</key>
 
 		<key name="page-number" type="i">
 			<default>0</default>
