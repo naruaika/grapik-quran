@@ -49,6 +49,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
     __gsignals__ = {
         'telaawa-playback': (GObject.SIGNAL_RUN_LAST, None, (bool,)),
+        'go-to-previous-ayah': (GObject.SIGNAL_RUN_LAST, None, ()),
         'go-to-next-ayah': (GObject.SIGNAL_RUN_LAST, None, ())}
 
     Gst.init()
@@ -181,6 +182,18 @@ class TelaawaPopover(Gtk.PopoverMenu):
         # Interrupt the telaawa playback if it is playing
         if self.ready_to_play:
             self.playback(TelaawaPlayer.PLAY)
+
+    @Gtk.Template.Callback()
+    def on_seek_backward(
+            self,
+            button: Gtk.Button) -> None:
+        self.emit('go-to-previous-ayah')
+
+    @Gtk.Template.Callback()
+    def on_seek_forward(
+            self,
+            button: Gtk.Button) -> None:
+        self.emit('go-to-next-ayah')
 
     @Gtk.Template.Callback()
     def on_played(

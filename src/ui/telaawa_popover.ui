@@ -194,6 +194,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="receives-default">True</property>
+                        <signal name="clicked" handler="on_seek_backward" swapped="no"/>
                         <child>
                           <object class="GtkImage">
                             <property name="visible">True</property>
@@ -235,6 +236,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="receives-default">True</property>
+                        <signal name="clicked" handler="on_seek_forward" swapped="no"/>
                         <child>
                           <object class="GtkImage">
                             <property name="visible">True</property>

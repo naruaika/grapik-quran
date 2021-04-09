@@ -122,9 +122,15 @@ class MainWindow(Handy.ApplicationWindow):
             'tarajem-names-updated', self.reload_tarajem_viewer)
         self.headerbar.popover_telaawa.connect(
             'go-to-next-ayah', self.headerbar.popover_nav.go_to_next_ayah)
+        self.headerbar.popover_telaawa.connect(
+            'go-to-previous-ayah',
+            self.headerbar.popover_nav.go_to_previous_ayah)
 
         self.headerbar.popover_telaawa.connect(
             'go-to-next-ayah', self.headerbar.popover_nav_alt.go_to_next_ayah)
+        self.headerbar.popover_telaawa.connect(
+            'go-to-previous-ayah',
+            self.headerbar.popover_nav_alt.go_to_previous_ayah)
 
         self.button_next_page.connect(
             'clicked', self.headerbar.popover_nav.go_to_next_page)
@@ -281,8 +287,10 @@ class MainWindow(Handy.ApplicationWindow):
     def reload_navigation_panel(
             self,
             widget: Gtk.Widget) -> None:
-        self.headerbar.popover_nav.update()
-        self.headerbar.popover_nav_alt.update()
+        if not glob.mobile_view:
+            self.headerbar.popover_nav.update()
+        else:
+            self.headerbar.popover_nav_alt.update()
 
     def reload_musshaf_viewer(
             self,

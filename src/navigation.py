@@ -176,6 +176,15 @@ class NavigationPopover(Gtk.PopoverMenu):
             button: Gtk.Button) -> None:
         self.spin_page_no.set_value(self.spin_page_no.get_value() + 1)
 
+    def go_to_previous_ayah(
+            self,
+            button: Gtk.Button) -> None:
+        ayah_no = self.spin_ayah_no.get_value() - 1
+        if self.adjust_ayah_no.get_lower() > ayah_no:
+            self.emit('reload-telaawa-player')
+        else:
+            self.spin_ayah_no.set_value(ayah_no)
+
     def go_to_next_ayah(
             self,
             button: Gtk.Button) -> None:
