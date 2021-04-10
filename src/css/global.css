@@ -62,6 +62,7 @@ row {
     font-size: 13pt;
     font-weight: 500;
     border-radius: 10px;
+    box-shadow: 0px 4px 4px #ccc;
 }
 .box-tarajem row:first-child {
     margin-top: 15px;
@@ -79,6 +80,8 @@ row {
 
 .box-tarajem box > label {
     padding: 10px 20px 0px 20px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 /* For the surah-ayah numbering */
 .box-tarajem box > label {
@@ -117,11 +120,6 @@ row {
     border: 1px solid #a8a8a8;
 }
 /* For the surah-ayah numbering being hovered/focused */
-#row-focused box > label,
-#row-hovered box > label {
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
 #row-focused box > label {
     color: @accent;
     background-color: #d0ddec;
