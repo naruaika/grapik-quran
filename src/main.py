@@ -54,8 +54,10 @@ class Application(Gtk.Application):
 
         glob.page_scale = self.settings.get_double('page-scale')
         glob.dual_page = self.settings.get_boolean('dual-page')
-        glob.tarajem_visibility = self.settings.get_boolean('tarajem-visibility')
         glob.playback_loop = self.settings.get_boolean('playback-loop')
+        glob.night_mode = self.settings.get_boolean('night-mode')
+        glob.tarajem_visibility = \
+            self.settings.get_boolean('tarajem-visibility')
 
         glob.page_number = self.settings.get_int('page-number')
         glob.surah_number = self.settings.get_int('surah-number')
@@ -137,8 +139,10 @@ class Application(Gtk.Application):
 
         self.settings.set_double('page-scale', glob.page_scale)
         self.settings.set_boolean('dual-page', glob.dual_page)
-        self.settings.set_boolean('tarajem-visibility', glob.tarajem_visibility)
         self.settings.set_boolean('playback-loop', glob.playback_loop)
+        self.settings.set_boolean('night-mode', glob.night_mode)
+        self.settings.set_boolean(
+            'tarajem-visibility', glob.tarajem_visibility)
 
         if glob.surah_number < 0:
             # If the last page read has no ayah(s), go to the page where Surah

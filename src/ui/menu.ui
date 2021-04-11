@@ -94,7 +94,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="button_check_dual">
+          <object class="GtkModelButton" id="button_check_dualpage">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>

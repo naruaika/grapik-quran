@@ -18,6 +18,7 @@
 from cairo import Context
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
+from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gtk
 from io import BytesIO
@@ -108,7 +109,10 @@ class MusshafViewer(Gtk.Overlay):
             widget: Gtk.Widget,
             context: Context) -> None:
         # Draw hovered ayah(s)
-        context.set_source_rgba(0.2, 0.2, 0.2, 0.075)
+        if not glob.night_mode:
+            context.set_source_rgba(0.2, 0.2, 0.2, 0.075)
+        else:
+            context.set_source_rgba(0.8, 0.8, 0.8, 0.075)
         for bbox in self.bboxes_hovered:
             if bbox in self.bboxes_focused:
                 continue
@@ -116,7 +120,10 @@ class MusshafViewer(Gtk.Overlay):
         context.fill()
 
         # Draw focused ayah(s)
-        context.set_source_rgba(0.082, 0.325, 0.620, 0.2)
+        if not glob.night_mode:
+            context.set_source_rgba(0.082, 0.325, 0.620, 0.2)
+        else:
+            context.set_source_rgba(0.97, 0.94, 0.41, 0.15)
         for bbox in self.bboxes_focused:
             context.rectangle(*bbox[2:])
         context.fill()
@@ -208,6 +215,14 @@ class MusshafViewer(Gtk.Overlay):
         page_height = round(self.page_height * glob.page_scale)
         page_image = self.page_image.scale_simple(
             page_width, page_height, GdkPixbuf.InterpType.BILINEAR)
+
+        if glob.night_mode:
+            page_image_bytes = bytearray(page_image.get_pixels())
+            page_image_bytes = bytearray(x ^ 0xff for x in page_image_bytes)
+            page_image = GdkPixbuf.Pixbuf.new_from_bytes(
+                GLib.Bytes.new(page_image_bytes), GdkPixbuf.Colorspace.RGB,
+                False, 8, page_width, page_height, page_image.get_rowstride())
+
         self.image.set_from_pixbuf(page_image)
         self.eventbox.set_size_request(page_width, page_height)
 

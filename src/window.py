@@ -145,6 +145,8 @@ class MainWindow(Handy.ApplicationWindow):
         self.headerbar.popover_menu.connect('page-scaled', self.resize_musshaf)
         self.headerbar.popover_menu.connect(
             'dualpage-toggled', self.toggle_dualpage)
+        self.headerbar.popover_menu.connect(
+            'nightmode-toggled', self.toggle_nightmode)
 
     def setup_musshaf_viewer(self) -> None:
         self.musshaf_viewer_right = MusshafViewer(0)
@@ -156,6 +158,11 @@ class MainWindow(Handy.ApplicationWindow):
         self.musshaf_viewer_left.image.set_halign(Gtk.Align.END)
         self.musshaf_viewer_left.eventbox.set_halign(Gtk.Align.END)
         self.main_paned.pack_start(self.musshaf_viewer_left, True, True, 0)
+
+        if glob.night_mode:
+            self.main_paned.set_name('musshaf-dark')
+        else:
+            self.main_paned.set_name('musshaf-light')
 
         self.headerbar.popover_nav.connect(
             'reload-musshaf-viewer', self.reload_musshaf_viewer)
@@ -411,6 +418,18 @@ class MainWindow(Handy.ApplicationWindow):
         self.reload_tarajem_viewer(widget)
         self.resize_musshaf(widget)
         self.setup_window_size()
+
+    def toggle_nightmode(
+            self,
+            widget: Gtk.Widget) -> None:
+        self.musshaf_viewer_right.update(True)
+        if glob.dual_page:
+            self.musshaf_viewer_left.update(True)
+
+        if glob.night_mode:
+            self.main_paned.set_name('musshaf-dark')
+        else:
+            self.main_paned.set_name('musshaf-light')
 
     # def on_notified(
     #         self,

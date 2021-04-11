@@ -22,8 +22,11 @@ progress, trough {
     padding: 0px;
 }
 
-.background-white {
+#musshaf-light {
     background-color: #ffffff;
+}
+#musshaf-dark {
+    background-color: #000000;
 }
 
 row {
@@ -55,6 +58,9 @@ row {
     border-color: #3271bf;
 }
 
+.box-tarajem {
+    background-color: transparent;
+}
 .box-tarajem row {
     padding: 0px;
     margin: 15px;

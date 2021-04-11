@@ -40,7 +40,6 @@
                   </object>
                 </child>
                 <style>
-                  <class name="background-white"/>
                   <class name="box-tarajem"/>
                 </style>
               </object>

@@ -109,9 +109,6 @@
                     <child>
                       <placeholder/>
                     </child>
-                    <style>
-                      <class name="background-white"/>
-                    </style>
                   </object>
                 </child>
                 <child type="overlay">

@@ -37,6 +37,13 @@
 				The value is updated whenever the user changes the dual page mode state.
 			</description>
 		</key>
+		<key name="night-mode" type="b">
+			<default>false</default>
+			<summary>Night mode read</summary>
+			<description>
+				The value is updated whenever the user changes the night mode read state.
+			</description>
+		</key>
 		<key name="tarajem-visibility" type="b">
 			<default>false</default>
 			<summary>Tarajem viewer visibility</summary>

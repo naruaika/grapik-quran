@@ -32,7 +32,7 @@ class MainMenu(Gtk.PopoverMenu):
         'nightmode-toggled': (GObject.SIGNAL_RUN_FIRST, None, ()),
         'dualpage-toggled': (GObject.SIGNAL_RUN_FIRST, None, ())}
 
-    button_check_dual = Gtk.Template.Child()
+    button_check_dualpage = Gtk.Template.Child()
     button_check_nightmode = Gtk.Template.Child()
     button_open_musshaf = Gtk.Template.Child()
     button_open_preferences = Gtk.Template.Child()
@@ -51,10 +51,11 @@ class MainMenu(Gtk.PopoverMenu):
             **kwargs) -> None:
         super().__init__(**kwargs)
 
-        self.button_check_dual.props.role = Gtk.ButtonRole.CHECK
+        self.button_check_dualpage.props.role = Gtk.ButtonRole.CHECK
         self.button_check_nightmode.props.role = Gtk.ButtonRole.CHECK
 
-        self.button_check_dual.props.active = glob.dual_page
+        self.button_check_dualpage.props.active = glob.dual_page
+        self.button_check_nightmode.props.active = glob.night_mode
         self.adjust_zoom.set_value(glob.page_scale*100)
         self.button_open_zoom.props.text = f'{int(glob.page_scale*100)}%'
 
@@ -87,6 +88,7 @@ class MainMenu(Gtk.PopoverMenu):
             self,
             button: Gtk.Button) -> None:
         button.props.active = not button.props.active
+        glob.night_mode = button.props.active
         self.emit('nightmode-toggled')
 
     @Gtk.Template.Callback()
