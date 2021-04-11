@@ -60,6 +60,9 @@ class TarajemViewer(Gtk.Overlay):
                 self.listbox.remove(row)
             self.listbox.foreach(reset)
 
+        if not glob.tarajem_names:
+            return
+
         with Metadata() as metadata, \
              Tarajem() as model:
             row_focused = None
