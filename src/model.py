@@ -120,6 +120,18 @@ class Metadata(Model):
             return result[0]
         return -1
 
+    def get_ayah_text(
+            self,
+            musshaf_name: str,
+            surah_no: int,
+            ayah_no: int) -> str:
+        self.cursor.execute('SELECT text FROM texts WHERE sura=? AND aya=?',
+                            (surah_no, ayah_no))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
+
     def get_juz_no(
             self,
             surah_no: int,

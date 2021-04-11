@@ -51,3 +51,7 @@ grapik_quran_sources = [
 ]
 
 install_data(grapik_quran_sources, install_dir: moduledir)
+
+install_data('fonts/Amiri-Regular.ttf',
+  install_dir: join_paths(get_option('datadir'), 'fonts')
+)

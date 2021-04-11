@@ -69,14 +69,28 @@ class TarajemViewer(Gtk.Overlay):
             row_hovered = None
             for idx_bbox, bbox in enumerate(bboxes):
                 if regenerate:
+                    textview = Gtk.TextView()
+                    textview.set_editable(False)
+                    textview.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
+                    textview.set_can_focus(False)
+                    textview.set_hexpand(True)
+                    ayah_imlaei = metadata.get_ayah_text(
+                        glob.musshaf_name, bbox[0], bbox[1])
+                    buffer = Gtk.TextBuffer()
+                    buffer.insert_markup(
+                        buffer.get_start_iter(), ayah_imlaei, -1)
+                    textview.set_buffer(buffer)
+
                     label = Gtk.Label(
                         label=f'{metadata.get_surah_name(bbox[0])} '
                             f'({bbox[0]}) : {bbox[1]}', xalign=0)
                     label.set_can_focus(False)
 
-                    hbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+                    hbox = Gtk.Box(
+                        orientation=Gtk.Orientation.VERTICAL)
                     hbox.set_can_focus(False)
                     hbox.pack_start(label, True, True, 0)
+                    hbox.pack_start(textview, True, True, 1)
 
                     for tid in glob.tarajem_names:
                         textview = Gtk.TextView()
@@ -98,7 +112,7 @@ class TarajemViewer(Gtk.Overlay):
                         buffer.insert_markup(
                             buffer.get_start_iter(), markup, -1)
                         textview.set_buffer(buffer)
-                        hbox.pack_start(textview, True, True, 1)
+                        hbox.pack_start(textview, True, True, 2)
 
                     row = Gtk.ListBoxRow()
                     row.set_can_focus(False)
