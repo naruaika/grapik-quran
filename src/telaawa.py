@@ -251,10 +251,14 @@ class TelaawaPopover(Gtk.PopoverMenu):
     def scroll_to_selected_row(
             self,
             widget: Gtk.Widget) -> None:
+        selected_row = self.list_qaree.get_selected_row()
+        if not selected_row:
+            return
+
         # Scroll to the selected row, since Gtk has no idea how to set the
         # scrolling before the widget is rendered
         GLib.timeout_add(50, Animation.scroll_to, self.scrolledwindow_qaree,
-                         self.list_qaree.get_selected_row(), 200)
+                         selected_row, 200)
 
     def playback(
             self,
