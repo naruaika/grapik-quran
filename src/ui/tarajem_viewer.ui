@@ -30,7 +30,7 @@
                     <property name="can-focus">False</property>
                     <property name="margin-start">15</property>
                     <property name="margin-end">15</property>
-                    <property name="label" translatable="yes">No tarajem/tafaser enabled.</property>
+                    <property name="label" translatable="yes">Selected tarajem/tafaser will appear here.</property>
                     <property name="justify">center</property>
                     <property name="wrap">True</property>
                     <attributes>
