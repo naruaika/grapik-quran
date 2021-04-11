@@ -38,6 +38,7 @@ grapik_quran_sources = [
   'menu.py',
   'musshaf.py',
   'navigation.py',
+  'search.py',
   'tarajem.py',
   'telaawa.py',
   'window.py',
@@ -52,6 +53,11 @@ grapik_quran_sources = [
 
 install_data(grapik_quran_sources, install_dir: moduledir)
 
-install_data('fonts/Amiri-Regular.ttf',
+install_data([
+    'fonts/Amiri-Regular.ttf',
+    'fonts/NotoSans-Regular.ttf',
+    'fonts/NotoSansSC-Regular.otf',
+    'fonts/NotoSansJP-Regular.otf'
+  ],
   install_dir: join_paths(get_option('datadir'), 'fonts')
 )

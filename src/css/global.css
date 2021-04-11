@@ -60,6 +60,7 @@ row {
 
 .box-tarajem {
     background: transparent;
+    font-family: "Noto Sans";
 }
 .box-tarajem row,
 .box-tarajem row:active {
@@ -73,7 +74,7 @@ row {
 .box-tarajem row {
     padding: 0px;
     margin: 15px;
-    font-size: 13pt;
+    font-size: 12pt;
     font-weight: 500;
     border-radius: 10px;
     box-shadow: 0px 4px 4px #cccccc;
