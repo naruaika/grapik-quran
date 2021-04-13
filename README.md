@@ -30,27 +30,27 @@ There are many alternatives to Ayat, such as [Zekr](https://sourceforge.net/proj
 
 ## Motivation
 
-I used to be a user of Sabily OS and I've been amazed how wonderful it is. May Allah forgive me all along the way by doing this project and I ask Allah for His _taufiq_ and _hidayah_ to the straight path.
+I used to be a user of Sabily OS and I've been amazed how wonderful it is. I am planning to revive the idea. May Allah forgive me all along the way by doing this project and I ask Allah for His _taufiq_ and _hidayah_ to the straight path.
 
 ## Contributing
 
 The easiest way for beginners is clone this repository to your local computer, then build and run it using [GNOME Builder](https://wiki.gnome.org/Apps/Builder). To enable GTK Inspector, run `gsettings set org.gtk.Settings.Debug enable-inspector-keybinding true` in the runtime terminal. If you are not a developer, you can still contribute by praying for me so that my age will be lengthened and my intentions will be straightened out in working on this project. _La hawla wala quwwata illa billah._
 
+## Licenses
+
+This software is distributed under the terms of the [GNU General Public License Version 3](COPYING). For the Quran images are under license not for sale and credit to Quran Complex. For the Quran metadata credit to Tanzil. For the translations are for non-commercial purposes only and credit to Tanzil. However, there's a disclaimer from Tanzil which I would like to mention in here to be considered by all of us:
+
+> No translation of Quran can be a hundred percent accurate, nor it can be used as a replacement of the Quran text. We have tried to provide a set of mostly acceptable quran translations here, but we cannot guarantee their authenticity and/or accuracy. Please use them at your own discretion. —[https://tanzil.net/trans/](https://tanzil.net/trans/)
+
+For the recitations credit to EveryAyah. For the fonts, we use [Noto Sans](https://www.google.com/get/noto/) and [Amiri](https://www.amirifont.org/) fonts licensed under the [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL), both credit to Google Fonts.
+
 ## Useful Links
 
 - [High quality Musshaf PDFs for qira'at Hafs](https://qurancomplex.gov.sa/kfgqpc-quran-hafs/)
-- [High quality Musshaf PDFs for other qira'at](https://qurancomplex.gov.sa/kfgqpc-quran-qiraat/)
+- [High quality Musshaf PDFs for other qira'ats](https://qurancomplex.gov.sa/kfgqpc-quran-qiraat/)
 - [Mostly acceptable Quran translations](https://tanzil.net/trans/)
 - [Quran indexing for qira'at Hafs](https://tanzil.net/docs/quran_metadata)
 - [Recitations ayah by ayah](https://everyayah.com/recitations_ayat.html)
 - [Processed and labeled data for Grapik Quran](https://sourceforge.net/projects/grapik-quran-data/)
-- [Automatic Quran (ayah bounding boxes) labeller](https://github.com/naruaika/my-playground/blob/master/quran-ocr.py)
+- [Automatic Quran (ayah bounding boxes) labeler](https://github.com/naruaika/my-playground/blob/master/quran-ocr.py)
 - [Free licensed font families](https://fonts.google.com/)
-
-## Licenses
-
-This software is distributed under the terms of the [GNU General Public License Version 3](COPYING). For the Quran images are under license not for sale and credit they are credit to Quran Complex. For the Quran metadata credit to Tanzil. For the translations are for non-commercial purposes only and credit to Tanzil. However, there's a disclaimer from Tanzil which I would like to mention in here to be considered by all of us:
-
-> No translation of Quran can be a hundred percent accurate, nor it can be used as a replacement of the Quran text. We have tried to provide a set of mostly acceptable quran translations here, but we cannot guarantee their authenticity and/or accuracy. Please use them at your own discretion. —[https://tanzil.net/trans/](https://tanzil.net/trans/)
-
-For the recitations credit to EveryAyah. For the fonts, we use [Noto Sans](https://www.google.com/get/noto/) and [Amiri](https://www.amirifont.org/) fonts licensed under the [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL), they are credit to Google Fonts.
