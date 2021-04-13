@@ -36,7 +36,7 @@ from .animation import Animation
 from .model import Metadata
 
 
-class TelaawaPlayer(Enum):
+class TelaawaPlayerState(Enum):
     STOP = 0
     PLAY = 1
     PAUSE = 2
@@ -71,7 +71,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
     icon_toggle_loopback = Gtk.Template.Child()
 
     playbin: Gst.Element = None
-    playbin_state: TelaawaPlayer = None
+    playbin_state: TelaawaPlayerState = None
     playbin_seeker: int = None
     ready_to_play: bool = False
 
@@ -89,7 +89,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
         super().__init__(**kwargs)
 
         self.playbin = Gst.ElementFactory.make('playbin', 'playbin')
-        self.playbin_state = TelaawaPlayer.STOP
+        self.playbin_state = TelaawaPlayerState.STOP
 
         self.button_toggle_loopback.props.active = glob.playback_loop
 
@@ -184,7 +184,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
         # Interrupt the telaawa playback if it is playing
         if self.ready_to_play:
-            self.playback(TelaawaPlayer.PLAY)
+            self.playback(TelaawaPlayerState.PLAY)
 
     @Gtk.Template.Callback()
     def on_seek_backward(
@@ -216,12 +216,12 @@ class TelaawaPopover(Gtk.PopoverMenu):
             return
 
         if self.ready_to_play:
-            if self.playbin_state == TelaawaPlayer.STOP:
-                self.playback(TelaawaPlayer.PLAY)
+            if self.playbin_state == TelaawaPlayerState.STOP:
+                self.playback(TelaawaPlayerState.PLAY)
             else:
-                self.playback(TelaawaPlayer.RESUME)
+                self.playback(TelaawaPlayerState.RESUME)
         else:
-            self.playback(TelaawaPlayer.PAUSE)
+            self.playback(TelaawaPlayerState.PAUSE)
 
     @Gtk.Template.Callback()
     def on_looped(
@@ -262,20 +262,20 @@ class TelaawaPopover(Gtk.PopoverMenu):
 
     def playback(
             self,
-            state: TelaawaPlayer) -> None:
+            state: TelaawaPlayerState) -> None:
         self.playbin_state = state
 
-        if state == TelaawaPlayer.PAUSE:
+        if state == TelaawaPlayerState.PAUSE:
             self.playbin.set_state(Gst.State.PAUSED)
 
             self.is_updating = True
             self.button_toggle_playback.set_active(False)
             self.is_updating = False
 
-        elif state == TelaawaPlayer.RESUME:
+        elif state == TelaawaPlayerState.RESUME:
             self.playbin.set_state(Gst.State.PLAYING)
 
-        elif state == TelaawaPlayer.STOP:
+        elif state == TelaawaPlayerState.STOP:
             self.ready_to_play = False
             self.playbin.set_state(Gst.State.READY)
 
@@ -297,8 +297,8 @@ class TelaawaPopover(Gtk.PopoverMenu):
                     # Check if the download was successful and the user still
                     # wants to play the telaawa
                     if not is_downloaded \
-                            or self.playbin_state != TelaawaPlayer.PLAY:
-                        GLib.idle_add(self.playback, TelaawaPlayer.STOP)
+                            or self.playbin_state != TelaawaPlayerState.PLAY:
+                        GLib.idle_add(self.playback, TelaawaPlayerState.STOP)
                         return
 
                 self.playbin.set_property(
@@ -326,11 +326,11 @@ class TelaawaPopover(Gtk.PopoverMenu):
             Thread(target=play, daemon=True).start()
 
     def seek(self) -> bool:
-        if self.playbin_state == TelaawaPlayer.STOP:
+        if self.playbin_state == TelaawaPlayerState.STOP:
             GLib.source_remove(self.playbin_seeker)
             self.playbin_seeker = None
             return False
-        if self.playbin_state == TelaawaPlayer.PAUSE:
+        if self.playbin_state == TelaawaPlayerState.PAUSE:
             return True
 
         is_fetched, duration = self.playbin.query_duration(Gst.Format.TIME)

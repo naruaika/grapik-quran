@@ -34,7 +34,7 @@ from .animation import Animation
 from .headerbar import HeaderBar
 from .musshaf import MusshafViewer
 from .tarajem import TarajemViewer
-from .telaawa import TelaawaPlayer
+from .telaawa import TelaawaPlayerState
 
 
 @Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/window.ui')
@@ -409,13 +409,13 @@ class MainWindow(Handy.ApplicationWindow):
 
         player = self.headerbar.popover_telaawa
         if not player.ready_to_play:
-            player.playback(TelaawaPlayer.STOP)
+            player.playback(TelaawaPlayerState.STOP)
             return
 
         if state:
-            player.playback(TelaawaPlayer.PLAY)
+            player.playback(TelaawaPlayerState.PLAY)
         else:
-            player.playback(TelaawaPlayer.STOP)
+            player.playback(TelaawaPlayerState.STOP)
 
     def toggle_bookmark(
             self,

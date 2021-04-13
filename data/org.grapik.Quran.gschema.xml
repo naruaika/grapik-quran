@@ -10,7 +10,7 @@
 		</key>
 		<key name="tarajem-names" type="as">
 			<default>[]</default>
-			<summary>List of enabled tarajem IDs</summary>
+			<summary>List of displayed tarajem IDs</summary>
 			<description>
 				The value is updated whenever the user add/remove a tarajem to/from being displayed.
 			</description>
@@ -77,7 +77,7 @@
 			<default>1</default>
 			<summary>Last ayah read number</summary>
 			<description>
-				The value is updated whenever the user changes the ayah name/number.
+				The value is updated whenever the user changes the ayah number.
 			</description>
 		</key>
 	</schema>
