@@ -4,28 +4,21 @@
 
 A simple and modern digital Quran app for GNOME desktop.
 
-In the name of Allah, the Entirely Merciful, the Especially Merciful. This proof-of-concept application is specially made for the GNOME desktop. We use Quran images from [Quran Complex](https://qurancomplex.gov.sa/) to provide the same experience of reading a non-digital Quran; Quran indexes and translations are from [Tanzil](http://tanzil.net); recitations are from [EveryAyah](https://everyayah.com). Here're some prototypes of the app:
+In the name of Allah, the Entirely Merciful, the Especially Merciful. This proof-of-concept application is specially made for the GNOME desktop. We use Quran images from [Quran Complex](https://qurancomplex.gov.sa/) to provide the same experience of reading a non-digital Quran; Quran metadata and translations are from [Tanzil](http://tanzil.net); and recitations are from [EveryAyah](https://everyayah.com). Here's a prototype of the app:
 
 <!-- TODO: replace by a video intro -->
 
-![Musshaf viewer](screenshot.png)
-
-![Tarajem list](screenshot1.png)
-
-![Navigation](screenshot2.png)
-
-![Telaawa list](screenshot3.png)
-
-![Musshaf list](screenshot4.png)
+![Grapik Quran Prototype](screenshot.png)
 
 ## Features
 
 Using this app, you'll be able to:
 
-- Download and read any variants of the complete Quran (8 variants in 5 qira'at)
-- Navigate to any specific page/surah/ayah/juz
+- [TODO] Download and read any variants of the complete Quran (8 variants in 5 qira'at)
+- Navigate to any specific page/surah/ayah/juz/hizb/quarter
 - Download and read translation in 39 languages
 - Download and listen recitation by 41 reciters
+- Search for imlaei and tarajem texts
 
 ## Background
 
@@ -41,7 +34,7 @@ I used to be a user of Sabily OS and I've been amazed how wonderful it is. May A
 
 ## Contributing
 
-The easiest way for beginners is clone this repository to your local computer, then build and run it using [GNOME Builder](https://wiki.gnome.org/Apps/Builder). To enable GTK Inspector, run `gsettings set org.gtk.Settings.Debug enable-inspector-keybinding true` in the runtime terminal. If you are not a developer, you can still contribute by praying for me so that my age will be lengthened and my intentions will be straightened out in working on this project. La Hawla Wala Quwwata illa Billah.
+The easiest way for beginners is clone this repository to your local computer, then build and run it using [GNOME Builder](https://wiki.gnome.org/Apps/Builder). To enable GTK Inspector, run `gsettings set org.gtk.Settings.Debug enable-inspector-keybinding true` in the runtime terminal. If you are not a developer, you can still contribute by praying for me so that my age will be lengthened and my intentions will be straightened out in working on this project. _La hawla wala quwwata illa billah._
 
 ## Useful Links
 
@@ -52,3 +45,12 @@ The easiest way for beginners is clone this repository to your local computer, t
 - [Recitations ayah by ayah](https://everyayah.com/recitations_ayat.html)
 - [Processed and labeled data for Grapik Quran](https://sourceforge.net/projects/grapik-quran-data/)
 - [Automatic Quran (ayah bounding boxes) labeller](https://github.com/naruaika/my-playground/blob/master/quran-ocr.py)
+- [Free licensed font families](https://fonts.google.com/)
+
+## Licenses
+
+This software is distributed under the terms of the [GNU General Public License Version 3](COPYING). For the Quran images are under license not for sale and credit they are credit to Quran Complex. For the Quran metadata credit to Tanzil. For the translations are for non-commercial purposes only and credit to Tanzil. However, there's a disclaimer from Tanzil which I would like to mention in here to be considered by all of us:
+
+> No translation of Quran can be a hundred percent accurate, nor it can be used as a replacement of the Quran text. We have tried to provide a set of mostly acceptable quran translations here, but we cannot guarantee their authenticity and/or accuracy. Please use them at your own discretion. —[https://tanzil.net/trans/](https://tanzil.net/trans/)
+
+For the recitations credit to EveryAyah. For the fonts, we use [Noto Sans](https://www.google.com/get/noto/) and [Amiri](https://www.amirifont.org/) fonts licensed under the [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL), they are credit to Google Fonts.
