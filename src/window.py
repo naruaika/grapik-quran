@@ -118,6 +118,11 @@ class MainWindow(Handy.ApplicationWindow):
         self.headerbar.connect(
             'mobileview-toggled', self.reload_navigation_panel)
 
+        self.headerbar.popover_search.connect(
+            'go-to-suraya', self.headerbar.popover_nav.go_to_suraya)
+        self.headerbar.popover_search.connect(
+            'go-to-suraya', self.headerbar.popover_nav_alt.go_to_suraya)
+
         self.headerbar.popover_tarajem.connect(
             'tarajem-names-updated', self.reload_tarajem_viewer)
         self.headerbar.popover_telaawa.connect(

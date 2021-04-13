@@ -24,6 +24,7 @@ from . import constants as const
 from . import globals as glob
 from .menu import MainMenu
 from .navigation import NavigationPopover
+from .search import SearchPopover
 from .tarajem import TarajemPopover
 from .telaawa import TelaawaPopover
 
@@ -64,6 +65,7 @@ class HeaderBar(Handy.HeaderBar):
         child = self.squeezer.get_visible_child()
         glob.mobile_view = child != self.headerbar_switcher
 
+        self.setup_search_popover()
         self.setup_tarajem_popover()
         self.setup_navigation_popover()
         self.setup_telaawa_popover()
@@ -71,6 +73,10 @@ class HeaderBar(Handy.HeaderBar):
 
         # Watch the squeezer when it starts to hide some of its children
         self.squeezer.connect('notify::visible-child', self.on_squeezed)
+
+    def setup_search_popover(self) -> None:
+        self.popover_search = SearchPopover()
+        self.button_open_search.set_popover(self.popover_search)
 
     def setup_tarajem_popover(self) -> None:
         self.popover_tarajem = TarajemPopover()
@@ -81,9 +87,9 @@ class HeaderBar(Handy.HeaderBar):
         self.button_open_navigation.set_popover(self.popover_nav)
 
         self.popover_nav_alt = NavigationPopover(1)
-        self.popover_nav_alt.container.set_orientation(
+        self.popover_nav_alt.main_container.set_orientation(
             Gtk.Orientation.VERTICAL)
-        self.popover_nav_alt.container.set_spacing(8)
+        self.popover_nav_alt.main_container.set_spacing(8)
         self.button_open_navigation_alt.set_popover(self.popover_nav_alt)
 
         # Whenever focused ayah changed, change the window title to the newly

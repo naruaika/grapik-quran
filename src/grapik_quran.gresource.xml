@@ -8,6 +8,8 @@
     <file compressed="true">ui/musshaf_listboxrow.ui</file>
     <file compressed="true">ui/musshaf_viewer.ui</file>
     <file compressed="true">ui/navigation.ui</file>
+    <file compressed="true">ui/search_listboxrow.ui</file>
+    <file compressed="true">ui/search_popover.ui</file>
     <file compressed="true">ui/tarajem_listboxrow.ui</file>
     <file compressed="true">ui/tarajem_popover.ui</file>
     <file compressed="true">ui/tarajem_viewer.ui</file>

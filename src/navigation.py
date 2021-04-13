@@ -49,7 +49,7 @@ class NavigationPopover(Gtk.PopoverMenu):
     adjust_page_no = Gtk.Template.Child()
     container_quarter = Gtk.Template.Child()
 
-    container = Gtk.Template.Child()
+    main_container = Gtk.Template.Child()
 
     # To adjust the page numbering in the page navigation system based on the
     # page image index
@@ -206,6 +206,18 @@ class NavigationPopover(Gtk.PopoverMenu):
                 self.emit('reload-telaawa-player')
         else:
             self.spin_ayah_no.set_value(ayah_no)
+
+    def go_to_suraya(
+            self,
+            widget: Gtk.Widget,
+            surah_no: int,
+            ayah_no: int) -> None:
+        if not self.in_focus():
+            return
+
+        glob.surah_number = surah_no
+        glob.ayah_number = ayah_no
+        self.update('ayah-number')
 
     def update(
             self,

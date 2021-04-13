@@ -120,6 +120,13 @@ class Metadata(Model):
             return result[0]
         return -1
 
+    def get_ayah_texts(
+            self,
+            query: str) -> List:
+        self.cursor.execute('SELECT sura, aya, text FROM texts WHERE text LIKE'
+                            ' ?', ('%'+query+'%',))
+        return self.cursor.fetchall()
+
     def get_ayah_text(
             self,
             musshaf_name: str,

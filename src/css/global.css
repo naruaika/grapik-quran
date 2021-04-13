@@ -32,6 +32,14 @@ progress, trough {
 row {
     padding: 10px;
 }
+
+.row-search textview,
+.row-search textview text {
+    color: inherit;
+    background: transparent;
+    font-family: "Noto Sans";
+}
+
 .row-qaree {
     padding: 0px 0px 0px 10px;
 }
