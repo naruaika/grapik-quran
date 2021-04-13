@@ -83,9 +83,6 @@
                 <property name="halign">start</property>
                 <property name="label" translatable="yes">Telaawa description...</property>
                 <property name="single-line-mode">True</property>
-                <style>
-                  <class name="second-text"/>
-                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
