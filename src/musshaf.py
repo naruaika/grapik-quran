@@ -269,8 +269,8 @@ class MusshafDialog(Gtk.Window):
             musshaf_dir = path.join(const.USER_DATA_PATH, 'musshaf')
 
             for musshaf in metadata.get_musshafs():
-                name = f'<span weight="bold">{musshaf[1]}</span>'
-                description = f'<span size="small">{musshaf[4]}</span>'
+                name = f'<span weight="bold">{musshaf[2]}</span>'
+                description = f'<span size="small">{musshaf[5]}</span>'
                 row = MusshafListBoxRow(name, description)
 
                 row.id = musshaf[0]
@@ -380,12 +380,12 @@ class MusshafDialog(Gtk.Window):
                     return False
 
                 # Open connection and look for content length in its header
-                # response_images = urlopen(musshaf[2])
+                # response_images = urlopen(musshaf[3])
                 # image_length = response_images.getheader('Content-Length')
                 # image_length = (0 if not image_length else int(image_length))
                 image_length = 0
 
-                response_bboxes = urlopen(musshaf[3])
+                response_bboxes = urlopen(musshaf[4])
                 bbox_length = response_bboxes.getheader('Content-Length')
                 bbox_length = (0 if not bbox_length else int(bbox_length))
 
@@ -404,7 +404,7 @@ class MusshafDialog(Gtk.Window):
                 model.cursor.execute('SELECT name FROM sqlite_master WHERE '
                                      'name=?', (glob.musshaf_name,))
                 if not model.cursor.fetchone():
-                    response_bboxes = urlopen(musshaf[3])  # reopen; in case of
+                    response_bboxes = urlopen(musshaf[4])  # reopen; in case of
                                                            # connection reset
                                                            # by peer
 
