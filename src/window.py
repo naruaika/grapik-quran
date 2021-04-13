@@ -177,6 +177,8 @@ class MainWindow(Handy.ApplicationWindow):
         self.headerbar.popover_nav.connect(
             'reload-musshaf-viewer', self.reload_musshaf_viewer)
         self.headerbar.popover_nav.connect(
+            'reload-musshaf-viewer', self.toggle_bookmark)
+        self.headerbar.popover_nav.connect(
             'reload-tarajem-viewer', self.reload_tarajem_viewer)
         self.headerbar.popover_nav.connect(
             'reload-telaawa-player', self.reload_telaawa_player)
@@ -184,6 +186,8 @@ class MainWindow(Handy.ApplicationWindow):
         self.headerbar.popover_nav_alt.connect(
             'reload-musshaf-viewer', self.reload_musshaf_viewer)
         self.headerbar.popover_nav_alt.connect(
+            'reload-musshaf-viewer', self.toggle_bookmark)
+        self.headerbar.popover_nav_alt.connect(
             'reload-tarajem-viewer', self.reload_tarajem_viewer)
         self.headerbar.popover_nav_alt.connect(
             'reload-telaawa-player', self.reload_telaawa_player)
@@ -194,8 +198,6 @@ class MainWindow(Handy.ApplicationWindow):
             'hovered-ayah-changed', self.reload_tarajem_viewer)
         self.musshaf_viewer_right.connect(
             'focused-page-changed', self.reload_tarajem_viewer)
-        self.musshaf_viewer_right.connect(
-            'focused-page-changed', self.toggle_bookmark)
 
         self.musshaf_viewer_left.connect(
             'selected-ayah-changed', self.reload_navigation_panel)
@@ -203,8 +205,6 @@ class MainWindow(Handy.ApplicationWindow):
             'hovered-ayah-changed', self.reload_tarajem_viewer)
         self.musshaf_viewer_left.connect(
             'focused-page-changed', self.reload_tarajem_viewer)
-        self.musshaf_viewer_left.connect(
-            'focused-page-changed', self.toggle_bookmark)
 
     def setup_tarajem_viewer(self) -> None:
         self.tarajem_viewer = TarajemViewer()
