@@ -19,8 +19,10 @@ from gi.repository import Gtk
 from gi.repository import GObject
 from typing import List
 
+from . import globals as glob
 from . import constants as const
 from .model import Metadata
+from .model import Tarajem
 
 @Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/search_popover.ui')
 class SearchPopover(Gtk.PopoverMenu):
@@ -49,12 +51,20 @@ class SearchPopover(Gtk.PopoverMenu):
         if len(query) < 3:
             return
 
-        with Metadata() as metadata:
+        with Metadata() as metadata, \
+             Tarajem() as tarajem:
             query = query.lower()
-            results = metadata.get_ayah_texts(query)
+
+            results_imlaei = metadata.get_ayah_texts(query)
+
+            results_tarajem = []
+            for tarajem_name in glob.tarajem_names:
+                results_tarajem += \
+                    tarajem.get_tarajem_texts(tarajem_name, query)
 
             # Compare to the previous displayed list. If they are the same,
             # do not update the display. Otherwise, save current list.
+            results = results_imlaei + results_tarajem
             if self.results == results:
                 return
             self.results = results

@@ -125,7 +125,7 @@ class Metadata(Model):
             query: str) -> List:
         self.cursor.execute('SELECT sura, aya, text FROM texts WHERE text LIKE'
                             ' ?', ('%'+query+'%',))
-        return self.cursor.fetchall()
+        return self.cursor.fetchall()[:100]
 
     def get_ayah_text(
             self,
@@ -257,6 +257,16 @@ class Tarajem(Model):
         if self.cursor.fetchone():
             return True
         return False
+
+    def get_tarajem_texts(
+            self,
+            tarajem_name: str,
+            query: str) -> List:
+        if self.is_tarajem_exist(tarajem_name):
+            self.cursor.execute(f'SELECT sura, aya, text FROM {tarajem_name} '
+                                'WHERE text LIKE ?', ('%'+query+'%',))
+            return self.cursor.fetchall()[:100]
+        return []
 
     def get_tarajem_text(
             self,
