@@ -180,6 +180,16 @@ class NavigationPopover(Gtk.PopoverMenu):
             return
         self.spin_page_no.set_value(self.spin_page_no.get_value() + 1)
 
+    def go_to_defined_page(
+            self,
+            widget: Gtk.Widget,
+            page_no: int) -> None:
+        if not self.in_focus():
+            return
+
+        glob.page_number = page_no
+        self.update('page-number')
+
     def go_to_previous_ayah(
             self,
             button: Gtk.Button) -> None:

@@ -1,0 +1,14 @@
+{
+    "name": "python3-ummalqura",
+    "buildsystem": "simple",
+    "build-commands": [
+        "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"ummalqura\""
+    ],
+    "sources": [
+        {
+            "type": "file",
+            "url": "https://files.pythonhosted.org/packages/41/fe/d44e0cd296392ec5ddedd0780f8d66e44eeeb61238e2a21b48e743259160/ummalqura-2.0.1.tar.gz",
+            "sha256": "657ee9f4ee961a5f1381a2abb0c22801859fa6803533ccf6c888194e6b301d03"
+        }
+    ]
+}

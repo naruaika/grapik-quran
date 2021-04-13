@@ -19,6 +19,7 @@ Using this app, you'll be able to:
 - Download and read translation in 39 languages
 - Download and listen recitation by 41 reciters
 - Search for imlaei and tarajem texts
+- Bookmark any page
 
 ## Background
 

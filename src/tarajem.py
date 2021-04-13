@@ -148,7 +148,7 @@ class TarajemPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'TarajemPopover'
 
     __gsignals__ = {
-        'tarajem-names-updated': (GObject.SIGNAL_RUN_FIRST, None, ())}
+        'tarajem-names-updated': (GObject.SIGNAL_RUN_CLEANUP, None, ())}
 
     entry = Gtk.Template.Child()
     listbox = Gtk.Template.Child()

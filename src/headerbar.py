@@ -19,9 +19,11 @@ from gi.repository import Gdk
 from gi.repository import Gtk
 from gi.repository import GObject
 from gi.repository import Handy
+from ummalqura.hijri_date import HijriDate
 
 from . import constants as const
 from . import globals as glob
+from .bookmark import BookmarkPopover
 from .menu import MainMenu
 from .navigation import NavigationPopover
 from .search import SearchPopover
@@ -41,6 +43,8 @@ class HeaderBar(Handy.HeaderBar):
 
     squeezer = Gtk.Template.Child()
     headerbar_switcher = Gtk.Template.Child()
+    button_toggle_bookmark = Gtk.Template.Child()
+    button_bookmark_option = Gtk.Template.Child()
     button_open_search = Gtk.Template.Child()
     button_open_tarajem = Gtk.Template.Child()
     button_tarajem_option = Gtk.Template.Child()
@@ -65,6 +69,7 @@ class HeaderBar(Handy.HeaderBar):
         child = self.squeezer.get_visible_child()
         glob.mobile_view = child != self.headerbar_switcher
 
+        self.setup_bookmark_popover()
         self.setup_search_popover()
         self.setup_tarajem_popover()
         self.setup_navigation_popover()
@@ -73,6 +78,10 @@ class HeaderBar(Handy.HeaderBar):
 
         # Watch the squeezer when it starts to hide some of its children
         self.squeezer.connect('notify::visible-child', self.on_squeezed)
+
+    def setup_bookmark_popover(self) -> None:
+        self.popover_bookmark = BookmarkPopover()
+        self.button_bookmark_option.set_popover(self.popover_bookmark)
 
     def setup_search_popover(self) -> None:
         self.popover_search = SearchPopover()
@@ -106,6 +115,39 @@ class HeaderBar(Handy.HeaderBar):
     def setup_main_menu(self) -> None:
         self.popover_menu = MainMenu()
         self.button_open_mainmenu.set_popover(self.popover_menu)
+
+    @Gtk.Template.Callback()
+    def toggle_bookmark(
+            self,
+            button: Gtk.ToggleButton) -> None:
+        if self.is_updating:
+            return
+
+        months = [
+            "Muharram",
+            "Safar",
+            "Rabi Al Awwal",
+            "Rabi Al Akhar",
+            "Jumada Al Ula",
+            "Jumada Al Akhira",
+            "Rajab",
+            "Sha'aban",
+            "Ramadan",
+            "Shawwal",
+            "Dhu Al Qa'da",
+            "Dhu Al Hijja"]
+        date = HijriDate.today()
+
+        # Format bookmark data
+        bookmark = f'{glob.musshaf_name};{glob.page_number};' \
+            f'Bookmarked on {date.day_name_en}, {months[date.month]} ' \
+            f'{date.day}, {date.year}'
+
+        # Add/remove bookmark
+        if button.get_active():
+            glob.bookmark_names.append(bookmark)
+        else:
+            glob.bookmark_names.remove(bookmark)
 
     @Gtk.Template.Callback()
     def toggle_tarajem(

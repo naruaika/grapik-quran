@@ -9,7 +9,7 @@
   </object>
   <template class="TelaawaPopover" parent="GtkPopoverMenu">
     <property name="can-focus">False</property>
-    <signal name="show" handler="scroll_to_selected_row" swapped="no"/>
+    <signal name="show" handler="on_shown" swapped="no"/>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>

@@ -29,7 +29,7 @@ class SearchPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'SearchPopover'
 
     __gsignals__ = {
-        'go-to-suraya': (GObject.SIGNAL_RUN_LAST, None, (int, int))}
+        'go-to-suraya': (GObject.SIGNAL_RUN_CLEANUP, None, (int, int))}
 
     entry = Gtk.Template.Child()
     listbox = Gtk.Template.Child()

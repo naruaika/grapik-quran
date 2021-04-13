@@ -42,7 +42,7 @@ class MainWindow(Handy.ApplicationWindow):
     __gtype_name__ = 'MainWindow'
 
     __gsignals__ = {
-        'notify-requested': (GObject.SIGNAL_RUN_LAST, None, (str,))}
+        'notify-requested': (GObject.SIGNAL_RUN_CLEANUP, None, (str,))}
 
     Handy.init()
 
@@ -118,6 +118,11 @@ class MainWindow(Handy.ApplicationWindow):
         self.headerbar.connect(
             'mobileview-toggled', self.reload_navigation_panel)
 
+        self.headerbar.popover_bookmark.connect(
+            'go-to-page', self.headerbar.popover_nav.go_to_defined_page)
+        self.headerbar.popover_bookmark.connect(
+            'go-to-page', self.headerbar.popover_nav_alt.go_to_defined_page)
+
         self.headerbar.popover_search.connect(
             'go-to-suraya', self.headerbar.popover_nav.go_to_suraya)
         self.headerbar.popover_search.connect(
@@ -189,6 +194,8 @@ class MainWindow(Handy.ApplicationWindow):
             'hovered-ayah-changed', self.reload_tarajem_viewer)
         self.musshaf_viewer_right.connect(
             'focused-page-changed', self.reload_tarajem_viewer)
+        self.musshaf_viewer_right.connect(
+            'focused-page-changed', self.toggle_bookmark)
 
         self.musshaf_viewer_left.connect(
             'selected-ayah-changed', self.reload_navigation_panel)
@@ -196,6 +203,8 @@ class MainWindow(Handy.ApplicationWindow):
             'hovered-ayah-changed', self.reload_tarajem_viewer)
         self.musshaf_viewer_left.connect(
             'focused-page-changed', self.reload_tarajem_viewer)
+        self.musshaf_viewer_left.connect(
+            'focused-page-changed', self.toggle_bookmark)
 
     def setup_tarajem_viewer(self) -> None:
         self.tarajem_viewer = TarajemViewer()
@@ -407,6 +416,26 @@ class MainWindow(Handy.ApplicationWindow):
             player.playback(TelaawaPlayer.PLAY)
         else:
             player.playback(TelaawaPlayer.STOP)
+
+    def toggle_bookmark(
+            self,
+            widget: Gtk.Widget) -> None:
+        for bookmark in glob.bookmark_names:
+            musshaf_name, page_number, _ = bookmark.split(';')
+            page_number = int(page_number)
+
+            if musshaf_name != glob.musshaf_name:
+                continue
+
+            if page_number == glob.page_number:
+                is_bookmarked = True
+                break
+        else:
+            is_bookmarked = False
+
+        self.headerbar.is_updating = True
+        self.headerbar.button_toggle_bookmark.set_active(is_bookmarked)
+        self.headerbar.is_updating = False
 
     def resize_musshaf(
             self,

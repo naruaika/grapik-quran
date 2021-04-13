@@ -62,8 +62,7 @@ class Metadata(Model):
         self.cursor.execute('SELECT * FROM musshaf ORDER BY name')
         return self.cursor.fetchall()
 
-    def get_musshaf(
-            self) -> List:
+    def get_musshaf(self) -> List:
         self.cursor.execute('SELECT * FROM musshaf WHERE id=?',
                             (glob.musshaf_name,))
         return self.cursor.fetchone()
@@ -206,6 +205,31 @@ class Musshaf(Model):
         if not self.is_musshaf_exist(glob.musshaf_name):
             return -1
         query = f'SELECT page FROM {glob.musshaf_name} WHERE sura=? AND aya=?' \
+            ' ORDER BY id DESC'
+        self.cursor.execute(query, (surah_no, ayah_no))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
+
+    def get_translated_page_no(
+            self,
+            musshaf_src_name: str,
+            musshaf_dest_name: str,
+            page_no: int) -> int:
+        if not self.is_musshaf_exist(musshaf_src_name) \
+            or not self.is_musshaf_exist(musshaf_dest_name):
+            return -1
+
+        query = f'SELECT sura, aya FROM {musshaf_src_name} WHERE page=?'
+        self.cursor.execute(query, (page_no,))
+        result = self.cursor.fetchone()
+        if result:
+            surah_no, ayah_no = result[0]
+        else:
+            return -1
+
+        query = f'SELECT page FROM {musshaf_dest_name} WHERE sura=? AND aya=?' \
             ' ORDER BY id DESC'
         self.cursor.execute(query, (surah_no, ayah_no))
         result = self.cursor.fetchone()

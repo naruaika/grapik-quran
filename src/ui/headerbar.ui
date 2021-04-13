@@ -177,10 +177,11 @@
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <child>
-          <object class="GtkToggleButton" id="button_bookmark">
+          <object class="GtkToggleButton" id="button_toggle_bookmark">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="receives-default">True</property>
+            <signal name="toggled" handler="toggle_bookmark" swapped="no"/>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>

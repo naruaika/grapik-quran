@@ -48,9 +48,9 @@ class TelaawaPopover(Gtk.PopoverMenu):
     __gtype_name__ = 'TelaawaPopover'
 
     __gsignals__ = {
-        'telaawa-playback': (GObject.SIGNAL_RUN_LAST, None, (bool,)),
-        'go-to-previous-ayah': (GObject.SIGNAL_RUN_LAST, None, ()),
-        'go-to-next-ayah': (GObject.SIGNAL_RUN_LAST, None, ())}
+        'telaawa-playback': (GObject.SIGNAL_RUN_CLEANUP, None, (bool,)),
+        'go-to-previous-ayah': (GObject.SIGNAL_RUN_CLEANUP, None, ()),
+        'go-to-next-ayah': (GObject.SIGNAL_RUN_CLEANUP, None, ())}
 
     Gst.init()
 
@@ -109,8 +109,8 @@ class TelaawaPopover(Gtk.PopoverMenu):
                 telaawas = []
                 query = query.lower()
                 for telaawa in metadata.get_telaawas():
-                    if query in telaawa[1].lower() or \
-                            query in telaawa[3] \
+                    if query in telaawa[1].lower() \
+                            or query in telaawa[3] \
                             or query in telaawa[3]:
                         telaawas.append(telaawa)
 
@@ -248,7 +248,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
                                  seek_time_secs * Gst.SECOND)
 
     @Gtk.Template.Callback()
-    def scroll_to_selected_row(
+    def on_shown(
             self,
             widget: Gtk.Widget) -> None:
         selected_row = self.list_qaree.get_selected_row()

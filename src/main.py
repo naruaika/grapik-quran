@@ -51,6 +51,7 @@ class Application(Gtk.Application):
         glob.musshaf_name = self.settings.get_string('musshaf-name')
         glob.tarajem_names = self.settings.get_strv('tarajem-names')
         glob.telaawa_name = self.settings.get_string('telaawa-name')
+        glob.bookmark_names = self.settings.get_strv('bookmark-names')
 
         glob.page_scale = self.settings.get_double('page-scale')
         glob.dual_page = self.settings.get_boolean('dual-page')
@@ -132,6 +133,7 @@ class Application(Gtk.Application):
         self.settings.set_string('musshaf-name', glob.musshaf_name)
         self.settings.set_strv('tarajem-names', glob.tarajem_names)
         self.settings.set_string('telaawa-name', glob.telaawa_name)
+        self.settings.set_strv('bookmark-names', glob.bookmark_names)
 
         self.settings.set_double('page-scale', glob.page_scale)
         self.settings.set_boolean('dual-page', glob.dual_page)

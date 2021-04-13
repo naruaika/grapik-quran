@@ -27,6 +27,7 @@ variable that needs to be saved as a user setting.
 musshaf_name: str = None
 tarajem_names: List = None
 telaawa_name: str = None
+bookmark_names: List = None
 
 page_scale: float = None
 dual_page: bool = None
@@ -41,7 +42,7 @@ juz_number: int = None
 hizb_number: int = None
 quarter_number: int = None
 
-# These are not savable variables, but rather variables used to reduce
-# computational cost
+# These are not to be saved,
+# but rather used only to reduce computational cost
 page_focused: int = None
 mobile_view: bool = False

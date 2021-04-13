@@ -49,6 +49,7 @@
                       <object class="GtkListBox" id="listbox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="selection-mode">none</property>
                         <signal name="row-activated" handler="select" swapped="no"/>
                         <signal name="row-selected" handler="select" swapped="no"/>
                         <child type="placeholder">

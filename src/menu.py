@@ -28,9 +28,9 @@ class MainMenu(Gtk.PopoverMenu):
     __gtype_name__ = 'Menu'
 
     __gsignals__ = {
-        'page-scaled': (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'nightmode-toggled': (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'dualpage-toggled': (GObject.SIGNAL_RUN_FIRST, None, ())}
+        'page-scaled': (GObject.SIGNAL_RUN_CLEANUP, None, ()),
+        'nightmode-toggled': (GObject.SIGNAL_RUN_CLEANUP, None, ()),
+        'dualpage-toggled': (GObject.SIGNAL_RUN_CLEANUP, None, ())}
 
     button_check_dualpage = Gtk.Template.Child()
     button_check_nightmode = Gtk.Template.Child()

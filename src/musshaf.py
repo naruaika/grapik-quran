@@ -45,9 +45,9 @@ class MusshafViewer(Gtk.Overlay):
     __gtype_name__ = 'MusshafViewer'
 
     __gsignals__ = {
-        'selected-ayah-changed': (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'hovered-ayah-changed': (GObject.SIGNAL_RUN_FIRST, None, ()),
-        'focused-page-changed': (GObject.SIGNAL_RUN_FIRST, None, ())}
+        'selected-ayah-changed': (GObject.SIGNAL_RUN_CLEANUP, None, ()),
+        'hovered-ayah-changed': (GObject.SIGNAL_RUN_CLEANUP, None, ()),
+        'focused-page-changed': (GObject.SIGNAL_RUN_CLEANUP, None, ())}
 
     viewport = Gtk.Template.Child()
     overlay = Gtk.Template.Child()
@@ -216,6 +216,7 @@ class MusshafViewer(Gtk.Overlay):
         page_image = self.page_image.scale_simple(
             page_width, page_height, GdkPixbuf.InterpType.BILINEAR)
 
+        # Invert the colors of the page image
         if glob.night_mode:
             page_image_bytes = bytearray(page_image.get_pixels())
             page_image_bytes = bytearray(x ^ 0xff for x in page_image_bytes)
