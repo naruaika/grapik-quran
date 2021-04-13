@@ -8,7 +8,7 @@ In the name of Allah, the Entirely Merciful, the Especially Merciful. This proof
 
 <!-- TODO: replace by a video intro -->
 
-![Grapik Quran Prototype](screenshot.png)
+![Grapik Quran Prototype](screenshots/screenshot.png)
 
 ## Features
 
