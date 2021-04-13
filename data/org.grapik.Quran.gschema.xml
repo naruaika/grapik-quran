@@ -59,13 +59,6 @@
 			</description>
 		</key>
 
-		<key name="page-number" type="i">
-			<default>0</default>
-			<summary>Last page read number</summary>
-			<description>
-				The value is updated whenever the user changes the page read.
-			</description>
-		</key>
 		<key name="surah-number" type="i">
 			<default>1</default>
 			<summary>Last surah read number</summary>
@@ -78,27 +71,6 @@
 			<summary>Last ayah read number</summary>
 			<description>
 				The value is updated whenever the user changes the ayah name/number.
-			</description>
-		</key>
-		<key name="juz-number" type="i">
-			<default>1</default>
-			<summary>Last juz read number</summary>
-			<description>
-				The value is updated whenever the user changes the juz number.
-			</description>
-		</key>
-		<key name="hizb-number" type="i">
-			<default>0</default>
-			<summary>Last hizb read number</summary>
-			<description>
-				The value is updated whenever the user changes the hizb number.
-			</description>
-		</key>
-		<key name="quarter-number" type="i">
-			<default>0</default>
-			<summary>Last quarter read number</summary>
-			<description>
-				The value is updated whenever the user changes the quarter number.
 			</description>
 		</key>
 	</schema>

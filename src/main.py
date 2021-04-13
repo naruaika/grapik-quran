@@ -59,12 +59,8 @@ class Application(Gtk.Application):
         glob.tarajem_visibility = \
             self.settings.get_boolean('tarajem-visibility')
 
-        glob.page_number = self.settings.get_int('page-number')
         glob.surah_number = self.settings.get_int('surah-number')
         glob.ayah_number = self.settings.get_int('ayah-number')
-        glob.juz_number = self.settings.get_int('juz-number')
-        glob.hizb_number = self.settings.get_int('hizb-number')
-        glob.quarter_number = self.settings.get_int('quarter-number')
 
         # Watch the system-wide settings when global Gtk application theme has
         # been changed
@@ -147,19 +143,11 @@ class Application(Gtk.Application):
         if glob.surah_number < 0:
             # If the last page read has no ayah(s), go to the page where Surah
             # Al-Fathihah is located
-            self.settings.reset('page-number')
             self.settings.reset('surah-number')
             self.settings.reset('ayah-number')
-            self.settings.reset('juz-number')
-            self.settings.reset('hizb-number')
-            self.settings.reset('quarter-number')
         else:
-            self.settings.set_int('page-number', glob.page_number)
             self.settings.set_int('surah-number', glob.surah_number)
             self.settings.set_int('ayah-number', glob.ayah_number)
-            self.settings.set_int('juz-number', glob.juz_number)
-            self.settings.set_int('hizb-number', glob.hizb_number)
-            self.settings.set_int('quarter-number', glob.quarter_number)
 
     def on_theme_changed(
             self,
