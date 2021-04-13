@@ -105,9 +105,8 @@ class SearchPopover(Gtk.PopoverMenu):
 class SearchListBoxRow(Gtk.ListBoxRow):
     __gtype_name__ = 'SearchListBoxRow'
 
-    textview = Gtk.Template.Child()
+    text = Gtk.Template.Child()
     label = Gtk.Template.Child()
-    textbuffer = Gtk.Template.Child()
 
     def __init__(
             self,
@@ -116,6 +115,5 @@ class SearchListBoxRow(Gtk.ListBoxRow):
             **kwargs) -> None:
         super().__init__(**kwargs)
 
-        self.textbuffer.insert_markup(
-            self.textbuffer.get_start_iter(), text, -1)
+        self.text.set_markup(text)
         self.label.set_markup(label)

@@ -2,7 +2,6 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkTextBuffer" id="textbuffer"/>
   <template class="SearchListBoxRow" parent="GtkListBoxRow">
     <property name="visible">True</property>
     <property name="can-focus">True</property>
@@ -13,15 +12,12 @@
         <property name="orientation">vertical</property>
         <property name="spacing">4</property>
         <child>
-          <object class="GtkTextView" id="textview">
+          <object class="GtkLabel" id="text">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="valign">start</property>
-            <property name="editable">False</property>
-            <property name="wrap-mode">word-char</property>
-            <property name="cursor-visible">False</property>
-            <property name="buffer">textbuffer</property>
-            <property name="accepts-tab">False</property>
+            <property name="halign">start</property>
+            <property name="label" translatable="yes">Text</property>
+            <property name="ellipsize">end</property>
           </object>
           <packing>
             <property name="expand">False</property>
