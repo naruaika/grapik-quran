@@ -76,12 +76,12 @@ row {
     box-shadow: none;
 }
 .box-tarajem row:first-child {
-    margin-top: 20px
+    margin-top: 10px
 }
 
 .box-tarajem row {
     padding: 0px;
-    margin: 15px;
+    margin: 10px 15px;
     font-size: 12pt;
     font-weight: 500;
     border-radius: 10px;
@@ -122,9 +122,6 @@ row {
     background-color: #ddd;
 }
 /* For the translation contents */
-.box-tarajem box textview:nth-child(3) {
-    border-top: 10px solid #000;
-}
 .box-tarajem box > textview,
 .box-tarajem box > textview text {
     color: inherit;
