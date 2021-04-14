@@ -83,11 +83,10 @@ class TarajemViewer(Gtk.Overlay):
 
                     label = Gtk.Label(
                         label=f'{metadata.get_surah_name(bbox[0])} '
-                            f'({bbox[0]}) : {bbox[1]}', xalign=0)
+                              f'({bbox[0]}) : {bbox[1]}', xalign=0)
                     label.set_can_focus(False)
 
-                    hbox = Gtk.Box(
-                        orientation=Gtk.Orientation.VERTICAL)
+                    hbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
                     hbox.set_can_focus(False)
                     hbox.pack_start(label, True, True, 0)
                     hbox.pack_start(textview, True, True, 1)
@@ -133,7 +132,6 @@ class TarajemViewer(Gtk.Overlay):
 
         # Add a delay to make sure all the listboxrow has been rendered
         # and then animate the scroll
-        # FIXME: find better solution to make sure all its children are ready
         if bboxes_focused:
             GLib.timeout_add(50, Animation.scroll_to, self.scrolledwindow,
                              row_hovered if row_hovered else row_focused)

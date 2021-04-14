@@ -33,53 +33,64 @@ class Animation(Gtk.Application):
             target: Gtk.Widget,
             duration: int = 600) -> bool:
         """Animate the scroll for duration in milliseconds."""
-        target = target.get_allocation()
-        adjustment = scroll.get_vadjustment()
-        start_point = adjustment.get_value()
+        def get_end_point(
+                scroll: Gtk.ScrolledWindow,
+                target: Gtk.Widget) -> int:
+            talloc = target.get_allocation()
+            adjustment = scroll.get_vadjustment()
+            start_point = adjustment.get_value()
 
-        page_size = adjustment.get_page_size()
-        if start_point <= target.y \
-                and (target.y+target.height) <= (start_point+page_size):
-            # If all parts of the target widget content are visible,
-            # no need to animate the scroll.
-            return False
-        else:
-            if target.y > start_point:
-                # If the height of the target widget is greater than the
-                # height of its container, scroll to the top-left coordinates
-                # of the widget. Otherwise, scroll to the bottom-right
-                # coordinates of the widget.
-                if target.height > page_size:
-                    end_point = target.y
-                else:
-                    end_point = min(adjustment.get_upper()-page_size,
-                                    target.y+target.height-page_size)
+            page_size = adjustment.get_page_size()
+            if start_point <= talloc.y \
+                    and (talloc.y+talloc.height) <= (start_point+page_size):
+                # If all parts of the target widget content are visible,
+                # no need to animate the scroll.
+                return -1
             else:
-                end_point = target.y
+                if talloc.y > start_point:
+                    # If the height of the target widget is greater than the
+                    # height of its container, scroll to the top-left
+                    # coordinates of the widget. Otherwise, scroll to the
+                    # bottom-right coordinates of the widget.
+                    if talloc.height > page_size:
+                        end_point = talloc.y
+                    else:
+                        end_point = min(adjustment.get_upper()-page_size,
+                                        talloc.y+talloc.height-page_size)
+                else:
+                    end_point = talloc.y
 
-            # Stop the current animating when the same widget requested to be
-            # animated again before it has finished animating
-            scroll.end_point = end_point
+            return end_point
 
         frame_clock = scroll.get_frame_clock()
         start_time = frame_clock.get_frame_time()
         end_time = start_time + 1000*duration
 
+        if hasattr(scroll, 'anime_id') \
+                and scroll.anime_id:
+            scroll.remove_tick_callback(scroll.anime_id)
+
         def animate(
-                widget: Gtk.Widget,
-                frame_clock: Gdk.FrameClock) -> bool:
+                scroll: Gtk.ScrolledWindow,
+                frame_clock: Gdk.FrameClock,
+                target: Gtk.Widget) -> bool:
             current_time = frame_clock.get_frame_time()
+            adjustment = scroll.get_vadjustment()
+            start_point = adjustment.get_value()
+            end_point = get_end_point(scroll, target)
+
             if current_time < end_time \
-                    and adjustment.get_value() != end_point \
-                    and widget.end_point == end_point:
+                    and end_point != -1 \
+                    and adjustment.get_value() != end_point:
                 t = (current_time-start_time) / (end_time-start_time)
                 t = Animation.ease_out_cubic(t)
                 adjustment.set_value(start_point + t*(end_point-start_point))
                 return GLib.SOURCE_CONTINUE
             else:
+                scroll.anime_id = None
                 return GLib.SOURCE_REMOVE
 
-        scroll.add_tick_callback(animate)
+        scroll.anime_id = scroll.add_tick_callback(animate, target)
 
         return False
 
@@ -92,26 +103,24 @@ class Animation(Gtk.Application):
         start_time = frame_clock.get_frame_time()
         end_time = start_time + 1000*duration
 
-        # Stop the current animating when the same widget requested to be
-        # animated again before it has finished animating
-        widget.animate = False
+        if hasattr(widget, 'anime_id') \
+                and widget.anime_id:
+            widget.remove_tick_callback(widget.anime_id)
 
         def animate(
                 widget: Gtk.Widget,
                 frame_clock: Gdk.FrameClock) -> bool:
-            widget.animate = True
-
             current_time = frame_clock.get_frame_time()
             if current_time < end_time \
-                    and 0 < widget.get_opacity() \
-                    and widget.animate:
+                    and widget.get_opacity() > 0:
                 t = (current_time-start_time) / (end_time-start_time)
                 t = 1 - Animation.ease_out_cubic(t)
                 widget.set_opacity(t)
                 return GLib.SOURCE_CONTINUE
             else:
+                widget.anime_id = None
                 return GLib.SOURCE_REMOVE
 
-        widget.add_tick_callback(animate)
+        widget.anime_id = widget.add_tick_callback(animate)
 
         return False
