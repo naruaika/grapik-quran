@@ -161,15 +161,11 @@ row {
 #row-focused box textview:nth-child(2) {
     background-color: #bdd3ec;
 }
-#row-focused box textview:nth-child(2) text {
-    color: @accent;
-}
 #row-hovered box textview:nth-child(2) {
     background-color: #c3c3c3;
 }
 /* For the surah-ayah numbering being hovered/focused */
 #row-focused box > label {
-    color: @accent;
     background-color: #d0ddec;
 }
 
