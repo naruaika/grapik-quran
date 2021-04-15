@@ -140,6 +140,14 @@ class TarajemViewer(Gtk.Overlay):
             return True
         return False
 
+    @Gtk.Template.Callback()
+    def on_focused(
+            self,
+            widget: Gtk.Widget,
+            direction: Gtk.DirectionType) -> None:
+        # To disable `focus` signal being emitted by pressing keys
+        return True
+
 
 @Gtk.Template(resource_path=f'{const.RESOURCE_PATH}/ui/tarajem_popover.ui')
 class TarajemPopover(Gtk.PopoverMenu):

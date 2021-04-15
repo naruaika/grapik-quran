@@ -168,14 +168,14 @@ class NavigationPopover(Gtk.PopoverMenu):
 
     def go_to_previous_page(
             self,
-            button: Gtk.Button) -> None:
+            *args) -> None:
         if not self.in_focus():
             return
         self.spin_page_no.set_value(self.spin_page_no.get_value() - 1)
 
     def go_to_next_page(
             self,
-            button: Gtk.Button) -> None:
+            *args) -> None:
         if not self.in_focus():
             return
         self.spin_page_no.set_value(self.spin_page_no.get_value() + 1)
@@ -192,19 +192,30 @@ class NavigationPopover(Gtk.PopoverMenu):
 
     def go_to_previous_ayah(
             self,
-            button: Gtk.Button) -> None:
+            *args,
+            fixed_surah_no: bool = True) -> None:
         if not self.in_focus():
             return
 
         ayah_no = glob.ayah_number - 1
         if self.adjust_ayah_no.get_lower() > ayah_no:
-            self.emit('reload-telaawa-player')
+            if not fixed_surah_no \
+                    and not (glob.surah_number == 1
+                             and glob.ayah_number == 1):
+                glob.surah_number = max(1, glob.surah_number - 1)
+                with Metadata() as metadata:
+                    glob.ayah_number = metadata.get_surah_length(
+                        glob.surah_number)
+                self.update('ayah-number')
+            else:
+                self.emit('reload-telaawa-player')
         else:
             self.spin_ayah_no.set_value(ayah_no)
 
     def go_to_next_ayah(
             self,
-            button: Gtk.Button) -> None:
+            *args,
+            fixed_surah_no: bool = True) -> None:
         if not self.in_focus():
             return
 
@@ -212,6 +223,11 @@ class NavigationPopover(Gtk.PopoverMenu):
         if self.adjust_ayah_no.get_upper() < ayah_no:
             if glob.playback_loop:
                 self.spin_ayah_no.set_value(1)
+            elif not fixed_surah_no \
+                    and not (glob.surah_number == 114
+                             and glob.ayah_number == 6):
+                glob.surah_number = min(114, glob.surah_number + 1)
+                self.update('surah-number')
             else:
                 self.emit('reload-telaawa-player')
         else:

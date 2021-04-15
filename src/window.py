@@ -241,7 +241,25 @@ class MainWindow(Handy.ApplicationWindow):
             self,
             window: Gtk.Window,
             event: Gdk.EventKey) -> None:
-        ...
+        if event.keyval == Gdk.KEY_Left:
+            self.headerbar.popover_nav.go_to_next_page()
+            self.headerbar.popover_nav_alt.go_to_next_page()
+
+        elif event.keyval == Gdk.KEY_Right:
+            self.headerbar.popover_nav.go_to_previous_page()
+            self.headerbar.popover_nav_alt.go_to_previous_page()
+
+        elif event.keyval == Gdk.KEY_Up:
+            self.headerbar.popover_nav.go_to_previous_ayah(
+                fixed_surah_no=False)
+            self.headerbar.popover_nav_alt.go_to_previous_ayah(
+                fixed_surah_no=False)
+
+        elif event.keyval == Gdk.KEY_Down:
+            self.headerbar.popover_nav.go_to_next_ayah(
+                fixed_surah_no=False)
+            self.headerbar.popover_nav_alt.go_to_next_ayah(
+                fixed_surah_no=False)
 
     @Gtk.Template.Callback()
     def on_key_release(

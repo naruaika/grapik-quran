@@ -14,6 +14,7 @@
         <property name="hscrollbar-policy">never</property>
         <property name="vscrollbar-policy">external</property>
         <property name="kinetic-scrolling">False</property>
+        <signal name="focus" handler="on_focused" swapped="no"/>
         <child>
           <object class="GtkViewport">
             <property name="visible">True</property>
