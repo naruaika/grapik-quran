@@ -100,12 +100,16 @@ class TarajemViewer(Gtk.Overlay):
                         tarajem = metadata.get_tarajem(tid)
                         translator = tarajem[1]
                         language = tarajem[2].title()
+                        content = model.get_tarajem_text(tid, *bbox)[2]
+                        content = content.replace('<p></p>', '\n')
+                        content = content.replace('<p>', '')
+                        content = content.replace('</p>', '')
                         markup = \
                             '<span foreground="#444444" size="small">' \
                                 f'{language} - {translator}' \
                             '</span>\n' \
                             '<span>' \
-                                f'{model.get_tarajem_text(tid, *bbox)[2]}' \
+                                f'{content}' \
                             '</span>'
                         buffer = Gtk.TextBuffer()
                         buffer.insert_markup(
@@ -285,7 +289,8 @@ class TarajemPopover(Gtk.PopoverMenu):
                     return False
 
                 # Open connection and look for content length in its header
-                response = urlopen(tarajem[-1])
+                fileurl = tarajem[-1]
+                response = urlopen(fileurl)
                 total_length = response.getheader('Content-Length')
                 total_length = (0 if not total_length else int(total_length))
 
@@ -315,11 +320,23 @@ class TarajemPopover(Gtk.PopoverMenu):
                         );'''
                     model.cursor.execute(query)
                     model.cursor.execute('PRAGMA encoding="UTF-8";')
-                    model.cursor.executescript(
-                        '\n'.join(f.read().decode('utf-8')
-                                  .replace('index', 'id')
-                                  .replace(r"\'),", "'),").replace(r"\'", "''")
-                                  .split('\n')[46:]))
+
+                    script = (f.read().decode('utf-8')
+                               .replace('index', 'id')
+                               .replace(r"\'),", "'),")
+                               .replace(r"\'", "''")
+                               .split('\n'))
+
+                    if 'tanzil.net' in fileurl:
+                        script = script[46:]
+                        model.cursor.executescript('\n'.join(script))
+
+                    elif 'sourceforge.net' in fileurl:
+                        script = script[16:-6]
+                        model.cursor.execute('begin')
+                        for line in script:
+                            model.cursor.execute(line)
+
                     model.connection.commit()
 
             self.progressbar.set_fraction(1)  # in case there is no content
