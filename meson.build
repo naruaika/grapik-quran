@@ -1,5 +1,5 @@
 project('Grapik Quran',
-          version: '0.1.0-alpha.4',
+          version: '0.1.0-alpha.5',
     meson_version: '>= 0.54.0',
   default_options: [ 'warning_level=2',
                    ],

@@ -18,7 +18,7 @@ Using this app, you'll be able to:
 - Navigate to any specific page/surah/ayah/juz/hizb/quarter
 - Download and read translation in 39 languages
 - Download and listen recitation by 41 reciters
-- Search for imlaei and tarajem/tafasir texts
+- Search for imlaei and tarajem/tafaser texts
 - Bookmark any page
 
 ## Background
