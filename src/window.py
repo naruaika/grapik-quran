@@ -25,12 +25,10 @@ from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import Handy
 from os import path
-from threading import Timer
 from typing import List
 
 from . import constants as const
 from . import globals as glob
-from .animation import Animation
 from .headerbar import HeaderBar
 from .musshaf import MusshafViewer
 from .tarajem import TarajemViewer
@@ -49,7 +47,6 @@ class MainWindow(Handy.ApplicationWindow):
     main_container = Gtk.Template.Child()
     main_paned = Gtk.Template.Child()
     main_overlay = Gtk.Template.Child()
-    buttonbox_navigation = Gtk.Template.Child()
     button_next_page = Gtk.Template.Child()
     button_previous_page = Gtk.Template.Child()
 
@@ -68,8 +65,6 @@ class MainWindow(Handy.ApplicationWindow):
     page_number: int = None
     page_focused: int = None
     tarajem_names: List = None
-
-    timer_buttonnav: Timer = None
 
     def __init__(
             self,
@@ -105,10 +100,6 @@ class MainWindow(Handy.ApplicationWindow):
         self.headerbar.popover_telaawa.populate()
 
         self.headerbar.button_open_tarajem.set_active(glob.tarajem_visibility)
-
-        # Setup a timer for show/hiding overlay widgets
-        self.timer_buttonnav = Timer(2.0, self.hide_buttonnav)
-        self.timer_buttonnav.start()
 
     def setup_headerbar(self) -> None:
         self.headerbar = HeaderBar()
@@ -267,22 +258,10 @@ class MainWindow(Handy.ApplicationWindow):
         ...
 
     @Gtk.Template.Callback()
-    def on_motion(
-            self,
-            widget: Gtk.Widget,
-            event: Gdk.EventMotion) -> None:
-        self.buttonbox_navigation.set_opacity(1)
-
-        self.timer_buttonnav.cancel()
-        self.timer_buttonnav = Timer(2.0, self.hide_buttonnav)
-        self.timer_buttonnav.start()
-
-    @Gtk.Template.Callback()
     def on_quit(
             self,
             widget: Gtk.Widget) -> None:
         # Free resources
-        self.timer_buttonnav.cancel()
         player = self.headerbar.popover_telaawa
         player.playbin.set_state(Gst.State.NULL)
         Gst.Object.unref(player.playbin)
@@ -290,22 +269,18 @@ class MainWindow(Handy.ApplicationWindow):
             GLib.source_remove(player.playbin_seeker)
 
     @Gtk.Template.Callback()
-    def on_buttonnav_focused(
+    def on_buttonnav_entered(
             self,
-            widget: Gtk.Widget) -> None:
-        self.buttonbox_navigation.set_opacity(1)
-        self.timer_buttonnav.cancel()
-        self.timer_buttonnav = Timer(2.0, self.hide_buttonnav)
+            widget: Gtk.Widget,
+            event: Gdk.EventCrossing) -> None:
+        widget.get_children()[0].set_reveal_child(True)
 
     @Gtk.Template.Callback()
-    def on_buttonnav_unfocused(
+    def on_buttonnav_left(
             self,
-            widget: Gtk.Widget) -> None:
-        self.timer_buttonnav = Timer(2.0, self.hide_buttonnav)
-        self.timer_buttonnav.start()
-
-    def hide_buttonnav(self) -> None:
-        Animation.to_invisible(self.buttonbox_navigation)
+            widget: Gtk.Widget,
+            event: Gdk.EventCrossing) -> None:
+        widget.get_children()[0].set_reveal_child(False)
 
     def reload_navigation_panel(
             self,

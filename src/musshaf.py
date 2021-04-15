@@ -156,6 +156,16 @@ class MusshafViewer(Gtk.Overlay):
         # Draw bounding boxes over hovered ayah(s) in Musshaf viewer
         self.eventbox.queue_draw()
 
+    @Gtk.Template.Callback()
+    def on_musshaf_left(
+            self,
+            widget: Gtk.Widget,
+            event: Gdk.EventCrossing) -> None:
+        # Clear hovered ayah(s)
+        self.bboxes_hovered = []
+        self.emit('hovered-ayah-changed')
+        self.eventbox.queue_draw()
+
     def update(
             self,
             regenerate: bool = False) -> None:

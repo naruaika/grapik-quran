@@ -41,6 +41,7 @@
                     <property name="above-child">True</property>
                     <signal name="button-press-event" handler="focus_on_ayah" swapped="no"/>
                     <signal name="draw" handler="draw_bboxes" swapped="no"/>
+                    <signal name="leave-notify-event" handler="on_musshaf_left" swapped="no"/>
                     <signal name="motion-notify-event" handler="hover_on_ayah" swapped="no"/>
                     <child>
                       <placeholder/>

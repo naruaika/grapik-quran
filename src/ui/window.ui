@@ -27,7 +27,6 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="transition-type">slide-left-right</property>
-            <signal name="motion-notify-event" handler="on_motion" swapped="no"/>
             <child>
               <object class="GtkOverlay" id="main_overlay">
                 <property name="visible">True</property>
@@ -112,76 +111,6 @@
                   </object>
                 </child>
                 <child type="overlay">
-                  <object class="GtkBox" id="buttonbox_navigation">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="valign">center</property>
-                    <child>
-                      <object class="GtkButton" id="button_next_page">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="receives-default">True</property>
-                        <signal name="enter" handler="on_buttonnav_focused" swapped="no"/>
-                        <signal name="leave" handler="on_buttonnav_unfocused" swapped="no"/>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="ypad">5</property>
-                            <property name="pixel-size">18</property>
-                            <property name="icon-name">go-previous-symbolic</property>
-                          </object>
-                        </child>
-                        <style>
-                          <class name="button-overlay"/>
-                          <class name="flat"/>
-                        </style>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="button_previous_page">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="receives-default">True</property>
-                        <property name="always-show-image">True</property>
-                        <signal name="enter" handler="on_buttonnav_focused" swapped="no"/>
-                        <signal name="leave" handler="on_buttonnav_unfocused" swapped="no"/>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="ypad">5</property>
-                            <property name="pixel-size">18</property>
-                            <property name="icon-name">go-next-symbolic</property>
-                          </object>
-                        </child>
-                        <style>
-                          <class name="button-overlay"/>
-                          <class name="flat"/>
-                        </style>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="pack-type">end</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <style>
-                      <class name="osd"/>
-                    </style>
-                  </object>
-                  <packing>
-                    <property name="pass-through">True</property>
-                    <property name="index">1</property>
-                  </packing>
-                </child>
-                <child type="overlay">
                   <object class="GtkBox" id="status_loading">
                     <property name="can-focus">False</property>
                     <property name="no-show-all">True</property>
@@ -228,12 +157,12 @@
                     <property name="can-focus">False</property>
                     <property name="halign">center</property>
                     <property name="valign">end</property>
-                    <property name="margin-bottom">10</property>
                     <property name="transition-type">slide-up</property>
                     <child>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="margin-bottom">10</property>
                         <property name="spacing">8</property>
                         <child>
                           <object class="GtkImage" id="notification_icon">
@@ -268,6 +197,98 @@
                   </object>
                   <packing>
                     <property name="index">3</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkEventBox">
+                    <property name="width-request">30</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <signal name="enter-notify-event" handler="on_buttonnav_entered" swapped="no"/>
+                    <signal name="leave-notify-event" handler="on_buttonnav_left" swapped="no"/>
+                    <child>
+                      <object class="GtkRevealer">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="transition-type">slide-right</property>
+                        <property name="transition-duration">100</property>
+                        <child>
+                          <object class="GtkButton" id="button_next_page">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="margin-start">10</property>
+                            <property name="relief">none</property>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="ypad">5</property>
+                                <property name="pixel-size">24</property>
+                                <property name="icon-name">go-previous-symbolic</property>
+                              </object>
+                            </child>
+                            <style>
+                              <class name="button-overlay"/>
+                              <class name="flat"/>
+                            </style>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="pass-through">True</property>
+                    <property name="index">4</property>
+                  </packing>
+                </child>
+                <child type="overlay">
+                  <object class="GtkEventBox">
+                    <property name="width-request">30</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">end</property>
+                    <signal name="enter-notify-event" handler="on_buttonnav_entered" swapped="no"/>
+                    <signal name="leave-notify-event" handler="on_buttonnav_left" swapped="no"/>
+                    <child>
+                      <object class="GtkRevealer">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="transition-type">slide-left</property>
+                        <property name="transition-duration">100</property>
+                        <child>
+                          <object class="GtkButton" id="button_previous_page">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <property name="halign">end</property>
+                            <property name="valign">center</property>
+                            <property name="margin-end">10</property>
+                            <property name="relief">none</property>
+                            <property name="always-show-image">True</property>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="ypad">5</property>
+                                <property name="pixel-size">24</property>
+                                <property name="icon-name">go-next-symbolic</property>
+                              </object>
+                            </child>
+                            <style>
+                              <class name="button-overlay"/>
+                              <class name="flat"/>
+                            </style>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="index">4</property>
                   </packing>
                 </child>
               </object>
