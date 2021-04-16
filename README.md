@@ -23,7 +23,7 @@ Using this app, you'll be able to:
 
 ## Background
 
-All I'd like to do is have a digital Quran app installed on my desktop. I know very well that there are many great apps on mobile—such as [Quran for Android](https://play.google.com/store/apps/details?id=com.quran.labs.androidquran) and [Al Quran (Tafsir & by Word)](https://play.google.com/store/apps/details?id=com.greentech.quran)—or the web—such as [Ayat](https://quran.ksu.edu.sa/index.php#aya=1_1&m=hafs&qaree=husary&trans=ar_mu) and [Quran.com](https://quran.com/)—, but I just want one on the desktop at the moment.
+All I'd like to do is have a digital Quran app installed on my desktop. I know very well that there are many great apps on mobile—such as [Quran for Android](https://play.google.com/store/apps/details?id=com.quran.labs.androidquran) and [Al Quran (Tafsir & by Word)](https://play.google.com/store/apps/details?id=com.greentech.quran)—or the web—such as [Ayat](https://quran.ksu.edu.sa/index.php) and [Quran.com](https://quran.com/)—, but I just want one on the desktop at the moment.
 
 Why not just use the [Ayat](https://quran.ksu.edu.sa/ayat/?l=en) app desktop version which was officially developed by KSU? Unfortunately, due to [Adobe AIR](https://en.wikipedia.org/wiki/Adobe_AIR) has reached [end of life](https://www.adelaide.edu.au/technology/your-services/software/adobe-air-end-of-life) on December 31, 2020, we won't be able to get it from the official GNU/Linux distro's repository. Not to mention that Adobe has decided to [no longer support](https://helpx.adobe.com/air/kb/install-air-2-64-bit.html) Adobe AIR for Linux desktop as of June 14, 2011. So, it has been such a pain to install Ayat on Linux since then.
 
@@ -45,7 +45,9 @@ This software is distributed under the terms of the [GNU General Public License 
 
 For the recitations credit to EveryAyah. For the fonts, we use [Noto Sans](https://www.google.com/get/noto/) and [Amiri](https://www.amirifont.org/) fonts licensed under the [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL), both credit to Google Fonts.
 
-## Useful Links
+## Resources
+
+All of the resources used in this app is as follows:
 
 - [High quality Musshaf PDFs for qira'at Hafs](https://qurancomplex.gov.sa/kfgqpc-quran-hafs/)
 - [High quality Musshaf PDFs for other qira'ats](https://qurancomplex.gov.sa/kfgqpc-quran-qiraat/)
@@ -55,3 +57,23 @@ For the recitations credit to EveryAyah. For the fonts, we use [Noto Sans](https
 - [Processed and labeled data for Grapik Quran](https://sourceforge.net/projects/grapik-quran-data/)
 - [Automatic Quran (ayah bounding boxes) labeler](https://github.com/naruaika/my-playground/blob/master/quran-ocr.py)
 - [Free licensed font families](https://fonts.google.com/)
+
+## Relevant Articles
+
+Here are some readings that help us make decisions in the development:
+
+- [Organization of the Qur'an](https://www.discoveringislam.org/organization-of-quran.pdf)
+- [Eksistensi Alquran Pusaka dalam Perkembangan Mushaf (Indonesian)](http://journal.uinjkt.ac.id/index.php/journal-of-quran-and-hadith/article/view/13381)
+
+## Similar Applications
+
+In fact, when designing, we have done some research on similar apps as follows:
+
+- [Zekr](https://sourceforge.net/projects/zekr/)
+- [Ayat](https://quran.ksu.edu.sa/)
+- [Quran.com](https://quran.com/)
+- [Quranflash](https://app.quranflash.com/)
+- [iQuran](https://apps.apple.com/us/app/iquran/id285944183)
+- [Quran for Android](https://play.google.com/store/apps/details?id=com.quran.labs.androidquran)
+- [Al Quran (Tafsir & by Word)](https://play.google.com/store/apps/details?id=com.greentech.quran)
+- And many more.
