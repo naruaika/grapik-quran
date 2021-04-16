@@ -32,6 +32,7 @@ class SearchPopover(Gtk.PopoverMenu):
         'go-to-suraya': (GObject.SIGNAL_RUN_CLEANUP, None, (int, int))}
 
     entry = Gtk.Template.Child()
+    note = Gtk.Template.Child()
     listbox = Gtk.Template.Child()
     progressbar = Gtk.Template.Child()
     scrolledwindow = Gtk.Template.Child()
@@ -48,32 +49,50 @@ class SearchPopover(Gtk.PopoverMenu):
         based on the user's search query. The search query should contain at
         least three characters.
         """
+        def reset() -> None:
+            def reset(row: Gtk.ListBoxRow) -> None:
+                self.listbox.remove(row)
+            self.listbox.foreach(reset)
+
         if len(query) < 3:
+            self.note.hide()
+            reset()
             return
 
         with Metadata() as metadata, \
              Tarajem() as tarajem:
             query = query.lower()
+            n_search_results = 0
+            max_search_results = 100
 
             results_imlaei = metadata.get_ayah_texts(query)
+            n_search_results += len(results_imlaei)
+            results_imlaei = results_imlaei[:max_search_results]
 
-            results_tarajem = []
+            results_tarajems = []
             for tarajem_name in glob.tarajem_names:
-                results_tarajem += \
+                results_tarajem = \
                     tarajem.get_tarajem_texts(tarajem_name, query)
+                n_search_results += len(results_tarajem)
+                results_tarajem = results_tarajem[:max_search_results]
+                results_tarajems += results_tarajem
 
             # Compare to the previous displayed list. If they are the same,
             # do not update the display. Otherwise, save current list.
-            results = results_imlaei + results_tarajem
+            results = results_imlaei + results_tarajems
             if self.results == results:
                 return
             self.results = results
 
-            # Reset the display
-            def reset(row: Gtk.ListBoxRow) -> None:
-                self.listbox.remove(row)
-            self.listbox.foreach(reset)
+            self.note.show()
+            self.note.set_markup(
+                '<span size="small">'
+                    'Displaying search results '
+                    f'{min(max_search_results, n_search_results)} '
+                    f'of {n_search_results}'
+                '</span>')
 
+            reset()
             for result in self.results:
                 text = \
                     '<span>' \
