@@ -37,18 +37,25 @@ class SearchPopover(Gtk.PopoverMenu):
     progressbar = Gtk.Template.Child()
     scrolledwindow = Gtk.Template.Child()
 
+    query: str = ''
     results: List = []  # store the search results to avoid unneeded
                         # refreshment of search results
+    match_case: bool = False
+    match_whole_word: bool = False
 
     def populate(
             self,
-            query: str) -> bool:
+            query: str = '') -> bool:
         """Display search results
 
         Search everything including Musshaf unicode texts and tarajem/tafaser
         based on the user's search query. The search query should contain at
         least three characters.
         """
+        if not query:
+            query = self.query
+        self.query = query
+
         def reset() -> None:
             def reset(row: Gtk.ListBoxRow) -> None:
                 self.listbox.remove(row)
@@ -58,39 +65,39 @@ class SearchPopover(Gtk.PopoverMenu):
             self.note.hide()
             reset()
             return
+        self.note.show()
 
         with Metadata() as metadata, \
              Tarajem() as tarajem:
-            query = query.lower()
             n_search_results = 0
             max_search_results = 100
 
             results_imlaei = metadata.get_ayah_texts(query)
             n_search_results += len(results_imlaei)
-            results_imlaei = results_imlaei[:max_search_results]
 
             results_tarajems = []
             for tarajem_name in glob.tarajem_names:
-                results_tarajem = \
-                    tarajem.get_tarajem_texts(tarajem_name, query)
+                results_tarajem = tarajem.get_tarajem_texts(
+                    tarajem_name, query, self.match_case,
+                    self.match_whole_word)
                 n_search_results += len(results_tarajem)
-                results_tarajem = results_tarajem[:max_search_results]
                 results_tarajems += results_tarajem
 
-            # Compare to the previous displayed list. If they are the same,
-            # do not update the display. Otherwise, save current list.
             results = results_imlaei + results_tarajems
-            if self.results == results:
-                return
-            self.results = results
 
-            self.note.show()
             self.note.set_markup(
                 '<span size="small">'
                     'Displaying search results '
                     f'{min(max_search_results, n_search_results)} '
                     f'of {n_search_results}'
                 '</span>')
+
+            # Compare to the previous displayed list. If they are the same,
+            # do not update the display. Otherwise, save current list.
+            results = results[:max_search_results]
+            if self.results == results:
+                return
+            self.results = results
 
             reset()
             for result in self.results:
@@ -119,6 +126,20 @@ class SearchPopover(Gtk.PopoverMenu):
             entry: Gtk.SearchEntry) -> None:
         query = entry.get_text()
         self.populate(query)
+
+    @Gtk.Template.Callback()
+    def match_case_toggled(
+            self,
+            toggle: Gtk.ToggleButton) -> None:
+        self.match_case = toggle.get_active()
+        self.populate()
+
+    @Gtk.Template.Callback()
+    def match_whole_word_toggled(
+            self,
+            toggle: Gtk.ToggleButton) -> None:
+        self.match_whole_word = toggle.get_active()
+        self.populate()
 
     @Gtk.Template.Callback()
     def select(

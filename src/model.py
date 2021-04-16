@@ -19,6 +19,7 @@ from __future__ import annotations
 from abc import ABC
 from os import path
 from typing import List
+import re
 import sqlite3
 
 from . import constants as const
@@ -42,6 +43,13 @@ class Model(ABC):
     def __enter__(self) -> Model:
         self.connection = sqlite3.connect(self._database_filepath)
         self.cursor = self.connection.cursor()
+
+        def regexp(
+                expr: str,
+                item: str) -> bool:
+            return re.search(expr, item) is not None
+        self.connection.create_function('REGEXP', 2, regexp)
+
         return self
 
     def __exit__(
@@ -285,10 +293,21 @@ class Tarajem(Model):
     def get_tarajem_texts(
             self,
             tarajem_name: str,
-            query: str) -> List:
+            search_query: str,
+            case_sensitive: bool = False,
+            match_whole_word: bool = False) -> List:
         if self.is_tarajem_exist(tarajem_name):
-            self.cursor.execute(f'SELECT sura, aya, text FROM {tarajem_name} '
-                                'WHERE text LIKE ?', ('%'+query+'%',))
+            if case_sensitive:
+                self.cursor.execute('PRAGMA case_sensitive_like = true;')
+            else:
+                search_query = search_query.lower()
+            query = f'SELECT sura, aya, text FROM {tarajem_name} '
+            if match_whole_word:
+                query = query + 'WHERE text REGEXP ?'
+                self.cursor.execute(query, (r'\b'+search_query+r'\b',))
+            else:
+                query = query + 'WHERE text LIKE ?'
+                self.cursor.execute(query, ('%'+search_query+'%',))
             return self.cursor.fetchall()
         return []
 
