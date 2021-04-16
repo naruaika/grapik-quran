@@ -40,6 +40,8 @@ class NavigationPopover(Gtk.PopoverMenu):
     spin_ayah_no = Gtk.Template.Child()
     spin_juz_no = Gtk.Template.Child()
     spin_hizb_no = Gtk.Template.Child()
+    spin_manzil_no = Gtk.Template.Child()
+    spin_ruku_no = Gtk.Template.Child()
     page_length = Gtk.Template.Child()
     surah_length = Gtk.Template.Child()
     combo_surah_name = Gtk.Template.Child()
@@ -50,6 +52,7 @@ class NavigationPopover(Gtk.PopoverMenu):
     container_quarter = Gtk.Template.Child()
 
     main_container = Gtk.Template.Child()
+    secondary_container = Gtk.Template.Child()
 
     # To adjust the page numbering in the page navigation system based on the
     # page image index
@@ -166,6 +169,24 @@ class NavigationPopover(Gtk.PopoverMenu):
                 self.update('quarter-number')
                 break
 
+    @Gtk.Template.Callback()
+    def go_to_manzil(
+            self,
+            button: Gtk.SpinButton) -> None:
+        if self.is_updating:
+            return
+        glob.manzil_number = int(button.get_value())
+        self.update('manzil-number')
+
+    @Gtk.Template.Callback()
+    def go_to_ruku(
+            self,
+            button: Gtk.SpinButton) -> None:
+        if self.is_updating:
+            return
+        glob.ruku_number = int(button.get_value())
+        self.update('ruku-number')
+
     def go_to_previous_page(
             self,
             *args) -> None:
@@ -260,59 +281,73 @@ class NavigationPopover(Gtk.PopoverMenu):
             if keyword == 'page-number':
                 glob.surah_number = musshaf.get_surah_no(glob.page_number)
                 glob.ayah_number = musshaf.get_ayah_no(glob.page_number)
-                glob.juz_number = \
-                    metadata.get_juz_no(glob.surah_number, glob.ayah_number)
-                hizb_no = \
-                    metadata.get_hizb_no(glob.surah_number, glob.ayah_number)
+                glob.juz_number = metadata.get_juz_no(glob.surah_number, glob.ayah_number)
+                hizb_no = metadata.get_hizb_no(glob.surah_number, glob.ayah_number)
                 glob.hizb_number = hizb_no//4 + (hizb_no%4 > 0)
                 glob.quarter_number = hizb_no%4 - 1
+                glob.manzil_number = metadata.get_manzil_no(glob.surah_number, glob.ayah_number)
+                glob.ruku_number = metadata.get_ruku_no(glob.surah_number, glob.ayah_number)
             elif keyword == 'surah-number':
                 glob.ayah_number = 1
-                glob.page_number = \
-                    musshaf.get_page_no(glob.surah_number, glob.ayah_number)
-                glob.juz_number = \
-                    metadata.get_juz_no(glob.surah_number, glob.ayah_number)
-                hizb_no = \
-                    metadata.get_hizb_no(glob.surah_number, glob.ayah_number)
+                glob.page_number = musshaf.get_page_no(glob.surah_number, glob.ayah_number)
+                glob.juz_number = metadata.get_juz_no(glob.surah_number, glob.ayah_number)
+                hizb_no = metadata.get_hizb_no(glob.surah_number, glob.ayah_number)
                 glob.hizb_number = hizb_no//4 + (hizb_no%4 > 0)
                 glob.quarter_number = hizb_no%4 - 1
+                glob.manzil_number = metadata.get_manzil_no(glob.surah_number, glob.ayah_number)
+                glob.ruku_number = metadata.get_ruku_no(glob.surah_number, glob.ayah_number)
             elif keyword == 'juz-number':
                 glob.surah_number = metadata.get_surah_no(juz_no=glob.juz_number)
                 glob.ayah_number = metadata.get_ayah_no(juz_no=glob.juz_number)
-                glob.page_number = \
-                    musshaf.get_page_no(glob.surah_number, glob.ayah_number)
-                hizb_no = \
-                    metadata.get_hizb_no(glob.surah_number, glob.ayah_number)
+                glob.page_number = musshaf.get_page_no(glob.surah_number, glob.ayah_number)
+                hizb_no = metadata.get_hizb_no(glob.surah_number, glob.ayah_number)
                 glob.hizb_number = hizb_no//4 + (hizb_no%4 > 0)
                 glob.quarter_number = 0
+                glob.manzil_number = metadata.get_manzil_no(glob.surah_number, glob.ayah_number)
+                glob.ruku_number = metadata.get_ruku_no(glob.surah_number, glob.ayah_number)
             elif keyword == 'hizb-number':
                 hizb_no = (glob.hizb_number-1)*4 + 1
                 glob.surah_number = metadata.get_surah_no(hizb_no=hizb_no)
                 glob.ayah_number = metadata.get_ayah_no(hizb_no=hizb_no)
-                glob.page_number = \
-                    musshaf.get_page_no(glob.surah_number, glob.ayah_number)
-                glob.juz_number = \
-                    metadata.get_juz_no(glob.surah_number, glob.ayah_number)
+                glob.page_number = musshaf.get_page_no(glob.surah_number, glob.ayah_number)
+                glob.juz_number = metadata.get_juz_no(glob.surah_number, glob.ayah_number)
                 glob.quarter_number = 0
+                glob.manzil_number = metadata.get_manzil_no(glob.surah_number, glob.ayah_number)
+                glob.ruku_number = metadata.get_ruku_no(glob.surah_number, glob.ayah_number)
             elif keyword == 'quarter-number':
                 hizb_no = (glob.hizb_number-1)*4 + 1 + glob.quarter_number
                 glob.surah_number = metadata.get_surah_no(hizb_no=hizb_no)
                 glob.ayah_number = metadata.get_ayah_no(hizb_no=hizb_no)
-                glob.page_number = \
-                    musshaf.get_page_no(glob.surah_number, glob.ayah_number)
-                glob.juz_number = \
-                    metadata.get_juz_no(glob.surah_number, glob.ayah_number)
+                glob.page_number = musshaf.get_page_no(glob.surah_number, glob.ayah_number)
+                glob.juz_number = metadata.get_juz_no(glob.surah_number, glob.ayah_number)
+                glob.manzil_number = metadata.get_manzil_no(glob.surah_number, glob.ayah_number)
+                glob.ruku_number = metadata.get_ruku_no(glob.surah_number, glob.ayah_number)
+            elif keyword == 'manzil-number':
+                glob.surah_number = metadata.get_surah_no(manzil_no=glob.manzil_number)
+                glob.ayah_number = metadata.get_ayah_no(manzil_no=glob.manzil_number)
+                glob.page_number = musshaf.get_page_no(glob.surah_number, glob.ayah_number)
+                hizb_no = metadata.get_hizb_no(glob.surah_number, glob.ayah_number)
+                glob.hizb_number = hizb_no//4 + (hizb_no%4 > 0)
+                glob.quarter_number = 0
+                glob.ruku_number = metadata.get_ruku_no(glob.surah_number, glob.ayah_number)
+            elif keyword == 'ruku-number':
+                glob.surah_number = metadata.get_surah_no(ruku_no=glob.ruku_number)
+                glob.ayah_number = metadata.get_ayah_no(ruku_no=glob.ruku_number)
+                glob.page_number = musshaf.get_page_no(glob.surah_number, glob.ayah_number)
+                hizb_no = metadata.get_hizb_no(glob.surah_number, glob.ayah_number)
+                glob.hizb_number = hizb_no//4 + (hizb_no%4 > 0)
+                glob.quarter_number = 0
+                glob.manzil_number = metadata.get_manzil_no(glob.surah_number, glob.ayah_number)
             else:
                 # if the `keyword` is not specified, it is assumed that the
                 # ayah number has been changed
-                glob.page_number = \
-                    musshaf.get_page_no(glob.surah_number, glob.ayah_number)
-                glob.juz_number = \
-                    metadata.get_juz_no(glob.surah_number, glob.ayah_number)
-                hizb_no = \
-                    metadata.get_hizb_no(glob.surah_number, glob.ayah_number)
+                glob.page_number = musshaf.get_page_no(glob.surah_number, glob.ayah_number)
+                glob.juz_number = metadata.get_juz_no(glob.surah_number, glob.ayah_number)
+                hizb_no = metadata.get_hizb_no(glob.surah_number, glob.ayah_number)
                 glob.hizb_number = hizb_no//4 + (hizb_no%4 > 0)
                 glob.quarter_number = hizb_no%4 - 1
+                glob.manzil_number = metadata.get_manzil_no(glob.surah_number, glob.ayah_number)
+                glob.ruku_number = metadata.get_ruku_no(glob.surah_number, glob.ayah_number)
             surah_length = metadata.get_surah_length(glob.surah_number)
 
         self.is_updating = True
@@ -327,6 +362,8 @@ class NavigationPopover(Gtk.PopoverMenu):
             self.spin_ayah_no.set_value(glob.ayah_number)
             self.spin_juz_no.set_value(glob.juz_number)
             self.spin_hizb_no.set_value(glob.hizb_number)
+            self.spin_manzil_no.set_value(glob.manzil_number)
+            self.spin_ruku_no.set_value(glob.ruku_number)
             radio_quarters = self.container_quarter.get_children()
             radio_quarters[glob.quarter_number].set_active(True)
 

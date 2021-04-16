@@ -98,7 +98,10 @@ class HeaderBar(Handy.HeaderBar):
         self.popover_nav_alt = NavigationPopover(1)
         self.popover_nav_alt.main_container.set_orientation(
             Gtk.Orientation.VERTICAL)
+        self.popover_nav_alt.secondary_container.set_orientation(
+            Gtk.Orientation.VERTICAL)
         self.popover_nav_alt.main_container.set_spacing(8)
+        self.popover_nav_alt.secondary_container.set_spacing(8)
         self.button_open_navigation_alt.set_popover(self.popover_nav_alt)
 
         # Whenever focused ayah changed, change the window title to the newly

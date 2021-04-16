@@ -41,6 +41,8 @@ ayah_number: int = None
 juz_number: int = None
 hizb_number: int = None
 quarter_number: int = None
+manzil_number: int = None
+ruku_number: int = None
 
 # These are not to be saved,
 # but rather used only to reduce computational cost

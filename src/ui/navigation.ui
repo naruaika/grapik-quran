@@ -22,7 +22,21 @@
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="adjust_manzil_no">
+    <property name="lower">1</property>
+    <property name="upper">7</property>
+    <property name="value">1</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
   <object class="GtkAdjustment" id="adjust_page_no">
+    <property name="value">1</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjust_ruku_no">
+    <property name="lower">1</property>
+    <property name="upper">556</property>
     <property name="value">1</property>
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
@@ -43,9 +57,190 @@
         <property name="margin-top">15</property>
         <property name="margin-bottom">15</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">15</property>
+        <property name="spacing">8</property>
         <child>
           <object class="GtkBox" id="main_container">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="spacing">20</property>
+            <property name="homogeneous">True</property>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">8</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">Surah Name</property>
+                        <property name="justify">right</property>
+                        <attributes>
+                          <attribute name="weight" value="bold"/>
+                          <attribute name="foreground" value="#808080808080"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">(1–114)</property>
+                        <attributes>
+                          <attribute name="foreground" value="#808080808080"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBoxText" id="combo_surah_name">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="has-entry">True</property>
+                    <signal name="changed" handler="go_to_surah" swapped="no"/>
+                    <child internal-child="entry">
+                      <object class="GtkEntry" id="entry_surah_name">
+                        <property name="can-focus">True</property>
+                        <property name="truncate-multiline">True</property>
+                        <property name="progress-pulse-step">0</property>
+                        <property name="placeholder-text" translatable="yes">Type surah name...</property>
+                        <property name="completion">complete_surah_name</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">8</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">Ayah No.</property>
+                        <property name="justify">right</property>
+                        <attributes>
+                          <attribute name="weight" value="bold"/>
+                          <attribute name="foreground" value="#808080808080"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="surah_length">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">(1–999)</property>
+                        <attributes>
+                          <attribute name="foreground" value="#808080808080"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSpinButton" id="spin_ayah_no">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="caps-lock-warning">False</property>
+                    <property name="progress-pulse-step">0</property>
+                    <property name="placeholder-text" translatable="yes">Type ayah number...</property>
+                    <property name="input-purpose">number</property>
+                    <property name="adjustment">adjust_ayah_no</property>
+                    <property name="climb-rate">1</property>
+                    <property name="numeric">True</property>
+                    <property name="update-policy">if-valid</property>
+                    <property name="value">1</property>
+                    <signal name="value-changed" handler="go_to_ayah" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="secondary_container">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="spacing">20</property>
@@ -129,7 +324,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Surah Name</property>
+                        <property name="label" translatable="yes">Manzil No.</property>
                         <property name="justify">right</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
@@ -146,7 +341,7 @@
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">(1–114)</property>
+                        <property name="label" translatable="yes">(1–7)</property>
                         <attributes>
                           <attribute name="foreground" value="#808080808080"/>
                         </attributes>
@@ -165,19 +360,20 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBoxText" id="combo_surah_name">
+                  <object class="GtkSpinButton" id="spin_manzil_no">
                     <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="has-entry">True</property>
-                    <signal name="changed" handler="go_to_surah" swapped="no"/>
-                    <child internal-child="entry">
-                      <object class="GtkEntry" id="entry_surah_name">
-                        <property name="can-focus">True</property>
-                        <property name="progress-pulse-step">0</property>
-                        <property name="placeholder-text" translatable="yes">Type surah name...</property>
-                        <property name="completion">complete_surah_name</property>
-                      </object>
-                    </child>
+                    <property name="can-focus">True</property>
+                    <property name="text" translatable="yes">1</property>
+                    <property name="caps-lock-warning">False</property>
+                    <property name="progress-pulse-step">0</property>
+                    <property name="placeholder-text" translatable="yes">Type hizb number...</property>
+                    <property name="input-purpose">number</property>
+                    <property name="adjustment">adjust_manzil_no</property>
+                    <property name="climb-rate">1</property>
+                    <property name="numeric">True</property>
+                    <property name="update-policy">if-valid</property>
+                    <property name="value">1</property>
+                    <signal name="value-changed" handler="go_to_manzil" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -194,7 +390,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Ayah No.</property>
+                        <property name="label" translatable="yes">Ruku No.</property>
                         <property name="justify">right</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
@@ -208,10 +404,10 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="surah_length">
+                      <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">(1–999)</property>
+                        <property name="label" translatable="yes">(1–556)</property>
                         <attributes>
                           <attribute name="foreground" value="#808080808080"/>
                         </attributes>
@@ -230,19 +426,20 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="spin_ayah_no">
+                  <object class="GtkSpinButton" id="spin_ruku_no">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="text" translatable="yes">1</property>
                     <property name="caps-lock-warning">False</property>
                     <property name="progress-pulse-step">0</property>
-                    <property name="placeholder-text" translatable="yes">Type ayah number...</property>
+                    <property name="placeholder-text" translatable="yes">Type hizb number...</property>
                     <property name="input-purpose">number</property>
-                    <property name="adjustment">adjust_ayah_no</property>
+                    <property name="adjustment">adjust_ruku_no</property>
                     <property name="climb-rate">1</property>
                     <property name="numeric">True</property>
                     <property name="update-policy">if-valid</property>
                     <property name="value">1</property>
-                    <signal name="value-changed" handler="go_to_ayah" swapped="no"/>
+                    <signal name="value-changed" handler="go_to_ruku" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -501,11 +698,8 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">0</property>
+            <property name="position">2</property>
           </packing>
-        </child>
-        <child>
-          <placeholder/>
         </child>
       </object>
       <packing>

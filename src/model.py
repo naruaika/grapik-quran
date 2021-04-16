@@ -91,14 +91,21 @@ class Metadata(Model):
     def get_surah_no(
             self,
             juz_no: int = None,
-            hizb_no: int = None) -> int:
-        if juz_no:
-            self.cursor.execute('SELECT sura FROM juzs WHERE id=?', (juz_no,))
-            result = self.cursor.fetchone()
-        else:
+            hizb_no: int = None,
+            manzil_no: int = None,
+            ruku_no: int = None) -> int:
+        if hizb_no:
             self.cursor.execute('SELECT sura FROM hizbs WHERE id=?',
                                 (hizb_no,))
-            result = self.cursor.fetchone()
+        elif manzil_no:
+            self.cursor.execute('SELECT sura FROM manzils WHERE id=?',
+                                (manzil_no,))
+        elif ruku_no:
+            self.cursor.execute('SELECT sura FROM rukus WHERE id=?',
+                                (ruku_no,))
+        else:
+            self.cursor.execute('SELECT sura FROM juzs WHERE id=?', (juz_no,))
+        result = self.cursor.fetchone()
         if result:
             return result[0]
         return -1
@@ -116,13 +123,19 @@ class Metadata(Model):
     def get_ayah_no(
             self,
             juz_no: int = None,
-            hizb_no: int = None) -> int:
-        if juz_no:
-            self.cursor.execute('SELECT aya FROM juzs WHERE id=?', (juz_no,))
-            result = self.cursor.fetchone()
-        else:
+            hizb_no: int = None,
+            manzil_no: int = None,
+            ruku_no: int = None) -> int:
+        if hizb_no:
             self.cursor.execute('SELECT aya FROM hizbs WHERE id=?', (hizb_no,))
-            result = self.cursor.fetchone()
+        elif manzil_no:
+            self.cursor.execute('SELECT aya FROM manzils WHERE id=?',
+                                (manzil_no,))
+        elif ruku_no:
+            self.cursor.execute('SELECT aya FROM rukus WHERE id=?', (ruku_no,))
+        else:
+            self.cursor.execute('SELECT aya FROM juzs WHERE id=?', (juz_no,))
+        result = self.cursor.fetchone()
         if result:
             return result[0]
         return -1
@@ -163,6 +176,30 @@ class Metadata(Model):
             surah_no: int,
             ayah_no: int) -> int:
         self.cursor.execute('SELECT id FROM hizbs WHERE (sura=? AND aya<=?) OR'
+                            ' sura<? ORDER BY id DESC',
+                            (surah_no, ayah_no, surah_no))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
+
+    def get_manzil_no(
+            self,
+            surah_no: int,
+            ayah_no: int) -> int:
+        self.cursor.execute('SELECT id FROM manzils WHERE (sura=? AND aya<=?) '
+                            'OR sura<? ORDER BY id DESC',
+                            (surah_no, ayah_no, surah_no))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return -1
+
+    def get_ruku_no(
+            self,
+            surah_no: int,
+            ayah_no: int) -> int:
+        self.cursor.execute('SELECT id FROM rukus WHERE (sura=? AND aya<=?) OR'
                             ' sura<? ORDER BY id DESC',
                             (surah_no, ayah_no, surah_no))
         result = self.cursor.fetchone()
