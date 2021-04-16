@@ -326,6 +326,7 @@ class NavigationPopover(Gtk.PopoverMenu):
                 glob.surah_number = metadata.get_surah_no(manzil_no=glob.manzil_number)
                 glob.ayah_number = metadata.get_ayah_no(manzil_no=glob.manzil_number)
                 glob.page_number = musshaf.get_page_no(glob.surah_number, glob.ayah_number)
+                glob.juz_number = metadata.get_juz_no(glob.surah_number, glob.ayah_number)
                 hizb_no = metadata.get_hizb_no(glob.surah_number, glob.ayah_number)
                 glob.hizb_number = hizb_no//4 + (hizb_no%4 > 0)
                 glob.quarter_number = 0
@@ -334,6 +335,7 @@ class NavigationPopover(Gtk.PopoverMenu):
                 glob.surah_number = metadata.get_surah_no(ruku_no=glob.ruku_number)
                 glob.ayah_number = metadata.get_ayah_no(ruku_no=glob.ruku_number)
                 glob.page_number = musshaf.get_page_no(glob.surah_number, glob.ayah_number)
+                glob.juz_number = metadata.get_juz_no(glob.surah_number, glob.ayah_number)
                 hizb_no = metadata.get_hizb_no(glob.surah_number, glob.ayah_number)
                 glob.hizb_number = hizb_no//4 + (hizb_no%4 > 0)
                 glob.quarter_number = 0
