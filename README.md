@@ -15,7 +15,7 @@ In the name of Allah, the Entirely Merciful, the Especially Merciful. This proof
 Using this app, you'll be able to:
 
 - [WIP] Download and read any variants of the complete Quran (8 variants in 5 qira'at)
-- Navigate to any specific page/surah/ayah/juz/hizb/quarter
+- Navigate to any specific page/surah/ayah/juz/hizb/quarter/manzil/ruku
 - Download and read translation in 39 languages
 - Download and listen recitation by 41 reciters
 - Search for imlaei and tarajem/tafaser texts
@@ -31,7 +31,7 @@ There're many alternatives to Ayat, such as [Zekr](https://sourceforge.net/proje
 
 ## Motivation
 
-I used to be a user of Sabily OS and I've been amazed how wonderful it is. I am planning to revive the idea. May Allah forgive me all along the way by doing this project and I ask Allah for His _taufiq_ and _hidayah_ to the straight path.
+I used to be a user of Sabily OS and I've been amazed how wonderful it is. I'm planning to revive the idea. May Allah forgive me all along the way by doing this project and I ask Allah for His _taufiq_ and _hidayah_ to the straight path.
 
 ## Contributing
 
@@ -39,11 +39,11 @@ The easiest way for beginners is clone this repository to your local computer, t
 
 ## Licenses
 
-This software is distributed under the terms of the [GNU General Public License Version 3](COPYING). For the Quran images are under license not for sale and credit to Quran Complex. For the Quran metadata credit to Tanzil. For the translations are for non-commercial purposes only and credit to Tanzil. However, there's a disclaimer from Tanzil which I would like to mention in here to be considered by all of us:
+This software is distributed under the terms of the [GNU General Public License (GPL) Version 3](COPYING). For the Quran images credit to Quran Complex under license not for sale. For the Quran metadata credit to Tanzil. For the translations are for non-commercial purposes only and credit to Tanzil. However, there's a disclaimer from Tanzil which I'd like to mention in here to be considered by all of us:
 
 > No translation of Quran can be a hundred percent accurate, nor it can be used as a replacement of the Quran text. We have tried to provide a set of mostly acceptable quran translations here, but we cannot guarantee their authenticity and/or accuracy. Please use them at your own discretion. —[https://tanzil.net/trans/](https://tanzil.net/trans/)
 
-For the recitations credit to EveryAyah. For the fonts, we use [Noto Sans](https://www.google.com/get/noto/) and [Amiri](https://www.amirifont.org/) fonts licensed under the [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL), both credit to Google Fonts.
+For the recitations credit to EveryAyah. For the phonetic search algorithm and data credit to [Lafzi](https://github.com/lafzi) under GPL-3.0 license. However we've re-written the codebase in Python under the same license as the original. For the fonts, we use [Noto Sans](https://www.google.com/get/noto/) and [Amiri](https://www.amirifont.org/) fonts licensed under the [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL), both credit to Google Fonts.
 
 ## Resources
 
@@ -55,6 +55,7 @@ All of the resources used in this app is as follows:
 - [Quran indexing for qira'at Hafs](https://tanzil.net/docs/quran_metadata)
 - [Recitations ayah by ayah](https://everyayah.com/recitations_ayat.html)
 - [Processed and labeled data for Grapik Quran](https://sourceforge.net/projects/grapik-quran-data/)
+- [Quran search by phonetics](https://github.com/lafzi)
 - [Automatic Quran (ayah bounding boxes) labeler](https://github.com/naruaika/my-playground/blob/master/quran-ocr.py)
 - [Free licensed font families](https://fonts.google.com/)
 
@@ -64,6 +65,7 @@ Here are some readings that help us make decisions in the development:
 
 - [Organization of the Qur'an](https://www.discoveringislam.org/organization-of-quran.pdf)
 - [Eksistensi Alquran Pusaka dalam Perkembangan Mushaf (Indonesian)](http://journal.uinjkt.ac.id/index.php/journal-of-quran-and-hadith/article/view/13381)
+- [Transliterasi Al-Quran, antara Hukum dan Kebutuhan (Indonesian)](https://lajnah.kemenag.go.id/artikel/382-transliterasi-al-quran-antara-hukum-dan-kebutuhan)
 
 ## Similar Applications
 

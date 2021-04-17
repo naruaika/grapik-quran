@@ -46,10 +46,14 @@ grapik_quran_sources = [
 
   # models
   'model.py',
-  'main.db',
 
   # helpers
-  'animation.py'
+  'animation.py',
+
+  # databases
+  'db/main.db',
+  'db/lafzi_postlist.txt',
+  'db/lafzi_termlist.txt'
 ]
 
 install_data(grapik_quran_sources, install_dir: moduledir)

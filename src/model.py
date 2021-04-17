@@ -19,6 +19,7 @@ from __future__ import annotations
 from abc import ABC
 from os import path
 from typing import List
+from typing import Union
 import re
 import sqlite3
 
@@ -63,8 +64,8 @@ class Model(ABC):
 class Metadata(Model):
 
     def __init__(self) -> None:
-        self.database_filepath = path.join(
-            path.dirname(path.abspath(__file__)), 'main.db')
+        self.database_filepath = \
+            path.join(path.dirname(path.abspath(__file__)), 'main.db')
 
     def get_musshafs(self) -> List:
         self.cursor.execute('SELECT * FROM musshaf ORDER BY name')
@@ -150,14 +151,20 @@ class Metadata(Model):
     def get_ayah_text(
             self,
             musshaf_name: str,
-            surah_no: int,
-            ayah_no: int) -> str:
-        self.cursor.execute('SELECT text FROM texts WHERE sura=? AND aya=?',
-                            (surah_no, ayah_no))
-        result = self.cursor.fetchone()
-        if result:
-            return result[0]
-        return -1
+            surah_no: int = -1,
+            ayah_no: int = -1,
+            text_id: int = None) -> Union[List,str]:
+        if text_id:
+            self.cursor.execute('SELECT sura, aya, text FROM texts WHERE id=?',
+                                (text_id,))
+            return self.cursor.fetchall()
+        else:
+            self.cursor.execute('SELECT text FROM texts WHERE sura=? AND aya=?',
+                                (surah_no, ayah_no))
+            result = self.cursor.fetchone()
+            if result:
+                return result[0]
+            return -1
 
     def get_juz_no(
             self,
