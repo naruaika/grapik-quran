@@ -27,7 +27,6 @@ from os import path
 from shutil import copyfileobj
 from tempfile import TemporaryFile
 from threading import Thread
-from typing import List
 from urllib.request import urlopen
 from zipfile import ZipFile
 
@@ -62,9 +61,9 @@ class MusshafViewer(Gtk.Overlay):
     page_no: int = None  # to stop image page reloading when the page number
                          # has not changed
 
-    bboxes: List = []
-    bboxes_hovered: List = []
-    bboxes_focused: List = []
+    bboxes: list = []
+    bboxes_hovered: list = []
+    bboxes_focused: list = []
 
     def __init__(
             self,

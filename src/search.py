@@ -19,7 +19,6 @@ from collections import Counter
 from gi.repository import Gtk
 from gi.repository import GObject
 from os import path
-from typing import List
 import itertools
 import re
 
@@ -42,7 +41,7 @@ class SearchPopover(Gtk.PopoverMenu):
     scrolledwindow = Gtk.Template.Child()
 
     query: str = ''
-    results: List = []  # store the search results to avoid unneeded
+    results: list = []  # store the search results to avoid unneeded
                         # refreshment of search results
     match_case: bool = False
     match_whole_word: bool = False
@@ -258,7 +257,7 @@ class SearchPopover(Gtk.PopoverMenu):
     def search_phonetic(
             self,
             query: str,
-            threshold: float = 0.8) -> List:
+            threshold: float = 0.8) -> list:
         module_dirpath = path.dirname(path.abspath(__file__))
         termlist_filepath = path.join(module_dirpath, 'lafzi_termlist.txt')
         postlist_filepath = path.join(module_dirpath, 'lafzi_postlist.txt')

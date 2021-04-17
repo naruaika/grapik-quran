@@ -18,7 +18,6 @@
 from __future__ import annotations
 from abc import ABC
 from os import path
-from typing import List
 from typing import Union
 import re
 import sqlite3
@@ -67,16 +66,16 @@ class Metadata(Model):
         self.database_filepath = \
             path.join(path.dirname(path.abspath(__file__)), 'main.db')
 
-    def get_musshafs(self) -> List:
+    def get_musshafs(self) -> list:
         self.cursor.execute('SELECT * FROM musshaf ORDER BY name')
         return self.cursor.fetchall()
 
-    def get_musshaf(self) -> List:
+    def get_musshaf(self) -> list:
         self.cursor.execute('SELECT * FROM musshaf WHERE id=?',
                             (glob.musshaf_name,))
         return self.cursor.fetchone()
 
-    def get_surahs(self) -> List:
+    def get_surahs(self) -> list:
         self.cursor.execute('SELECT * FROM suras')
         return self.cursor.fetchall()
 
@@ -143,7 +142,7 @@ class Metadata(Model):
 
     def get_ayah_texts(
             self,
-            query: str) -> List:
+            query: str) -> list:
         self.cursor.execute('SELECT sura, aya, text FROM texts WHERE text LIKE'
                             ' ?', ('%'+query+'%',))
         return self.cursor.fetchall()
@@ -153,7 +152,7 @@ class Metadata(Model):
             musshaf_name: str,
             surah_no: int = -1,
             ayah_no: int = -1,
-            text_id: int = None) -> Union[List,str]:
+            text_id: int = None) -> Union[list,str]:
         if text_id:
             self.cursor.execute('SELECT sura, aya, text FROM texts WHERE id=?',
                                 (text_id,))
@@ -214,24 +213,24 @@ class Metadata(Model):
             return result[0]
         return -1
 
-    def get_tarajems(self) -> List:
+    def get_tarajems(self) -> list:
         self.cursor.execute('SELECT * FROM tarajem ORDER BY language')
         return self.cursor.fetchall()
 
     def get_tarajem(
             self,
-            tarajem_id: str) -> List:
+            tarajem_id: str) -> list:
         self.cursor.execute('SELECT * FROM tarajem WHERE id=?', (tarajem_id,))
         return self.cursor.fetchone()
 
-    def get_telaawas(self) -> List:
+    def get_telaawas(self) -> list:
         self.cursor.execute('SELECT * FROM telaawa ORDER BY qiraat, qaree, '
                             'bitrate, style ASC')
         return self.cursor.fetchall()
 
     def get_telaawa(
             self,
-            telaawa_id: str) -> List:
+            telaawa_id: str) -> list:
         self.cursor.execute('SELECT * FROM telaawa WHERE id=?', (telaawa_id,))
         return self.cursor.fetchone()
 
@@ -311,7 +310,7 @@ class Musshaf(Model):
 
     def get_bboxes(
             self,
-            page_no: int) -> List:
+            page_no: int) -> list:
         if not self.is_musshaf_exist(glob.musshaf_name):
             return -1
         query = 'SELECT sura, aya, x1, y1, x2-x1, y2-y1 FROM ' \
@@ -339,7 +338,7 @@ class Tarajem(Model):
             tarajem_name: str,
             search_query: str,
             case_sensitive: bool = False,
-            match_whole_word: bool = False) -> List:
+            match_whole_word: bool = False) -> list:
         if self.is_tarajem_exist(tarajem_name):
             if case_sensitive:
                 self.cursor.execute('PRAGMA case_sensitive_like = true;')
@@ -359,7 +358,7 @@ class Tarajem(Model):
             self,
             tarajem_name: str,
             surah_no: int,
-            ayah_no: int) -> List:
+            ayah_no: int) -> list:
         if self.is_tarajem_exist(tarajem_name):
             query = f'SELECT sura, aya, text FROM {tarajem_name} WHERE ' \
                 'sura=? AND aya=?'

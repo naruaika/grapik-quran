@@ -25,7 +25,6 @@ from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import Handy
 from os import path
-from typing import List
 
 from . import constants as const
 from . import globals as glob
@@ -64,7 +63,7 @@ class MainWindow(Handy.ApplicationWindow):
     ayah_number: int = None
     page_number: int = None
     page_focused: int = None
-    tarajem_names: List = None
+    tarajem_names: list = None
 
     def __init__(
             self,

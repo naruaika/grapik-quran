@@ -20,7 +20,6 @@ from gi.repository import GObject
 from gi.repository import Gtk
 from tempfile import TemporaryFile
 from threading import Thread
-from typing import List
 from urllib.request import urlopen
 
 from . import constants as const
@@ -39,9 +38,9 @@ class TarajemViewer(Gtk.Overlay):
 
     def populate(
             self,
-            bboxes: List,
-            bboxes_hovered: List,
-            bboxes_focused: List,
+            bboxes: list,
+            bboxes_hovered: list,
+            bboxes_focused: list,
             regenerate: bool = False) -> bool:
         uniques = set()  # for removing duplicate surah-ayah pairs
         bboxes = [bbox[:2] for bbox in bboxes]
@@ -169,7 +168,7 @@ class TarajemPopover(Gtk.PopoverMenu):
     tarajem_name: str = ''  # store a being downloaded tarajem ID to prevent
                             # from downloading another tarajem when the current
                             # download is not finished
-    tarajems: List = []  # store the search results to avoid unneeded
+    tarajems: list = []  # store the search results to avoid unneeded
                          # refreshment of Qaree list
 
     def populate(

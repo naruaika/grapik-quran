@@ -26,7 +26,6 @@ from os import path
 from shutil import copyfileobj
 from tempfile import TemporaryFile
 from threading import Thread
-from typing import List
 from urllib.request import urlopen
 from zipfile import ZipFile
 
@@ -80,7 +79,7 @@ class TelaawaPopover(Gtk.PopoverMenu):
     telaawa_name: str = ''  # store a being downloaded telaawa ID to prevent
                             # from downloading another telaawa when the current
                             # download is not finished
-    telaawas: List = []  # store the search results to avoid unneeded
+    telaawas: list = []  # store the search results to avoid unneeded
                          # refreshment of Qaree list
 
     def __init__(

@@ -15,9 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import List
-
-
 """Application variables
 
 This module must be imported by other modules that have at least one class that
@@ -25,9 +22,9 @@ needs to communicate with other classes in other modules or have at least one
 variable that needs to be saved as a user setting.
 """
 musshaf_name: str = None
-tarajem_names: List = None
+tarajem_names: list = None
 telaawa_name: str = None
-bookmark_names: List = None
+bookmark_names: list = None
 
 page_scale: float = None
 dual_page: bool = None
