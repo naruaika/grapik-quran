@@ -142,15 +142,19 @@ class HeaderBar(Handy.HeaderBar):
         date = HijriDate.today()
 
         # Format bookmark data
-        bookmark = f'{glob.musshaf_name};{glob.page_number};' \
-            f'Bookmarked on {date.day_name_en}, {months[date.month]} ' \
-            f'{date.day}, {date.year}'
+        bookmark = f'{glob.musshaf_name};{glob.page_number};'
 
         # Add/remove bookmark
         if button.get_active():
+            bookmark += \
+                f'Bookmarked on {date.day_name_en}, {months[date.month-1]} ' \
+                f'{date.day}, {date.year}'
             glob.bookmark_names.append(bookmark)
         else:
-            glob.bookmark_names.remove(bookmark)
+            for bookmark_name in glob.bookmark_names:
+                if bookmark_name.startswith(bookmark):
+                    glob.bookmark_names.remove(bookmark_name)
+                    break
 
     @Gtk.Template.Callback()
     def toggle_tarajem(
