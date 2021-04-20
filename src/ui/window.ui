@@ -226,7 +226,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="ypad">5</property>
-                                <property name="pixel-size">24</property>
+                                <property name="pixel-size">20</property>
                                 <property name="icon-name">go-previous-symbolic</property>
                               </object>
                             </child>
@@ -272,7 +272,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="ypad">5</property>
-                                <property name="pixel-size">24</property>
+                                <property name="pixel-size">20</property>
                                 <property name="icon-name">go-next-symbolic</property>
                               </object>
                             </child>
