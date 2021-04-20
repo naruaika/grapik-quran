@@ -16,6 +16,7 @@
             <property name="can-focus">False</property>
             <property name="halign">start</property>
             <property name="label" translatable="yes">Text</property>
+            <property name="justify">fill</property>
             <property name="ellipsize">end</property>
           </object>
           <packing>
