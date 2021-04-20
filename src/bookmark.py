@@ -76,12 +76,9 @@ class BookmarkPopover(Gtk.PopoverMenu):
                 '</span>'
             label.set_markup(markup)
 
-            hbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-            hbox.pack_start(label, True, True, 0)
-
             row = Gtk.ListBoxRow()
             row.id = page_number
-            row.add(hbox)
+            row.add(label)
             self.listbox.add(row)
 
         self.listbox.show_all()
