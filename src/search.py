@@ -37,12 +37,11 @@ class SearchPopover(Gtk.PopoverMenu):
     entry = Gtk.Template.Child()
     note = Gtk.Template.Child()
     listbox = Gtk.Template.Child()
-    progressbar = Gtk.Template.Child()
     scrolledwindow = Gtk.Template.Child()
 
     query: str = ''
-    results: list = []  # store the search results to avoid unneeded
-                        # refreshment of search results
+    results: list = None  # store the search results to avoid unneeded
+                          # refreshment of search results
     match_case: bool = False
     match_whole_word: bool = False
 
@@ -60,14 +59,9 @@ class SearchPopover(Gtk.PopoverMenu):
             query = self.query
         self.query = query
 
-        def reset() -> None:
-            def reset(row: Gtk.ListBoxRow) -> None:
-                self.listbox.remove(row)
-            self.listbox.foreach(reset)
-
         if len(query) < 3:
+            self.scrolledwindow.hide()
             self.note.hide()
-            reset()
             return
 
         with Metadata() as metadata, \
@@ -103,7 +97,10 @@ class SearchPopover(Gtk.PopoverMenu):
                 return
             self.results = results
 
-            reset()
+            def reset(row: Gtk.ListBoxRow) -> None:
+                self.listbox.remove(row)
+            self.listbox.foreach(reset)
+
             for result in self.results:
                 text = \
                     '<span>' \
@@ -118,14 +115,21 @@ class SearchPopover(Gtk.PopoverMenu):
                 row.id = (result[0], result[1])
                 self.listbox.add(row)
 
-            if results:
+            if n_search_results == 0:
+                self.note.set_markup(
+                    '<span size="small" foreground="#808080808080">'
+                        'No search result'
+                    '</span>')
+                self.scrolledwindow.hide()
+            else:
                 self.note.set_markup(
                     '<span size="small" foreground="#808080808080">'
                         'Displaying search results '
                         f'{min(max_search_results, n_search_results)} '
                         f'of {n_search_results}'
                     '</span>')
-                self.note.show()
+                self.scrolledwindow.show()
+            self.note.show()
 
         self.listbox.show_all()
 
