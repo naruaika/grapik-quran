@@ -36,6 +36,7 @@ grapik_quran_sources = [
   'about.py',
   'bookmark.py',
   'headerbar.py',
+  'listofcontents.py',
   'menu.py',
   'musshaf.py',
   'navigation.py',

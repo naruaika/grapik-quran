@@ -234,6 +234,10 @@ class Metadata(Model):
         self.cursor.execute('SELECT * FROM telaawa WHERE id=?', (telaawa_id,))
         return self.cursor.fetchone()
 
+    def get_titles(self) -> list:
+        self.cursor.execute('SELECT sura, aya, title FROM titles')
+        return self.cursor.fetchall()
+
 
 class Musshaf(Model):
 

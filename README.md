@@ -4,7 +4,7 @@
 
 A simple and modern digital Quran app for GNOME desktop.
 
-In the name of Allah, the Entirely Merciful, the Especially Merciful. This proof-of-concept application is specially made for the GNOME desktop. We use Quran images from [Quran Complex](https://qurancomplex.gov.sa/) to provide the same experience of reading a non-digital Quran; Quran metadata and translations are from [Tanzil](http://tanzil.net); Quran interpretations are from [King Saud University (KSU)](https://quran.ksu.edu.sa/ayat/?l=en&pg=patches); and recitations are from [EveryAyah](https://everyayah.com). Here's a prototype of the app:
+In the name of Allah, the Entirely Merciful, the Especially Merciful. This proof-of-concept application is specially made for the GNOME desktop. We use Quran images from [Quran Complex](https://qurancomplex.gov.sa/) to provide the same experience of reading a non-digital Quran; Quran table of contents from The Translation of The Meaning of The Quran in Indonesian compiled by the Ministry of Religion of the Republic of Indonesia under the supervision of the Ministry of Islamic Affairs, Da'wah, and Islamic Guidance of the Kingdom of Saudi Arabia in 1441 Hijri; Quran metadata and translations from [Tanzil](http://tanzil.net); Quran interpretations from [King Saud University (KSU)](https://quran.ksu.edu.sa/ayat/?l=en&pg=patches); and recitations from [EveryAyah](https://everyayah.com). Here's a prototype of the app:
 
 <!-- TODO: replace by a video intro -->
 
@@ -18,7 +18,8 @@ Using this app, you'll be able to:
 - Navigate to any specific page/surah/ayah/juz/hizb/quarter/manzil/ruku
 - Download and read translation in 39 languages
 - Download and listen recitation by 41 reciters
-- Search for imlaei and tarajem/tafaser texts
+- Search for imlaei/tarajem/tafaser by text/transliteration
+- Search the table of contents (Indonesian only)
 - Bookmark any page
 
 ## Background
@@ -39,7 +40,7 @@ The easiest way for beginners is clone this repository to your local computer, t
 
 ## Licenses
 
-This software is distributed under the terms of the [GNU General Public License (GPL) Version 3](COPYING). For the Quran images credit to Quran Complex under license not for sale. For the Quran metadata credit to Tanzil. For the translations are for non-commercial purposes only and credit to Tanzil. However, there's a disclaimer from Tanzil which I'd like to mention in here to be considered by all of us:
+This software is distributed under the terms of the [GNU General Public License (GPL) Version 3](COPYING). For the images and the table of contents credit to Quran Complex under license not for sale. For the metadata credit to Tanzil. For the translations are for non-commercial purposes only and credit to Tanzil. However, there's a disclaimer from Tanzil which I'd like to mention in here to be considered by all of us:
 
 > No translation of Quran can be a hundred percent accurate, nor it can be used as a replacement of the Quran text. We have tried to provide a set of mostly acceptable quran translations here, but we cannot guarantee their authenticity and/or accuracy. Please use them at your own discretion. —[https://tanzil.net/trans/](https://tanzil.net/trans/)
 

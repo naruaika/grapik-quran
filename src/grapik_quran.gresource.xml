@@ -4,6 +4,7 @@
     <file compressed="true">ui/about_dialog.ui</file>
     <file compressed="true">ui/bookmark_popover.ui</file>
     <file compressed="true">ui/headerbar.ui</file>
+    <file compressed="true">ui/listofcontents_popover.ui</file>
     <file compressed="true">ui/menu.ui</file>
     <file compressed="true">ui/musshaf_dialog.ui</file>
     <file compressed="true">ui/musshaf_listboxrow.ui</file>

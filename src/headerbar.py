@@ -24,6 +24,7 @@ from ummalqura.hijri_date import HijriDate
 from . import constants as const
 from . import globals as glob
 from .bookmark import BookmarkPopover
+from .listofcontents import ListofContentsPopover
 from .menu import MainMenu
 from .navigation import NavigationPopover
 from .search import SearchPopover
@@ -51,6 +52,7 @@ class HeaderBar(Handy.HeaderBar):
     button_telaawa_playback = Gtk.Template.Child()
     icon_telaawa_playback = Gtk.Template.Child()
     button_telaawa_option = Gtk.Template.Child()
+    button_open_listofcontents = Gtk.Template.Child()
     button_open_mainmenu = Gtk.Template.Child()
 
     window_title = Gtk.Template.Child()
@@ -74,6 +76,7 @@ class HeaderBar(Handy.HeaderBar):
         self.setup_tarajem_popover()
         self.setup_navigation_popover()
         self.setup_telaawa_popover()
+        self.setup_listofcontents_popover()
         self.setup_main_menu()
 
         # Watch the squeezer when it starts to hide some of its children
@@ -114,6 +117,11 @@ class HeaderBar(Handy.HeaderBar):
         self.button_telaawa_option.set_popover(self.popover_telaawa)
 
         self.popover_telaawa.connect('telaawa-playback', self.telaawa_toggled)
+
+    def setup_listofcontents_popover(self) -> None:
+        self.popover_listofcontents = ListofContentsPopover()
+        self.button_open_listofcontents.set_popover(
+            self.popover_listofcontents)
 
     def setup_main_menu(self) -> None:
         self.popover_menu = MainMenu()

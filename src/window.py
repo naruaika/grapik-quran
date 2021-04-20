@@ -97,6 +97,7 @@ class MainWindow(Handy.ApplicationWindow):
         self.musshaf_viewer_left.update()
         self.headerbar.popover_tarajem.populate()
         self.headerbar.popover_telaawa.populate()
+        self.headerbar.popover_listofcontents.populate()
 
         self.headerbar.button_open_tarajem.set_active(glob.tarajem_visibility)
 
@@ -131,6 +132,11 @@ class MainWindow(Handy.ApplicationWindow):
         self.headerbar.popover_telaawa.connect(
             'go-to-previous-ayah',
             self.headerbar.popover_nav_alt.go_to_previous_ayah)
+
+        self.headerbar.popover_listofcontents.connect(
+            'go-to-suraya', self.headerbar.popover_nav.go_to_suraya)
+        self.headerbar.popover_listofcontents.connect(
+            'go-to-suraya', self.headerbar.popover_nav_alt.go_to_suraya)
 
         self.button_next_page.connect(
             'clicked', self.headerbar.popover_nav.go_to_next_page)
