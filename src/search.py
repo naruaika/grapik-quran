@@ -76,7 +76,11 @@ class SearchPopover(Gtk.PopoverMenu):
                 # Search for ayah by phonetic
                 # TODO: implement cache system
                 query_phonetic = self.latin2phonetic(query)
-                matched_docs = self.search_phonetic(query_phonetic)
+                matched_docs = self.search_phonetic(query_phonetic, 0.9)
+                if not matched_docs:
+                    matched_docs = self.search_phonetic(query_phonetic, 0.8)
+                if not matched_docs:
+                    matched_docs = self.search_phonetic(query_phonetic, 0.7)
                 for matched_doc in matched_docs:
                     results += metadata.get_ayah_text(
                         glob.musshaf_name, text_id=matched_doc['document-id'])
