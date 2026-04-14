@@ -1,3 +1,6 @@
+> [!NOTE]
+> **2026-04-14**: I'm considering reviving and rewriting the application to use GTK4/Libadwaita. This likely won't happen anytime soon, as it would require a lot of work, especially in improving responsiveness and lightness. Please feel free to open [a new discussion](https://github.com/naruaika/grapik-quran/discussions/new/choose) if you have any questions, or contact me at hello@naruaika.me.
+
 <img src="data/org.grapik.Quran.svg" width="128px" align="left">
 
 # Grapik Quran
